@@ -21,8 +21,8 @@ import com.github.andreyasadchy.xtra.util.C
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.upstream.DefaultDataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.Util
 import kotlinx.coroutines.delay
@@ -30,23 +30,24 @@ import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.concurrent.schedule
 
-abstract class PlayerViewModel(context: Application) : BaseAndroidViewModel(context), Player.Listener, OnQualityChangeListener {
+abstract class PlayerViewModel(context: Application) : BaseAndroidViewModel(context), Player.EventListener, OnQualityChangeListener {
 
     protected val tag: String = javaClass.simpleName
 
-    protected val httpDataSourceFactory = DefaultHttpDataSource.Factory().setUserAgent(Util.getUserAgent(context, context.getString(R.string.app_name)))
-    protected val dataSourceFactory = DefaultDataSource.Factory(context, httpDataSourceFactory)
+    protected val httpDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(context, context.getString(R.string.app_name)))
+    protected val dataSourceFactory = DefaultDataSourceFactory(context, null, httpDataSourceFactory)
 
-    protected val trackSelector = DefaultTrackSelector(context)
-    private val rewind = context.prefs().getString(C.PLAYER_REWIND, "10000")!!.toLong()
-    private val forward = context.prefs().getString(C.PLAYER_FORWARD, "10000")!!.toLong()
+    protected val trackSelector = DefaultTrackSelector()
     private val minBuffer = context.prefs().getString(C.PLAYER_BUFFER_MIN, "15000")?.toIntOrNull() ?: 15000
     private val maxBuffer = context.prefs().getString(C.PLAYER_BUFFER_MAX, "50000")?.toIntOrNull() ?: 50000
     private val playbackBuffer = context.prefs().getString(C.PLAYER_BUFFER_PLAYBACK, "2000")?.toIntOrNull() ?: 2000
     private val rebuffer = context.prefs().getString(C.PLAYER_BUFFER_REBUFFER, "5000")?.toIntOrNull() ?: 5000
-    val player: ExoPlayer = ExoPlayer.Builder(context).setTrackSelector(trackSelector).setLoadControl(DefaultLoadControl.Builder()
-        .setBufferDurationsMs(minBuffer, maxBuffer, playbackBuffer, rebuffer)
-        .build()).setSeekBackIncrementMs(rewind).setSeekForwardIncrementMs(forward).build()
+    val player: SimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
+        context,
+        trackSelector,
+        DefaultLoadControl.Builder()
+            .setBufferDurationsMs(minBuffer, maxBuffer, playbackBuffer, rebuffer)
+            .createDefaultLoadControl())
         .apply { addListener(this@PlayerViewModel) }
     protected lateinit var mediaSource: MediaSource //TODO maybe redo these viewmodels to custom players
 
@@ -120,8 +121,7 @@ abstract class PlayerViewModel(context: Application) : BaseAndroidViewModel(cont
 
     protected fun play() {
         if (this::mediaSource.isInitialized) { //TODO
-            player.setMediaSource(mediaSource)
-            player.prepare()
+            player.prepare(mediaSource)
             player.playWhenReady = true
         }
     }
@@ -180,19 +180,16 @@ abstract class PlayerViewModel(context: Application) : BaseAndroidViewModel(cont
 
     //Player.EventListener
 
-    override fun onPlayerError(error: PlaybackException) {
-        val error2 = player.playerError
-        Log.e(tag, "Player error", error2)
+    override fun onPlayerError(error: ExoPlaybackException) {
+        Log.e(tag, "Player error", error)
         playbackPosition = player.currentPosition
         val context = getApplication<Application>()
         if (context.isNetworkAvailable) {
             try {
                 val isStreamEnded = try {
-                    if (error2 != null) {
-                        error2.type == ExoPlaybackException.TYPE_SOURCE &&
-                                this@PlayerViewModel is StreamPlayerViewModel &&
-                                error2.sourceException.let { it is HttpDataSource.InvalidResponseCodeException && it.responseCode == 404 }
-                    } else false
+                    error.type == ExoPlaybackException.TYPE_SOURCE &&
+                            this@PlayerViewModel is StreamPlayerViewModel &&
+                            error.sourceException.let { it is HttpDataSource.InvalidResponseCodeException && it.responseCode == 404 }
                 } catch (e: IllegalStateException) {
 //                    Crashlytics.log(Log.ERROR, tag, "onPlayerError: Stream end check error. Type: ${error.type}")
 //                    Crashlytics.logException(e)

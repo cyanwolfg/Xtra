@@ -38,6 +38,7 @@
         app:iconSpaceReserved="false" />
 
     <EditTextPreference
+        android:enabled="false"
         android:defaultValue=""
         android:key="player_live_min_speed"
         android:singleLine="true"
@@ -47,6 +48,7 @@
         app:iconSpaceReserved="false" />
 
     <EditTextPreference
+        android:enabled="false"
         android:defaultValue=""
         android:key="player_live_max_speed"
         android:singleLine="true"
@@ -56,6 +58,7 @@
         app:iconSpaceReserved="false" />
 
     <EditTextPreference
+        android:enabled="false"
         android:defaultValue="5000"
         android:key="player_live_target_offset"
         android:singleLine="true"

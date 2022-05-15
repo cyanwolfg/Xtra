@@ -18,8 +18,6 @@ import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.prefs
 import com.github.andreyasadchy.xtra.util.toast
 import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.source.hls.HlsManifest
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
@@ -89,7 +87,7 @@ class VideoPlayerViewModel @Inject constructor(
             viewModelScope.launch {
                 try {
                     val url = playerRepository.loadVideoPlaylistUrl(gqlClientId, video.id)
-                    mediaSource = HlsMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(url))
+                    mediaSource = HlsMediaSource.Factory(dataSourceFactory).createMediaSource(url)
                     play()
                     if (offset > 0) {
                         player.seekTo(offset.toLong())
@@ -155,16 +153,13 @@ class VideoPlayerViewModel @Inject constructor(
         }
     }
 
-    override fun onPlayerError(error: PlaybackException) {
-        val error2 = player.playerError
-        if (error2 != null) {
-            if (error2.type == ExoPlaybackException.TYPE_SOURCE &&
-                error2.sourceException.let { it is HttpDataSource.InvalidResponseCodeException && it.responseCode == 403 }) {
-                val context = getApplication<Application>()
-                context.toast(R.string.video_subscribers_only)
-            } else {
-                super.onPlayerError(error)
-            }
+    override fun onPlayerError(error: ExoPlaybackException) {
+        if (error.type == ExoPlaybackException.TYPE_SOURCE &&
+            error.sourceException.let { it is HttpDataSource.InvalidResponseCodeException && it.responseCode == 403 }) {
+            val context = getApplication<Application>()
+            context.toast(R.string.video_subscribers_only)
+        } else {
+            super.onPlayerError(error)
         }
     }
 

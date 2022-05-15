@@ -16,7 +16,6 @@ import com.github.andreyasadchy.xtra.ui.player.PlayerMode.*
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.prefs
 import com.github.andreyasadchy.xtra.util.toast
-import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.hls.HlsManifest
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.source.hls.playlist.DefaultHlsPlaylistTracker
@@ -159,18 +158,13 @@ class StreamPlayerViewModel @Inject constructor(
                 if (result != null) {
                     if (useAdBlock) {
                         if (result.second) {
-                            httpDataSourceFactory.setDefaultRequestProperties(hashMapOf("X-Donate-To" to "https://ttv.lol/donate"))
+                            httpDataSourceFactory.defaultRequestProperties.set("X-Donate-To", "https://ttv.lol/donate")
                         } else {
                             val context = getApplication<Application>()
                             context.toast(R.string.adblock_not_working)
                         }
                     }
-                    mediaSource = hlsMediaSourceFactory.createMediaSource(
-                        MediaItem.Builder().setUri(result.first).setLiveConfiguration(MediaItem.LiveConfiguration.Builder().apply {
-                            minSpeed?.let { setMinPlaybackSpeed(it) }
-                            maxSpeed?.let { setMaxPlaybackSpeed(it) }
-                            targetOffset?.let { setTargetOffsetMs(it) }
-                        }.build()).build())
+                    mediaSource = hlsMediaSourceFactory.createMediaSource(result.first)
                     play()
                 }
             } catch (e: Exception) {

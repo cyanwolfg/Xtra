@@ -225,6 +225,10 @@ abstract class BasePlayerFragment : BaseNetworkFragment(), Injectable, Lifecycle
                 forward <= 10000 -> R.drawable.baseline_forward_10_black_48
                 else -> R.drawable.baseline_forward_30_black_48
             }
+            playerView.apply {
+                setRewindIncrementMs(rewind)
+                setFastForwardIncrementMs(forward)
+            }
             view.findViewById<ImageButton>(com.google.android.exoplayer2.ui.R.id.exo_rew).setImageResource(rewindImage)
             view.findViewById<ImageButton>(com.google.android.exoplayer2.ui.R.id.exo_ffwd).setImageResource(forwardImage)
         }

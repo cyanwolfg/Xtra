@@ -115,8 +115,7 @@ abstract class HlsPlayerViewModel(
         }
     }
 
-    override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-        val manifest = player.currentManifest
+    override fun onTimelineChanged(timeline: Timeline, manifest: Any?, reason: Int) {
         if (helper.urls.isEmpty() && manifest is HlsManifest) {
             manifest.masterPlaylist.let {
                 val context = getApplication<Application>()

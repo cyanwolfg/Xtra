@@ -10,7 +10,6 @@ import com.github.andreyasadchy.xtra.ui.player.PlayerMode
 import com.github.andreyasadchy.xtra.ui.player.PlayerViewModel
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.prefs
-import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import javax.inject.Inject
@@ -31,7 +30,7 @@ class OfflinePlayerViewModel @Inject constructor(
             } else {
                 ProgressiveMediaSource.Factory(dataSourceFactory)
             }
-            mediaSource = mediaSourceFactory.createMediaSource(MediaItem.fromUri(video.url.toUri()))
+            mediaSource = mediaSourceFactory.createMediaSource(video.url.toUri())
             play()
             player.seekTo(if (context.prefs().getBoolean(C.PLAYER_USE_VIDEOPOSITIONS, true)) video.lastWatchPosition ?: 0 else 0)
         }
