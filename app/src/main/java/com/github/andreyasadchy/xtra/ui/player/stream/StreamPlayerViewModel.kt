@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.github.andreyasadchy.xtra.R
+import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.helix.stream.Stream
 import com.github.andreyasadchy.xtra.player.lowlatency.DefaultHlsPlaylistParserFactory
 import com.github.andreyasadchy.xtra.repository.GraphQLRepository
@@ -44,12 +45,13 @@ class StreamPlayerViewModel @Inject constructor(
     override val channelLogo: String?
         get() { return _stream.value?.channelLogo }
 
-    private var useAdBlock = false
-    private var randomDeviceId = true
-    private var xDeviceId = ""
-    private var deviceId = ""
-    private var playerType = ""
-    private var gqlClientId = ""
+    private var gqlClientId: String? = null
+    private var gqlToken: String? = null
+    private var useAdBlock: Boolean? = true
+    private var randomDeviceId: Boolean? = true
+    private var xDeviceId: String? = null
+    private var deviceId: String? = null
+    private var playerType: String? = null
     private var minSpeed: Float? = null
     private var maxSpeed: Float? = null
     private var targetOffset: Long? = null
@@ -60,13 +62,16 @@ class StreamPlayerViewModel @Inject constructor(
         .setPlaylistTrackerFactory(DefaultHlsPlaylistTracker.FACTORY)
         .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(6))
 
-    fun startStream(helixClientId: String?, helixToken: String, stream: Stream, useAdBlock: Boolean, randomDeviceId: Boolean, xDeviceId: String, deviceId: String, playerType: String, gqlClientId: String, minSpeed: String?, maxSpeed: String?, targetOffset: String?) {
+    fun startStream(user: User, includeToken: Boolean?, helixClientId: String?, gqlClientId: String?, stream: Stream, useAdBlock: Boolean?, randomDeviceId: Boolean?, xDeviceId: String?, deviceId: String?, playerType: String?, minSpeed: String?, maxSpeed: String?, targetOffset: String?) {
+        this.gqlClientId = gqlClientId
+        if (includeToken == true) {
+            this.gqlToken = user.gqlToken
+        }
         this.useAdBlock = useAdBlock
         this.randomDeviceId = randomDeviceId
         this.xDeviceId = xDeviceId
         this.deviceId = deviceId
         this.playerType = playerType
-        this.gqlClientId = gqlClientId
         this.minSpeed = minSpeed?.toFloatOrNull()
         this.maxSpeed = maxSpeed?.toFloatOrNull()
         this.targetOffset = targetOffset?.toLongOrNull()
@@ -78,7 +83,7 @@ class StreamPlayerViewModel @Inject constructor(
                     try {
                         val s = when {
                             stream.user_id != null -> {
-                                repository.loadStream(stream.user_id, stream.user_login, helixClientId, helixToken, gqlClientId)
+                                repository.loadStream(stream.user_id, stream.user_login, helixClientId, user.helixToken, gqlClientId)
                             }
                             stream.user_login != null -> {
                                 Stream(viewer_count = gql.loadViewerCount(gqlClientId, stream.user_login).viewers)
@@ -154,9 +159,9 @@ class StreamPlayerViewModel @Inject constructor(
     private fun loadStream(stream: Stream) {
         viewModelScope.launch {
             try {
-                val result = stream.user_login?.let { playerRepository.loadStreamPlaylistUrl(gqlClientId, it, playerType, useAdBlock, randomDeviceId, xDeviceId, deviceId) }
+                val result = stream.user_login?.let { playerRepository.loadStreamPlaylistUrl(gqlClientId, gqlToken, it, useAdBlock, randomDeviceId, xDeviceId, deviceId, playerType) }
                 if (result != null) {
-                    if (useAdBlock) {
+                    if (useAdBlock == true) {
                         if (result.second) {
                             httpDataSourceFactory.defaultRequestProperties.set("X-Donate-To", "https://ttv.lol/donate")
                         } else {
