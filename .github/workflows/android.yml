@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ old_exoplayer ]
+    branches: [ exoplayer ]
 
 jobs:
   build:
