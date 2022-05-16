@@ -81,7 +81,7 @@ class VideoPlayerViewModel @Inject constructor(
         player.seekTo(position)
     }
 
-    fun setVideo(gqlClientId: String, gqlToken: String?, video: Video, offset: Double) {
+    fun setVideo(gqlClientId: String?, gqlToken: String?, video: Video, offset: Double) {
         if (!this::video.isInitialized) {
             this.video = video
             viewModelScope.launch {
