@@ -42,7 +42,7 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: "0_old_exoplayer"
+          automatic_release_tag: "1_old_exoplayer"
           prerelease: false
           title: "old exoplayer"
           files: apk/*.apk
