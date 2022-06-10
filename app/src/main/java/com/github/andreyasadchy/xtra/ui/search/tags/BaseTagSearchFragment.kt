@@ -37,7 +37,7 @@ class BaseTagSearchFragment : MediaPagerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val activity = requireActivity() as MainActivity
-        val adapter = BaseTagSearchPagerAdapter(activity, childFragmentManager).apply {
+        val adapter = BaseTagSearchPagerAdapter(childFragmentManager).apply {
             setOnItemChangedListener {
                 if (it.isResumed) {
                     (it as Searchable).search(search.query.toString())

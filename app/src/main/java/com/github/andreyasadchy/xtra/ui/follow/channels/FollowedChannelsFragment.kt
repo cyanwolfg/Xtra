@@ -17,6 +17,7 @@ import com.github.andreyasadchy.xtra.ui.main.MainActivity
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.prefs
+import com.github.andreyasadchy.xtra.util.visible
 import kotlinx.android.synthetic.main.common_recycler_view_layout.*
 import kotlinx.android.synthetic.main.fragment_followed_channels.*
 import kotlinx.android.synthetic.main.sort_bar.*
@@ -45,15 +46,23 @@ class FollowedChannelsFragment : PagedListFragment<Follow, FollowedChannelsViewM
             gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, ""),
             apiPref = TwitchApiHelper.listFromPrefs(requireContext().prefs().getString(C.API_PREF_FOLLOWED_CHANNELS, ""), TwitchApiHelper.followedChannelsApiDefaults),
         )
-        sortBar.setOnClickListener { FollowedChannelsSortDialog.newInstance(viewModel.sort, viewModel.order).show(childFragmentManager, null) }
+        sortBar.visible()
+        sortBar.setOnClickListener {
+            FollowedChannelsSortDialog.newInstance(
+                sort = viewModel.sort,
+                order = viewModel.order,
+                saveDefault = requireContext().prefs().getBoolean(C.SORT_DEFAULT_FOLLOWED_CHANNELS, false)
+            ).show(childFragmentManager, null)
+        }
     }
 
-    override fun onChange(sort: Sort, sortText: CharSequence, order: Order, orderText: CharSequence) {
+    override fun onChange(sort: Sort, sortText: CharSequence, order: Order, orderText: CharSequence, saveDefault: Boolean) {
         adapter.submitList(null)
         viewModel.filter(
             sort = sort,
             order = order,
-            text = getString(R.string.sort_and_order, sortText, orderText)
+            text = getString(R.string.sort_and_order, sortText, orderText),
+            saveDefault = saveDefault
         )
     }
 

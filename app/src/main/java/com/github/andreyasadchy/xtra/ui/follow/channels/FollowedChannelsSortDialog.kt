@@ -19,17 +19,18 @@ import kotlinx.android.synthetic.main.dialog_followed_channels_sort.*
 class FollowedChannelsSortDialog : ExpandingBottomSheetDialogFragment() {
 
     interface OnFilter {
-        fun onChange(sort: Sort, sortText: CharSequence, order: Order, orderText: CharSequence)
+        fun onChange(sort: Sort, sortText: CharSequence, order: Order, orderText: CharSequence, saveDefault: Boolean)
     }
 
     companion object {
 
         private const val SORT = "sort"
         private const val ORDER = "order"
+        private const val SAVE_DEFAULT = "save_default"
 
-        fun newInstance(sort: Sort, order: Order): FollowedChannelsSortDialog {
+        fun newInstance(sort: Sort, order: Order, saveDefault: Boolean = false): FollowedChannelsSortDialog {
             return FollowedChannelsSortDialog().apply {
-                arguments = bundleOf(SORT to sort, ORDER to order)
+                arguments = bundleOf(SORT to sort, ORDER to order, SAVE_DEFAULT to saveDefault)
             }
         }
     }
@@ -54,23 +55,28 @@ class FollowedChannelsSortDialog : ExpandingBottomSheetDialogFragment() {
             LAST_BROADCAST -> R.id.last_broadcast
         }
         val originalOrderId = if (args.getSerializable(ORDER) as Order == DESC) R.id.newest_first else R.id.oldest_first
+        val originalSaveDefault = args.getBoolean(SAVE_DEFAULT)
         sort.check(originalSortId)
         order.check(originalOrderId)
+        saveDefault.isChecked = originalSaveDefault
         apply.setOnClickListener {
             val checkedSortId = sort.checkedRadioButtonId
             val checkedOrderId = order.checkedRadioButtonId
-            if (checkedSortId != originalSortId || checkedOrderId != originalOrderId) {
+            val checkedSaveDefault = saveDefault.isChecked
+            if (checkedSortId != originalSortId || checkedOrderId != originalOrderId || checkedSaveDefault != originalSaveDefault) {
                 val sortBtn = view.findViewById<RadioButton>(checkedSortId)
                 val orderBtn = view.findViewById<RadioButton>(checkedOrderId)
                 listener.onChange(
-                        when (checkedSortId) {
-                            R.id.time_followed -> FOLLOWED_AT
-                            R.id.alphabetically -> ALPHABETICALLY
-                            else -> LAST_BROADCAST
-                        },
-                        sortBtn.text,
-                        if (checkedOrderId == R.id.newest_first) DESC else ASC,
-                        orderBtn.text)
+                    when (checkedSortId) {
+                        R.id.time_followed -> FOLLOWED_AT
+                        R.id.alphabetically -> ALPHABETICALLY
+                        else -> LAST_BROADCAST
+                    },
+                    sortBtn.text,
+                    if (checkedOrderId == R.id.newest_first) DESC else ASC,
+                    orderBtn.text,
+                    checkedSaveDefault
+                )
             }
             dismiss()
         }

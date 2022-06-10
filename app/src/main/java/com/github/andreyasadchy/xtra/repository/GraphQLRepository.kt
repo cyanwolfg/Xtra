@@ -15,6 +15,7 @@ import com.github.andreyasadchy.xtra.model.gql.game.GameStreamsDataResponse
 import com.github.andreyasadchy.xtra.model.gql.game.GameVideosDataResponse
 import com.github.andreyasadchy.xtra.model.gql.search.SearchChannelDataResponse
 import com.github.andreyasadchy.xtra.model.gql.search.SearchGameDataResponse
+import com.github.andreyasadchy.xtra.model.gql.search.SearchVideosDataResponse
 import com.github.andreyasadchy.xtra.model.gql.stream.StreamDataResponse
 import com.github.andreyasadchy.xtra.model.gql.stream.ViewersDataResponse
 import com.github.andreyasadchy.xtra.model.gql.tag.*
@@ -139,7 +140,7 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
         return graphQL.getTopStreams(clientId, json)
     }
 
-    suspend fun loadGameStreams(clientId: String?, game: String?, tags: List<String>?, limit: Int?, cursor: String?): GameStreamsDataResponse {
+    suspend fun loadGameStreams(clientId: String?, game: String?, sort: String?, tags: List<String>?, limit: Int?, cursor: String?): GameStreamsDataResponse {
         val array = JsonArray()
         if (tags != null) {
             for (i in tags) {
@@ -154,7 +155,7 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
                 addProperty("name", game)
                 addProperty("sortTypeIsRecency", false)
                 add("options", JsonObject().apply {
-                    addProperty("sort", "VIEWER_COUNT")
+                    addProperty("sort", sort)
                     add("tags", array)
                 })
             })
@@ -314,6 +315,30 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
             })
         }
         return graphQL.getSearchGames(clientId, json)
+    }
+
+    suspend fun loadSearchVideos(clientId: String?, query: String?, cursor: String?): SearchVideosDataResponse {
+        val json = JsonObject().apply {
+            addProperty("operationName", "SearchResultsPage_SearchResults")
+            add("variables", JsonObject().apply {
+                add("options", JsonObject().apply {
+                    add("targets", JsonArray().apply {
+                        add(JsonObject().apply {
+                            addProperty("cursor", cursor)
+                            addProperty("index", "VOD")
+                        })
+                    })
+                })
+                addProperty("query", query)
+            })
+            add("extensions", JsonObject().apply {
+                add("persistedQuery", JsonObject().apply {
+                    addProperty("version", 1)
+                    addProperty("sha256Hash", "ee977ac21b324669b4c109be49ed3032227e8850bea18503d0ced68e8156c2a5")
+                })
+            })
+        }
+        return graphQL.getSearchVideos(clientId, json)
     }
 
     suspend fun loadGameTags(clientId: String?): TagGameDataResponse {

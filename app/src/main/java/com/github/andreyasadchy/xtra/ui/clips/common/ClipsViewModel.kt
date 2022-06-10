@@ -2,12 +2,14 @@ package com.github.andreyasadchy.xtra.ui.clips.common
 
 import android.app.Application
 import android.content.Context
+import androidx.core.content.edit
 import androidx.core.util.Pair
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.github.andreyasadchy.xtra.R
+import com.github.andreyasadchy.xtra.XtraApp
 import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.helix.clip.Clip
 import com.github.andreyasadchy.xtra.model.helix.video.Period
@@ -19,7 +21,9 @@ import com.github.andreyasadchy.xtra.type.Language
 import com.github.andreyasadchy.xtra.ui.common.PagedListViewModel
 import com.github.andreyasadchy.xtra.ui.common.follow.FollowLiveData
 import com.github.andreyasadchy.xtra.ui.common.follow.FollowViewModel
+import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
+import com.github.andreyasadchy.xtra.util.prefs
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -129,7 +133,7 @@ class ClipsViewModel @Inject constructor(
         }
     }
 
-    fun filter(period: Period, languageIndex: Int, text: CharSequence, saveSort: Boolean) {
+    fun filter(period: Period, languageIndex: Int, text: CharSequence, saveSort: Boolean, saveDefault: Boolean) {
         filter.value = filter.value?.copy(saveSort = saveSort, period = period, languageIndex = languageIndex)
         _sortText.value = text
         viewModelScope.launch {
@@ -146,7 +150,8 @@ class ClipsViewModel @Inject constructor(
                         clipPeriod = period.value,
                         clipLanguageIndex = languageIndex)
                     })?.let { sortGameRepository.save(it) }
-                } else {
+                }
+                if (saveDefault) {
                     (sortValues?.apply {
                         this.saveSort = saveSort
                     } ?: filter.value?.gameId?.let { SortGame(
@@ -163,6 +168,10 @@ class ClipsViewModel @Inject constructor(
                         clipLanguageIndex = languageIndex
                     )).let { sortGameRepository.save(it) }
                 }
+                val appContext = XtraApp.INSTANCE.applicationContext
+                if (saveDefault != appContext.prefs().getBoolean(C.SORT_DEFAULT_GAME_CLIPS, false)) {
+                    appContext.prefs().edit { putBoolean(C.SORT_DEFAULT_GAME_CLIPS, saveDefault) }
+                }
             } else {
                 if (!filter.value?.channelId.isNullOrBlank() || !filter.value?.channelLogin.isNullOrBlank()) {
                     val sortValues = filter.value?.channelId?.let { sortChannelRepository.getById(it) }
@@ -175,7 +184,8 @@ class ClipsViewModel @Inject constructor(
                             saveSort = saveSort,
                             clipPeriod = period.value)
                         })?.let { sortChannelRepository.save(it) }
-                    } else {
+                    }
+                    if (saveDefault) {
                         (sortValues?.apply {
                             this.saveSort = saveSort
                         } ?: filter.value?.channelId?.let { SortChannel(
@@ -189,6 +199,10 @@ class ClipsViewModel @Inject constructor(
                             id = "default",
                             clipPeriod = period.value
                         )).let { sortChannelRepository.save(it) }
+                    }
+                    val appContext = XtraApp.INSTANCE.applicationContext
+                    if (saveDefault != appContext.prefs().getBoolean(C.SORT_DEFAULT_CHANNEL_CLIPS, false)) {
+                        appContext.prefs().edit { putBoolean(C.SORT_DEFAULT_CHANNEL_CLIPS, saveDefault) }
                     }
                 }
             }

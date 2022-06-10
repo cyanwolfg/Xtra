@@ -2,12 +2,14 @@ package com.github.andreyasadchy.xtra.ui.follow.channels
 
 import android.app.Application
 import android.content.Context
+import androidx.core.content.edit
 import androidx.core.util.Pair
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.github.andreyasadchy.xtra.R
+import com.github.andreyasadchy.xtra.XtraApp
 import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.helix.follows.Follow
 import com.github.andreyasadchy.xtra.model.helix.follows.Order
@@ -17,6 +19,8 @@ import com.github.andreyasadchy.xtra.repository.Listing
 import com.github.andreyasadchy.xtra.repository.SortChannelRepository
 import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.ui.common.PagedListViewModel
+import com.github.andreyasadchy.xtra.util.C
+import com.github.andreyasadchy.xtra.util.prefs
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -70,19 +74,25 @@ class FollowedChannelsViewModel @Inject constructor(
         }
     }
 
-    fun filter(sort: Sort, order: Order, text: CharSequence) {
+    fun filter(sort: Sort, order: Order, text: CharSequence, saveDefault: Boolean) {
         filter.value = filter.value?.copy(sort = sort, order = order)
         _sortText.value = text
-        viewModelScope.launch {
-            val sortDefaults = sortChannelRepository.getById("followed_channels")
-            (sortDefaults?.apply {
-                videoSort = sort.value
-                videoType = order.value
-            } ?: SortChannel(
-                id = "followed_channels",
-                videoSort = sort.value,
-                videoType = order.value
-            )).let { sortChannelRepository.save(it) }
+        if (saveDefault) {
+            viewModelScope.launch {
+                val sortDefaults = sortChannelRepository.getById("followed_channels")
+                (sortDefaults?.apply {
+                    videoSort = sort.value
+                    videoType = order.value
+                } ?: SortChannel(
+                    id = "followed_channels",
+                    videoSort = sort.value,
+                    videoType = order.value
+                )).let { sortChannelRepository.save(it) }
+            }
+        }
+        val appContext = XtraApp.INSTANCE.applicationContext
+        if (saveDefault != appContext.prefs().getBoolean(C.SORT_DEFAULT_FOLLOWED_CHANNELS, false)) {
+            appContext.prefs().edit { putBoolean(C.SORT_DEFAULT_FOLLOWED_CHANNELS, saveDefault) }
         }
     }
 

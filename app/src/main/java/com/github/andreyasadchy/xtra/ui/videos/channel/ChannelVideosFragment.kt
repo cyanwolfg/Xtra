@@ -12,6 +12,7 @@ import com.github.andreyasadchy.xtra.ui.videos.VideosSortDialog
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.prefs
+import com.github.andreyasadchy.xtra.util.visible
 import kotlinx.android.synthetic.main.fragment_videos.*
 import kotlinx.android.synthetic.main.sort_bar.*
 
@@ -42,16 +43,26 @@ class ChannelVideosFragment : BaseVideosFragment<ChannelVideosViewModel>(), Vide
             gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, ""),
             apiPref = TwitchApiHelper.listFromPrefs(requireContext().prefs().getString(C.API_PREF_CHANNEL_VIDEOS, ""), TwitchApiHelper.channelVideosApiDefaults)
         )
-        sortBar.setOnClickListener { VideosSortDialog.newInstance(sort = viewModel.sort, period = viewModel.period, type = viewModel.type, saveSort = viewModel.saveSort).show(childFragmentManager, null) }
+        sortBar.visible()
+        sortBar.setOnClickListener {
+            VideosSortDialog.newInstance(
+                sort = viewModel.sort,
+                period = viewModel.period,
+                type = viewModel.type,
+                saveSort = viewModel.saveSort,
+                saveDefault = requireContext().prefs().getBoolean(C.SORT_DEFAULT_CHANNEL_VIDEOS, false)
+            ).show(childFragmentManager, null)
+        }
     }
 
-    override fun onChange(sort: Sort, sortText: CharSequence, period: Period, periodText: CharSequence, type: BroadcastType, languageIndex: Int, saveSort: Boolean) {
+    override fun onChange(sort: Sort, sortText: CharSequence, period: Period, periodText: CharSequence, type: BroadcastType, languageIndex: Int, saveSort: Boolean, saveDefault: Boolean) {
         adapter.submitList(null)
         viewModel.filter(
             sort = sort,
             type = type,
             text = getString(R.string.sort_and_period, sortText, periodText),
-            saveSort = saveSort
+            saveSort = saveSort,
+            saveDefault = saveDefault
         )
     }
 }

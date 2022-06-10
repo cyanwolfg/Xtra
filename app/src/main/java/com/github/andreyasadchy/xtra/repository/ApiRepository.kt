@@ -76,8 +76,8 @@ class ApiRepository @Inject constructor(
         return Listing.create(factory, config)
     }
 
-    override fun loadGameStreams(gameId: String?, gameName: String?, helixClientId: String?, helixToken: String?, gqlClientId: String?, tags: List<String>?, apiPref: ArrayList<Pair<Long?, String?>?>, thumbnailsEnabled: Boolean, coroutineScope: CoroutineScope): Listing<Stream> {
-        val factory = GameStreamsDataSource.Factory(gameId, gameName, helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, helix, gqlClientId, tags, gql, apiPref, coroutineScope)
+    override fun loadGameStreams(gameId: String?, gameName: String?, helixClientId: String?, helixToken: String?, gqlClientId: String?, gqlSort: com.github.andreyasadchy.xtra.model.helix.stream.Sort?, tags: List<String>?, apiPref: ArrayList<Pair<Long?, String?>?>, thumbnailsEnabled: Boolean, coroutineScope: CoroutineScope): Listing<Stream> {
+        val factory = GameStreamsDataSource.Factory(gameId, gameName, helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, helix, gqlClientId, gqlSort, tags, gql, apiPref, coroutineScope)
         val builder = PagedList.Config.Builder().setEnablePlaceholders(false)
         if (thumbnailsEnabled) {
             builder.setPageSize(10)
@@ -153,6 +153,17 @@ class ApiRepository @Inject constructor(
             .setPageSize(15)
             .setInitialLoadSizeHint(15)
             .setPrefetchDistance(5)
+            .setEnablePlaceholders(false)
+            .build()
+        return Listing.create(factory, config)
+    }
+
+    override fun loadSearchVideos(query: String, gqlClientId: String?, coroutineScope: CoroutineScope): Listing<Video> {
+        val factory = SearchVideosDataSource.Factory(query, gqlClientId, gql, coroutineScope)
+        val config = PagedList.Config.Builder()
+            .setPageSize(10)
+            .setInitialLoadSizeHint(15)
+            .setPrefetchDistance(3)
             .setEnablePlaceholders(false)
             .build()
         return Listing.create(factory, config)

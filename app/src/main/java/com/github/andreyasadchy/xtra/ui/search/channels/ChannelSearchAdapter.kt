@@ -46,6 +46,16 @@ class ChannelSearchAdapter(
             } else {
                 userFollowers.gone()
             }
+            if (!item.type.isNullOrBlank() || item.is_live == true) {
+                typeText.visible()
+                if (item.type == "rerun") {
+                    typeText.text = context.getString(R.string.video_type_rerun)
+                } else {
+                    typeText.text = context.getString(R.string.live)
+                }
+            } else {
+                typeText.gone()
+            }
         }
     }
 }

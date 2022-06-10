@@ -78,7 +78,7 @@ dependencies {
 
     //UI
     implementation 'com.google.android.material:material:1.7.0-alpha02'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
@@ -94,11 +94,11 @@ dependencies {
     implementation "androidx.room:room-runtime:$room"
     implementation "androidx.room:room-ktx:$room"
     kapt "androidx.room:room-compiler:$room"
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.fragment:fragment-ktx:1.4.1'
 
     //Misc
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.7'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.8'
     implementation 'com.ncapdevi:frag-nav:3.3.0'
     implementation 'com.iheartradio.m3u8:open-m3u8:0.2.6'
 
@@ -114,6 +114,7 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoplayer"
     implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayer"
+    implementation 'org.checkerframework:checker-qual:3.22.1'
 
     implementation "io.coil-kt:coil:$coil"
     implementation "io.coil-kt:coil-gif:$coil"

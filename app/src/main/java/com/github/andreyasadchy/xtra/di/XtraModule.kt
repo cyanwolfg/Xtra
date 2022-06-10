@@ -14,10 +14,7 @@ import com.github.andreyasadchy.xtra.model.gql.playlist.StreamPlaylistTokenDeser
 import com.github.andreyasadchy.xtra.model.gql.playlist.StreamPlaylistTokenResponse
 import com.github.andreyasadchy.xtra.model.gql.playlist.VideoPlaylistTokenDeserializer
 import com.github.andreyasadchy.xtra.model.gql.playlist.VideoPlaylistTokenResponse
-import com.github.andreyasadchy.xtra.model.gql.search.SearchChannelDataDeserializer
-import com.github.andreyasadchy.xtra.model.gql.search.SearchChannelDataResponse
-import com.github.andreyasadchy.xtra.model.gql.search.SearchGameDataDeserializer
-import com.github.andreyasadchy.xtra.model.gql.search.SearchGameDataResponse
+import com.github.andreyasadchy.xtra.model.gql.search.*
 import com.github.andreyasadchy.xtra.model.gql.stream.StreamDataDeserializer
 import com.github.andreyasadchy.xtra.model.gql.stream.StreamDataResponse
 import com.github.andreyasadchy.xtra.model.gql.stream.ViewersDataDeserializer
@@ -153,6 +150,7 @@ class XtraModule {
                 .registerTypeAdapter(EmoteCardResponse::class.java, EmoteCardDeserializer())
                 .registerTypeAdapter(SearchChannelDataResponse::class.java, SearchChannelDataDeserializer())
                 .registerTypeAdapter(SearchGameDataResponse::class.java, SearchGameDataDeserializer())
+                .registerTypeAdapter(SearchVideosDataResponse::class.java, SearchVideosDataDeserializer())
                 .registerTypeAdapter(TagGameDataResponse::class.java, TagGameDataDeserializer())
                 .registerTypeAdapter(TagGameStreamDataResponse::class.java, TagGameStreamDataDeserializer())
                 .registerTypeAdapter(TagStreamDataResponse::class.java, TagStreamDataDeserializer())

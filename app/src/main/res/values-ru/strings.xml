@@ -425,7 +425,7 @@ Removes a timeout on a user.</string>
     <string name="sleep_timer_lock_permissions">Блокировать экран после (требуются права админа)</string>
     <string name="admin_settings">Вкл./откл. права администратора устройства в приложении</string>
     <string name="disable_chat">Отключить чат</string>
-    <string name="disconnected">Отсоединено/string>
+    <string name="disconnected">Отсоединено</string>
     <string name="other">Прочее</string>
     <string name="both">Оба</string>
     <string name="timestamp_format_0">h:mm</string>
@@ -539,4 +539,8 @@ Removes a timeout on a user.</string>
     <string name="lang_pt">Бразильский португальский</string>
     <string name="lang_ru">Русский</string>
     <string name="lang_tr">Турецкий</string>
+    <string name="save_default">Save as default</string>
+    <string name="viewers_high">Viewers (high to low)</string>
+    <string name="viewers_low">Viewers (low to high)</string>
+    <string name="tags">Tags</string>
 </resources>

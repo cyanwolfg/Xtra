@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import androidx.core.content.edit
 import androidx.core.util.Pair
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.github.andreyasadchy.xtra.R
+import com.github.andreyasadchy.xtra.XtraApp
 import com.github.andreyasadchy.xtra.model.helix.video.BroadcastType
 import com.github.andreyasadchy.xtra.model.helix.video.Period
 import com.github.andreyasadchy.xtra.model.helix.video.Sort
@@ -22,7 +24,9 @@ import com.github.andreyasadchy.xtra.model.offline.SortChannel
 import com.github.andreyasadchy.xtra.repository.*
 import com.github.andreyasadchy.xtra.type.VideoSort
 import com.github.andreyasadchy.xtra.ui.videos.BaseVideosViewModel
+import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.DownloadUtils
+import com.github.andreyasadchy.xtra.util.prefs
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -96,7 +100,7 @@ class ChannelVideosViewModel @Inject constructor(
         }
     }
 
-    fun filter(sort: Sort, type: BroadcastType, text: CharSequence, saveSort: Boolean) {
+    fun filter(sort: Sort, type: BroadcastType, text: CharSequence, saveSort: Boolean, saveDefault: Boolean) {
         filter.value = filter.value?.copy(saveSort = saveSort, sort = sort, broadcastType = type)
         _sortText.value = text
         viewModelScope.launch {
@@ -112,7 +116,8 @@ class ChannelVideosViewModel @Inject constructor(
                     videoSort = sort.value,
                     videoType = type.value)
                 })?.let { sortChannelRepository.save(it) }
-            } else {
+            }
+            if (saveDefault) {
                 (sortValues?.apply {
                     this.saveSort = saveSort
                 } ?: filter.value?.channelId?.let { SortChannel(
@@ -129,6 +134,10 @@ class ChannelVideosViewModel @Inject constructor(
                     videoType = type.value
                 )).let { sortChannelRepository.save(it) }
             }
+        }
+        val appContext = XtraApp.INSTANCE.applicationContext
+        if (saveDefault != appContext.prefs().getBoolean(C.SORT_DEFAULT_CHANNEL_VIDEOS, false)) {
+            appContext.prefs().edit { putBoolean(C.SORT_DEFAULT_CHANNEL_VIDEOS, saveDefault) }
         }
     }
 

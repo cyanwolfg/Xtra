@@ -1,6 +1,7 @@
 package com.github.andreyasadchy.xtra.model.helix.video
 
 import android.os.Parcelable
+import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.model.offline.Downloadable
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.google.gson.annotations.SerializedName
@@ -25,7 +26,8 @@ data class Video(
 
     override val gameId: String? = null,
     override val gameName: String? = null,
-    var profileImageURL: String? = null) : Parcelable, Downloadable {
+    var profileImageURL: String? = null,
+    val tags: List<Tag>? = null) : Parcelable, Downloadable {
 
     @Parcelize
     data class MutedSegment(

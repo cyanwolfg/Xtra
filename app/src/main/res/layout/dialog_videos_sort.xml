@@ -97,6 +97,12 @@
     </RadioGroup>
 
     <CheckBox
+        android:id="@+id/saveDefault"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_default" />
+
+    <CheckBox
         android:id="@+id/saveSort"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
