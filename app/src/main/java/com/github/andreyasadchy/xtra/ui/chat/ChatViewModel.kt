@@ -35,9 +35,11 @@ import kotlin.collections.filter
 import kotlin.collections.forEach
 import kotlin.collections.hashSetOf
 import kotlin.collections.isNotEmpty
+import kotlin.collections.isNullOrEmpty
 import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import kotlin.collections.set
+import kotlin.collections.sortedBy
 
 class ChatViewModel @Inject constructor(
         private val repository: TwitchService,
@@ -155,112 +157,178 @@ class ChatViewModel @Inject constructor(
 
     private fun init(helixClientId: String?, helixToken: String?, gqlClientId: String, channelId: String, channelLogin: String? = null, enableRecentMsg: Boolean? = false, recentMsgLimit: String? = null) {
         chat?.start()
-        viewModelScope.launch {
-            if (channelLogin != null && enableRecentMsg == true && recentMsgLimit != null) {
-                try {
-                    val get = playerRepository.loadRecentMessages(channelLogin, recentMsgLimit).body()?.messages
-                    if (get != null && get.isNotEmpty()) {
-                        recentMessages.postValue(get!!)
-                    }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Failed to load recent messages for channel $channelLogin", e)
-                }
-            }
-            savedGlobalBadges.also {
-                if (it != null) {
-                    globalBadges.value = it
-                } else {
+        val list = mutableListOf<Emote>()
+        savedGlobalBadges.also {
+            if (!it.isNullOrEmpty()) {
+                globalBadges.value = it
+                emotesLoaded.value = true
+            } else {
+                viewModelScope.launch {
                     try {
-                        val badges = playerRepository.loadGlobalBadges().body()?.badges
-                        if (badges != null) {
-                            savedGlobalBadges = badges
-                            globalBadges.value = badges
+                        playerRepository.loadGlobalBadges().body()?.badges?.let { badges ->
+                            if (badges.isNotEmpty()) {
+                                savedGlobalBadges = badges
+                                globalBadges.value = badges
+                                emotesLoaded.value = true
+                            }
                         }
                     } catch (e: Exception) {
                         Log.e(TAG, "Failed to load global badges", e)
                     }
                 }
             }
-            try {
-                channelBadges.postValue(playerRepository.loadChannelBadges(channelId).body()?.badges)
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to load badges for channel $channelId", e)
-            }
-            val list = mutableListOf<Emote>()
-            try {
-                val channelStv = playerRepository.loadStvEmotes(channelId)
-                channelStv.body()?.emotes?.let(list::addAll)
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to load 7tv emotes for channel $channelId", e)
-            }
-            try {
-                val channelBttv = playerRepository.loadBttvEmotes(channelId)
-                channelBttv.body()?.emotes?.let(list::addAll)
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to load BTTV emotes for channel $channelId", e)
-            }
-            try {
-                val channelFfz = playerRepository.loadBttvFfzEmotes(channelId)
-                channelFfz.body()?.emotes?.let(list::addAll)
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to load FFZ emotes for channel $channelId", e)
-            }
-            globalStvEmotes.also {
-                if (it != null) {
-                    list.addAll(it)
-                } else {
+        }
+        globalStvEmotes.also {
+            if (!it.isNullOrEmpty()) {
+                (chat as? LiveChatController)?.addEmotes(it)
+                list.addAll(it)
+                _otherEmotes.value = list.sortedBy { emote -> emote is StvEmote }.sortedBy { emote -> emote is BttvEmote }.sortedBy { emote -> emote is FfzEmote }
+                emotesLoaded.value = true
+            } else {
+                viewModelScope.launch {
                     try {
-                        val emotes = playerRepository.loadGlobalStvEmotes().body()?.emotes
-                        if (emotes != null) {
-                            globalStvEmotes = emotes
-                            list.addAll(emotes)
+                        playerRepository.loadGlobalStvEmotes().body()?.emotes?.let { emotes ->
+                            if (emotes.isNotEmpty()) {
+                                globalStvEmotes = emotes
+                                (chat as? LiveChatController)?.addEmotes(emotes)
+                                list.addAll(emotes)
+                                _otherEmotes.value = list.sortedBy { emote -> emote is StvEmote }.sortedBy { emote -> emote is BttvEmote }.sortedBy { emote -> emote is FfzEmote }
+                                emotesLoaded.value = true
+                            }
                         }
                     } catch (e: Exception) {
                         Log.e(TAG, "Failed to load global 7tv emotes", e)
                     }
                 }
             }
-            globalBttvEmotes.also {
-                if (it != null) {
-                    list.addAll(it)
-                } else {
+        }
+        globalBttvEmotes.also {
+            if (!it.isNullOrEmpty()) {
+                (chat as? LiveChatController)?.addEmotes(it)
+                list.addAll(it)
+                _otherEmotes.value = list.sortedBy { emote -> emote is StvEmote }.sortedBy { emote -> emote is BttvEmote }.sortedBy { emote -> emote is FfzEmote }
+                emotesLoaded.value = true
+            } else {
+                viewModelScope.launch {
                     try {
-                        val emotes = playerRepository.loadGlobalBttvEmotes().body()?.emotes
-                        if (emotes != null) {
-                            globalBttvEmotes = emotes
-                            list.addAll(emotes)
+                        playerRepository.loadGlobalBttvEmotes().body()?.emotes?.let { emotes ->
+                            if (emotes.isNotEmpty()) {
+                                globalBttvEmotes = emotes
+                                (chat as? LiveChatController)?.addEmotes(emotes)
+                                list.addAll(emotes)
+                                _otherEmotes.value = list.sortedBy { emote -> emote is StvEmote }.sortedBy { emote -> emote is BttvEmote }.sortedBy { emote -> emote is FfzEmote }
+                                emotesLoaded.value = true
+                            }
                         }
                     } catch (e: Exception) {
                         Log.e(TAG, "Failed to load global BTTV emotes", e)
                     }
                 }
             }
-            globalFfzEmotes.also {
-                if (it != null) {
-                    list.addAll(it)
-                } else {
+        }
+        globalFfzEmotes.also {
+            if (!it.isNullOrEmpty()) {
+                (chat as? LiveChatController)?.addEmotes(it)
+                list.addAll(it)
+                _otherEmotes.value = list.sortedBy { emote -> emote is StvEmote }.sortedBy { emote -> emote is BttvEmote }.sortedBy { emote -> emote is FfzEmote }
+                emotesLoaded.value = true
+            } else {
+                viewModelScope.launch {
                     try {
-                        val emotes = playerRepository.loadBttvGlobalFfzEmotes().body()?.emotes
-                        if (emotes != null) {
-                            globalFfzEmotes = emotes
-                            list.addAll(emotes)
+                        playerRepository.loadBttvGlobalFfzEmotes().body()?.emotes?.let { emotes ->
+                            if (emotes.isNotEmpty()) {
+                                globalFfzEmotes = emotes
+                                (chat as? LiveChatController)?.addEmotes(emotes)
+                                list.addAll(emotes)
+                                _otherEmotes.value = list.sortedBy { emote -> emote is StvEmote }.sortedBy { emote -> emote is BttvEmote }.sortedBy { emote -> emote is FfzEmote }
+                                emotesLoaded.value = true
+                            }
                         }
                     } catch (e: Exception) {
                         Log.e(TAG, "Failed to load global FFZ emotes", e)
                     }
                 }
             }
-            (chat as? LiveChatController)?.addEmotes(list)
-            _otherEmotes.postValue(list)
+        }
+        if (channelLogin != null && enableRecentMsg == true && recentMsgLimit != null) {
+            viewModelScope.launch {
+                try {
+                    playerRepository.loadRecentMessages(channelLogin, recentMsgLimit).body()?.messages?.let {
+                        if (it.isNotEmpty()) {
+                            recentMessages.postValue(it)
+                            emotesLoaded.value = true
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to load recent messages for channel $channelLogin", e)
+                }
+            }
+        }
+        viewModelScope.launch {
             try {
-                val get = repository.loadCheerEmotes(channelId, helixClientId, helixToken, gqlClientId)
-                if (get != null) {
-                    cheerEmotes.postValue(get!!)
+                playerRepository.loadChannelBadges(channelId).body()?.badges?.let {
+                    if (it.isNotEmpty()) {
+                        channelBadges.postValue(it)
+                        emotesLoaded.value = true
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load badges for channel $channelId", e)
+            }
+        }
+        viewModelScope.launch {
+            try {
+                playerRepository.loadStvEmotes(channelId).body()?.emotes?.let {
+                    if (it.isNotEmpty()) {
+                        (chat as? LiveChatController)?.addEmotes(it)
+                        list.addAll(it)
+                        _otherEmotes.value = list.sortedBy { emote -> emote is StvEmote }.sortedBy { emote -> emote is BttvEmote }.sortedBy { emote -> emote is FfzEmote }
+                        emotesLoaded.value = true
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load 7tv emotes for channel $channelId", e)
+            }
+        }
+        viewModelScope.launch {
+            try {
+                playerRepository.loadBttvEmotes(channelId).body()?.emotes?.let {
+                    if (it.isNotEmpty()) {
+                        (chat as? LiveChatController)?.addEmotes(it)
+                        list.addAll(it)
+                        _otherEmotes.value = list.sortedBy { emote -> emote is StvEmote }.sortedBy { emote -> emote is BttvEmote }.sortedBy { emote -> emote is FfzEmote }
+                        emotesLoaded.value = true
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load BTTV emotes for channel $channelId", e)
+            }
+        }
+        viewModelScope.launch {
+            try {
+                playerRepository.loadBttvFfzEmotes(channelId).body()?.emotes?.let {
+                    if (it.isNotEmpty()) {
+                        (chat as? LiveChatController)?.addEmotes(it)
+                        list.addAll(it)
+                        _otherEmotes.value = list.sortedBy { emote -> emote is StvEmote }.sortedBy { emote -> emote is BttvEmote }.sortedBy { emote -> emote is FfzEmote }
+                        emotesLoaded.value = true
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load FFZ emotes for channel $channelId", e)
+            }
+        }
+        viewModelScope.launch {
+            try {
+                repository.loadCheerEmotes(channelId, helixClientId, helixToken, gqlClientId)?.let {
+                    if (it.isNotEmpty()) {
+                        cheerEmotes.postValue(it)
+                        emotesLoaded.value = true
+                    }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to load cheermotes for channel $channelId", e)
             }
-            emotesLoaded.value = true
         }
     }
 
