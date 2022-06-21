@@ -553,4 +553,5 @@ Bir kullanıcı üzerindeki zaman aşımını kaldırır.</string>
     <string name="viewers_high">Viewers (high to low)</string>
     <string name="viewers_low">Viewers (low to high)</string>
     <string name="tags">Tags</string>
+    <string name="show_player_mode">Show audio only button</string>
 </resources>

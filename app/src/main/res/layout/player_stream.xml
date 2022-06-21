@@ -44,6 +44,9 @@
         <ImageButton
             style="@style/PlayerVolume"
             tools:visibility="visible" />
+        <ImageButton
+            style="@style/PlayerMode"
+            tools:visibility="visible" />
     </LinearLayout>
 
     <LinearLayout

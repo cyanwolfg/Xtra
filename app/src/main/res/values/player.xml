@@ -235,6 +235,12 @@
         <item name="android:visibility">gone</item>
     </style>
 
+    <style name="PlayerMode" parent="PlayerSmallImage">
+        <item name="android:id">@id/playerMode</item>
+        <item name="android:src">@drawable/baseline_audiotrack_black_24</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
     <style name="PlayerChatBarToggle" parent="PlayerSmallImage">
         <item name="android:id">@id/playerChatBarToggle</item>
         <item name="android:src">@drawable/baseline_keyboard_black_24</item>

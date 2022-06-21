@@ -527,4 +527,5 @@
     <string name="viewers_high">視聴者数 (多い順)</string>
     <string name="viewers_low">視聴者数 (少ない順)</string>
     <string name="tags">タグ</string>
+    <string name="show_player_mode">Show audio only button</string>
 </resources>

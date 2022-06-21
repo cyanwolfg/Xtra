@@ -81,6 +81,7 @@ class StreamPlayerFragment : BasePlayerFragment(), RadioButtonDialogFragment.OnS
         val settings = requireView().findViewById<ImageButton>(R.id.playerSettings)
         val playerMenu = requireView().findViewById<ImageButton>(R.id.playerMenu)
         val restart = requireView().findViewById<ImageButton>(R.id.playerRestart)
+        val mode = requireView().findViewById<ImageButton>(R.id.playerMode)
         val viewersLayout = requireView().findViewById<LinearLayout>(R.id.viewersLayout)
         val viewerIcon = requireView().findViewById<ImageView>(R.id.viewerIcon)
         viewModel.loaded.observe(viewLifecycleOwner) {
@@ -118,6 +119,16 @@ class StreamPlayerFragment : BasePlayerFragment(), RadioButtonDialogFragment.OnS
             restart.visible()
             restart.setOnClickListener {
                 restartPlayer()
+            }
+        }
+        if (prefs.getBoolean(C.PLAYER_MODE, false)) {
+            mode.visible()
+            mode.setOnClickListener {
+                if (viewModel.playerMode.value != PlayerMode.AUDIO_ONLY) {
+                    startAudioOnly()
+                } else {
+                    viewModel.onResume()
+                }
             }
         }
         if (prefs.getBoolean(C.PLAYER_VIEWERLIST, false)) {

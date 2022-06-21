@@ -543,4 +543,5 @@ Removes a timeout on a user.</string>
     <string name="viewers_high">Зрители (от большего к меньшему)</string>
     <string name="viewers_low">Зрители (от меньшего к большему)</string>
     <string name="tags">Теги</string>
+    <string name="show_player_mode">Show audio only button</string>
 </resources>

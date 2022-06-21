@@ -16,10 +16,9 @@ import com.github.andreyasadchy.xtra.ui.player.stream.StreamPlayerViewModel
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.prefs
 import com.google.android.exoplayer2.Timeline
-import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.Tracks
 import com.google.android.exoplayer2.source.hls.HlsManifest
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import java.util.*
 import java.util.regex.Pattern
 
@@ -74,7 +73,7 @@ abstract class HlsPlayerViewModel(
         }
     }
 
-    override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
+    override fun onTracksChanged(tracks: Tracks) {
         if (trackSelector.currentMappedTrackInfo != null) {
             if (helper.loaded.value != true) {
                 val context = getApplication<Application>()

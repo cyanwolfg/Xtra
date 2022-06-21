@@ -52,6 +52,7 @@ class OfflinePlayerFragment : BasePlayerFragment(), RadioButtonDialogFragment.On
         super.initialize()
         val settings = requireView().findViewById<ImageButton>(R.id.playerSettings)
         val playerMenu = requireView().findViewById<ImageButton>(R.id.playerMenu)
+        val mode = requireView().findViewById<ImageButton>(R.id.playerMode)
         if (prefs.getBoolean(C.PLAYER_SETTINGS, true)) {
             settings.visible()
             settings.setOnClickListener {
@@ -62,6 +63,16 @@ class OfflinePlayerFragment : BasePlayerFragment(), RadioButtonDialogFragment.On
             playerMenu.visible()
             playerMenu.setOnClickListener {
                 FragmentUtils.showPlayerSettingsDialog(childFragmentManager, viewModel.qualities, viewModel.qualityIndex, viewModel.currentPlayer.value!!.playbackParameters.speed)
+            }
+        }
+        if (prefs.getBoolean(C.PLAYER_MODE, false)) {
+            mode.visible()
+            mode.setOnClickListener {
+                if (viewModel.playerMode.value != PlayerMode.AUDIO_ONLY) {
+                    startAudioOnly()
+                } else {
+                    viewModel.onResume()
+                }
             }
         }
     }

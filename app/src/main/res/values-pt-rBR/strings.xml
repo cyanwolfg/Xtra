@@ -549,4 +549,9 @@ Removes a timeout on a user.</string>
     <string name="lang_pt">Portuguese (Brazil)</string>
     <string name="lang_ru">Russian</string>
     <string name="lang_tr">Turkish</string>
+    <string name="save_default">Save as default</string>
+    <string name="viewers_high">Viewers (high to low)</string>
+    <string name="viewers_low">Viewers (low to high)</string>
+    <string name="tags">Tags</string>
+    <string name="show_player_mode">Show audio only button</string>
 </resources>

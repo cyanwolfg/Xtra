@@ -75,6 +75,12 @@
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
+        android:key="player_mode"
+        android:title="@string/show_player_mode"
+        android:icon="@drawable/baseline_audiotrack_black_24" />
+
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
         android:key="player_chatbartoggle"
         android:title="@string/player_chatbartoggle"
         android:icon="@drawable/baseline_keyboard_black_24" />

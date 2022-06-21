@@ -68,6 +68,7 @@ class VideoPlayerFragment : BasePlayerFragment(), HasDownloadDialog, ChatReplayP
         val playerMenu = requireView().findViewById<ImageButton>(R.id.playerMenu)
         val download = requireView().findViewById<ImageButton>(R.id.playerDownload)
         val gamesButton = requireView().findViewById<ImageButton>(R.id.playerGames)
+        val mode = requireView().findViewById<ImageButton>(R.id.playerMode)
         viewModel.loaded.observe(viewLifecycleOwner) {
             if (it) {
                 settings.enable()
@@ -106,6 +107,16 @@ class VideoPlayerFragment : BasePlayerFragment(), HasDownloadDialog, ChatReplayP
                     gamesButton.visible()
                     gamesButton.setOnClickListener { FragmentUtils.showPlayerGamesDialog(childFragmentManager, list) }
                     (childFragmentManager.findFragmentByTag("closeOnPip") as? PlayerSettingsDialog?)?.setVodGames()
+                }
+            }
+        }
+        if (prefs.getBoolean(C.PLAYER_MODE, false)) {
+            mode.visible()
+            mode.setOnClickListener {
+                if (viewModel.playerMode.value != PlayerMode.AUDIO_ONLY) {
+                    startAudioOnly()
+                } else {
+                    viewModel.onResume()
                 }
             }
         }

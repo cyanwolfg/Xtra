@@ -64,6 +64,7 @@ object C {
     const val PLAYER_ASPECT = "player_aspect"
     const val PLAYER_SETTINGS = "player_settings"
     const val PLAYER_RESTART = "player_restart"
+    const val PLAYER_MODE = "player_mode"
     const val PLAYER_CHATBARTOGGLE = "player_chatbartoggle"
     const val PLAYER_CHATTOGGLE = "player_chattoggle"
     const val PLAYER_FULLSCREEN = "player_fullscreen"
