@@ -129,13 +129,19 @@ class FollowedChannelsDataSource(
             if (order == Order.ASC) {
                 when (sort) {
                     Sort.FOLLOWED_AT -> list.sortBy { it.followed_at }
-                    Sort.LAST_BROADCAST -> list.sortBy { it.lastBroadcast }
+                    Sort.LAST_BROADCAST -> {
+                        list.sortBy { it.lastBroadcast }
+                        list.sortBy { it.lastBroadcast == null }
+                    }
                     else -> list.sortBy { it.to_login }
                 }
             } else {
                 when (sort) {
                     Sort.FOLLOWED_AT -> list.sortByDescending { it.followed_at }
-                    Sort.LAST_BROADCAST -> list.sortByDescending { it.lastBroadcast }
+                    Sort.LAST_BROADCAST -> {
+                        list.sortByDescending { it.lastBroadcast }
+                        list.sortBy { it.lastBroadcast == null }
+                    }
                     else -> list.sortByDescending { it.to_login }
                 }
             }
