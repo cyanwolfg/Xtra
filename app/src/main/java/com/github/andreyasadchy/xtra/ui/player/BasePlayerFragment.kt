@@ -218,12 +218,16 @@ abstract class BasePlayerFragment : BaseNetworkFragment(), Injectable, Lifecycle
             val rewindImage = when {
                 rewind <= 5000 -> R.drawable.baseline_replay_5_black_48
                 rewind <= 10000 -> R.drawable.baseline_replay_10_black_48
-                else -> R.drawable.baseline_replay_30_black_48
+                rewind <= 15000 -> R.drawable.baseline_replay_15_black_48
+                rewind <= 30000 -> R.drawable.baseline_replay_30_black_48
+                else -> R.drawable.baseline_replay_60_black_48
             }
             val forwardImage = when {
                 forward <= 5000 -> R.drawable.baseline_forward_5_black_48
                 forward <= 10000 -> R.drawable.baseline_forward_10_black_48
-                else -> R.drawable.baseline_forward_30_black_48
+                forward <= 15000 -> R.drawable.baseline_forward_15_black_48
+                forward <= 30000 -> R.drawable.baseline_forward_30_black_48
+                else -> R.drawable.baseline_forward_60_black_48
             }
             playerView.apply {
                 setRewindIncrementMs(rewind)

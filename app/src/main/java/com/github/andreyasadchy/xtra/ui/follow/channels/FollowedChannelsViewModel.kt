@@ -60,7 +60,7 @@ class FollowedChannelsViewModel @Inject constructor(
                     else -> Order.DESC
                 }
             )
-            _sortText.value = context.getString(R.string.sort_and_period,
+            _sortText.value = context.getString(R.string.sort_and_order,
                 when (sortValues?.videoSort) {
                     Sort.FOLLOWED_AT.value -> context.getString(R.string.time_followed)
                     Sort.ALPHABETICALLY.value -> context.getString(R.string.alphabetically)
