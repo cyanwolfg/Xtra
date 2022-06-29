@@ -544,4 +544,6 @@ Removes a timeout on a user.</string>
     <string name="viewers_low">Viewers (low to high)</string>
     <string name="tags">Tags</string>
     <string name="show_player_mode">Show audio only button</string>
+    <string name="search_videos">Search videos</string>
+    <string name="lang_de">German</string>
 </resources>

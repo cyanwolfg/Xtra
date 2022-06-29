@@ -4,12 +4,17 @@ query FollowedVideos($id: ID, $languages: [String!], $sort: VideoSort, $type: [B
             edges {
                 cursor
                 node {
-                    id
                     broadcastType
-                    title
+                    contentTags {
+                        id
+                        localizedName
+                    }
                     createdAt
-                    previewThumbnailURL
-                    viewCount
+                    game {
+                        id
+                        displayName
+                    }
+                    id
                     lengthSeconds
                     owner {
                         id
@@ -17,10 +22,9 @@ query FollowedVideos($id: ID, $languages: [String!], $sort: VideoSort, $type: [B
                         displayName
                         profileImageURL(width: 300)
                     }
-                    game {
-                        id
-                        displayName
-                    }
+                    previewThumbnailURL
+                    title
+                    viewCount
                 }
             }
             pageInfo {

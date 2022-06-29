@@ -93,7 +93,14 @@ class GameClipsDataSource(
 
     private suspend fun gqlQueryInitial(params: LoadInitialParams): List<Clip> {
         api = C.GQL_QUERY
-        val get1 = apolloClient(XtraModule(), gqlClientId).query(GameClipsQuery(id = Optional.Present(if (!gameId.isNullOrBlank()) gameId else null), name = Optional.Present(if (gameId.isNullOrBlank() && !gameName.isNullOrBlank()) gameName else null), languages = Optional.Present(gqlQueryLanguages), sort = Optional.Present(gqlQueryPeriod), first = Optional.Present(params.requestedLoadSize), after = Optional.Present(offset))).execute().data?.game?.clips
+        val get1 = apolloClient(XtraModule(), gqlClientId).query(GameClipsQuery(
+            id = Optional.Present(if (!gameId.isNullOrBlank()) gameId else null),
+            name = Optional.Present(if (gameId.isNullOrBlank() && !gameName.isNullOrBlank()) gameName else null),
+            languages = Optional.Present(gqlQueryLanguages),
+            sort = Optional.Present(gqlQueryPeriod),
+            first = Optional.Present(params.requestedLoadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.game?.clips
         val get = get1?.edges
         val list = mutableListOf<Clip>()
         if (get != null) {
@@ -108,14 +115,14 @@ class GameClipsDataSource(
                         videoOffsetSeconds = i?.node?.videoOffsetSeconds,
                         title = i?.node?.title,
                         view_count = i?.node?.viewCount,
-                        created_at = i?.node?.createdAt,
+                        created_at = i?.node?.createdAt.toString(),
                         duration = i?.node?.durationSeconds?.toDouble(),
                         thumbnail_url = i?.node?.thumbnailURL,
                         profileImageURL = i?.node?.broadcaster?.profileImageURL,
                     )
                 )
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list
@@ -166,7 +173,14 @@ class GameClipsDataSource(
     }
 
     private suspend fun gqlQueryRange(params: LoadRangeParams): List<Clip> {
-        val get1 = apolloClient(XtraModule(), gqlClientId).query(GameClipsQuery(id = Optional.Present(if (!gameId.isNullOrBlank()) gameId else null), name = Optional.Present(if (gameId.isNullOrBlank() && !gameName.isNullOrBlank()) gameName else null), languages = Optional.Present(gqlQueryLanguages), sort = Optional.Present(gqlQueryPeriod), first = Optional.Present(params.loadSize), after = Optional.Present(offset))).execute().data?.game?.clips
+        val get1 = apolloClient(XtraModule(), gqlClientId).query(GameClipsQuery(
+            id = Optional.Present(if (!gameId.isNullOrBlank()) gameId else null),
+            name = Optional.Present(if (gameId.isNullOrBlank() && !gameName.isNullOrBlank()) gameName else null),
+            languages = Optional.Present(gqlQueryLanguages),
+            sort = Optional.Present(gqlQueryPeriod),
+            first = Optional.Present(params.loadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.game?.clips
         val get = get1?.edges
         val list = mutableListOf<Clip>()
         if (get != null && nextPage && offset != null && offset != "") {
@@ -181,14 +195,14 @@ class GameClipsDataSource(
                         videoOffsetSeconds = i?.node?.videoOffsetSeconds,
                         title = i?.node?.title,
                         view_count = i?.node?.viewCount,
-                        created_at = i?.node?.createdAt,
+                        created_at = i?.node?.createdAt.toString(),
                         duration = i?.node?.durationSeconds?.toDouble(),
                         thumbnail_url = i?.node?.thumbnailURL,
                         profileImageURL = i?.node?.broadcaster?.profileImageURL,
                     )
                 )
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list

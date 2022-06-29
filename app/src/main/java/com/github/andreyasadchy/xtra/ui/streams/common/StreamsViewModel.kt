@@ -17,6 +17,7 @@ import com.github.andreyasadchy.xtra.model.helix.stream.Stream
 import com.github.andreyasadchy.xtra.repository.Listing
 import com.github.andreyasadchy.xtra.repository.LocalFollowGameRepository
 import com.github.andreyasadchy.xtra.repository.TwitchService
+import com.github.andreyasadchy.xtra.type.StreamSort
 import com.github.andreyasadchy.xtra.ui.common.PagedListViewModel
 import com.github.andreyasadchy.xtra.ui.common.follow.FollowLiveData
 import com.github.andreyasadchy.xtra.ui.common.follow.FollowViewModel
@@ -36,7 +37,12 @@ class StreamsViewModel @Inject constructor(
         if (it.gameId == null && it.gameName == null) {
             repository.loadTopStreams(it.helixClientId, it.helixToken, it.gqlClientId, it.tags, it.apiPref, it.thumbnailsEnabled, viewModelScope)
         } else {
-            repository.loadGameStreams(it.gameId, it.gameName, it.helixClientId, it.helixToken, it.gqlClientId, it.sort, it.tags, it.gameApiPref, it.thumbnailsEnabled, viewModelScope)
+            repository.loadGameStreams(it.gameId, it.gameName, it.helixClientId, it.helixToken, it.gqlClientId,
+                when (it.sort) {
+                    Sort.VIEWERS_HIGH -> StreamSort.VIEWER_COUNT
+                    Sort.VIEWERS_LOW -> StreamSort.VIEWER_COUNT_ASC
+                    else -> null },
+                it.sort, it.tags, it.gameApiPref, it.thumbnailsEnabled, viewModelScope)
         }
     }
     val sort: Sort?

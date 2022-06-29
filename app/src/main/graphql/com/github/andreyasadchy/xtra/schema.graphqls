@@ -1,78 +1,19 @@
 type Query {
-  games(first: Int, after: Cursor): Games
-  game(id: ID, name: String): GameNode
-  streams(languages: [Language!], first: Int, after: Cursor): Streams
-  videos(language: Language, first: Int, after: Cursor): Videos
-  video(id: ID): VideoNode
+  games(first: Int, after: Cursor, options: GameOptions): GameConnection
+  game(id: ID, name: String): Game
+  searchFor(userQuery: String!, platform: String!, target: SearchForTarget): SearchFor
+  streams(first: Int, after: Cursor, options: StreamOptions): StreamConnection
+  user(id: ID, login: String, lookupType: UserLookupType): User
   users(ids: [ID!], logins: [String!]): [User]
-  user(id: ID, login: String): User
-}
-
-type User {
-  id: String
-  login: String
-  displayName: String
-  roles: UserRoles
-  description: String
-  profileImageURL(width: Int): String
-  bannerImageURL: String
-  profileViewCount: Int
-  createdAt: Time
-  followers: FollowerConnection
-  follows(first: Int, after: Cursor, order: SortOrder): FollowConnection
-  lastBroadcast: Broadcast
-  stream: StreamNode
-  videos(sort: VideoSort, type: BroadcastType, first: Int, after: Cursor): Videos
-  clips(criteria: UserClipsInput, first: Int, after: Cursor): Clips
-  cheer: CheerInfo
-  followedLiveUsers(first: Int, after: Cursor): FollowedLiveUserConnection
-  followedVideos(first: Int, after: Cursor, languages: [String!], types: [BroadcastType!], sort: VideoSort): Videos
-  followedGames(first: Int, type: FollowedGamesType): FollowedGameConnection
+  video(id: ID): Video
 }
 
 type Broadcast {
   startedAt: Time
 }
 
-type FollowerConnection {
-  totalCount: Int
-}
-
-type FollowConnection {
-  totalCount: Int
-  edges: [FollowEdge]
-  pageInfo: PageInfo
-}
-
-type FollowEdge {
-  cursor: Cursor
-  followedAt: Time
-  node: User
-}
-
-type FollowedGameConnection {
-  nodes: [GameNode]
-}
-
-type FollowedLiveUserConnection {
-  totalCount: Int
-  edges: [FollowedLiveUserEdge]
-  pageInfo: PageInfo
-}
-
-type FollowedLiveUserEdge {
-  cursor: Cursor
-  node: User
-}
-
-type UserRoles {
-  isAffiliate: Boolean
-  isExtensionsApprover: Boolean
-  isExtensionsDeveloper: Boolean
-  isGlobalMod: Boolean
-  isPartner: Boolean
-  isSiteAdmin: Boolean
-  isStaff: Boolean
+type BroadcastSettings {
+  title: String
 }
 
 type CheerInfo {
@@ -84,109 +25,232 @@ type Cheermote {
   tiers: [CheermoteTier]
 }
 
+type CheermoteImage {
+  url: String
+}
+
 type CheermoteTier {
   bits: Int
   color: String
   images(isAnimated: Boolean, dpiScale: Float): [CheermoteImage]
 }
 
-type CheermoteImage {
-  url: String
-}
-
-type Games {
-  edges: [GameEdges]
-  pageInfo: PageInfo
-}
-
-type GameEdges {
-  cursor: String
-  node: GameNode
-}
-
-type Streams {
-  edges: [StreamEdges]
-  pageInfo: PageInfo
-}
-
-type StreamEdges {
-  cursor: String
-  node: StreamNode
-}
-
-type Videos {
-  edges: [VideoEdges]
-  pageInfo: PageInfo
-}
-
-type VideoEdges {
-  cursor: String
-  node: VideoNode
-}
-
-type Clips {
-  edges: [ClipEdges]
-  pageInfo: PageInfo
-}
-
-type ClipEdges {
-  cursor: String
-  node: ClipNode
-}
-
-type GameNode {
-  id: String
-  displayName: String
-  boxArtURL: String
-  viewersCount: Int
-  broadcastersCount: Int
-  streams(languages: [String!], first: Int, after: Cursor): Streams
-  videos(languages: [String!], sort: VideoSort, types: [BroadcastType!], first: Int, after: Cursor): Videos
-  clips(criteria: GameClipsInput, first: Int, after: Cursor): Clips
-}
-
-type StreamNode {
-  id: String
-  broadcaster: broadcaster
-  game: GameNode
-  type: String
-  title: String
-  viewersCount: Int
-  createdAt: String
-  previewImageURL: String
-}
-
-type VideoNode {
-  id: String
-  broadcastType: BroadcastType
-  title: String
-  owner: broadcaster
-  createdAt: String
-  previewThumbnailURL: String
-  viewCount: Int
-  lengthSeconds: Int
-  game: GameNode
-}
-
-type ClipNode {
-  id: String
-  slug: ID!
-  video: VideoNode
-  videoOffsetSeconds: Int
-  broadcaster: broadcaster
-  title: String
-  createdAt: String
-  thumbnailURL: String
-  viewCount: Int
+type Clip {
+  broadcaster: User
+  createdAt: Time
   durationSeconds: Int
-  game: GameNode
+  game: Game
+  id: ID
+  slug: String
+  thumbnailURL: String
+  title: String
+  video: Video
+  videoOffsetSeconds: Int
+  viewCount: Int
 }
 
-type broadcaster {
-  id: String
-  login: String
+type ClipConnection {
+  edges: [ClipEdge]
+  pageInfo: PageInfo
+}
+
+type ClipEdge {
+  cursor: Cursor
+  node: Clip
+}
+
+type FollowConnection {
+  edges: [FollowEdge]
+  pageInfo: PageInfo
+  totalCount: Int
+}
+type FollowedGameConnection {
+  nodes: [Game]
+}
+
+type FollowEdge {
+  cursor: Cursor
+  followedAt: Time
+  node: User
+}
+
+type FollowedLiveUserConnection {
+  edges: [FollowedLiveUserEdge]
+  pageInfo: PageInfo
+}
+
+type FollowedLiveUserEdge {
+  cursor: Cursor
+  node: User
+}
+
+type FollowerConnection {
+  totalCount: Int
+}
+
+type Game {
+  boxArtURL(width: Int, height: Int): String
+  broadcastersCount: Int
+  clips(first: Int, after: Cursor, criteria: GameClipsInput): ClipConnection
   displayName: String
+  id: ID
+  streams(first: Int, after: Cursor, options: GameStreamOptions): StreamConnection
+  tags(tagType: TagType!): [Tag!]
+  videos(first: Int, after: Cursor, languages: [String!], types: [BroadcastType!], sort: VideoSort): VideoConnection
+  viewersCount: Int
+}
+
+type GameConnection {
+  edges: [GameEdge]
+  pageInfo: PageInfo
+}
+
+type GameEdge {
+  cursor: Cursor
+  node: Game
+}
+
+type PageInfo {
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+}
+
+type SearchFor {
+  channels: SearchForResultUsers
+  games: SearchForResultGames
+  videos: SearchForResultVideos
+}
+
+type SearchForResultGames {
+  cursor: String
+  items: [Game!]
+  pageInfo: PageInfo
+}
+
+type SearchForResultUsers {
+  cursor: String
+  items: [User!]
+  pageInfo: PageInfo
+}
+
+type SearchForResultVideos {
+  cursor: String
+  items: [Video!]
+  pageInfo: PageInfo
+}
+
+type Stream {
+  broadcaster: User
+  createdAt: Time
+  game: Game
+  id: ID
+  previewImageURL: String
+  tags: [Tag!]
+  title: String
+  type: String
+  viewersCount: Int
+}
+
+type StreamConnection {
+  edges: [StreamEdge]
+  pageInfo: PageInfo
+}
+
+type StreamEdge {
+  cursor: Cursor
+  node: Stream
+}
+
+type Tag {
+  id: ID
+  localizedName: String
+  scope: TagScope
+}
+
+type User {
+  bannerImageURL: String
+  broadcastSettings: BroadcastSettings,
+  cheer: CheerInfo
+  clips(first: Int, after: Cursor, criteria: UserClipsInput): ClipConnection
+  createdAt: Time
+  description: String
+  displayName: String
+  followedGames(first: Int, type: FollowedGamesType): FollowedGameConnection
+  followedLiveUsers(first: Int, after: Cursor, sort: StreamSort): FollowedLiveUserConnection
+  followedVideos(first: Int, after: Cursor, languages: [String!], types: [BroadcastType!], sort: VideoSort): VideoConnection
+  followers: FollowerConnection
+  follows(first: Int, after: Cursor, order: SortOrder): FollowConnection
+  id: ID
+  login: String
+  lastBroadcast: Broadcast
   profileImageURL(width: Int): String
+  profileViewCount: Int
+  roles: UserRoles
+  stream: Stream
+  videos(first: Int, after: Cursor, types: [BroadcastType!], sort: VideoSort): VideoConnection
+}
+
+type UserRoles {
+  isAffiliate: Boolean
+  isExtensionsDeveloper: Boolean
+  isGlobalMod: Boolean
+  isPartner: Boolean
+  isSiteAdmin: Boolean
+  isStaff: Boolean
+}
+
+type Video {
+  broadcastType: BroadcastType
+  contentTags: [Tag!]
+  createdAt: Time
+  game: Game
+  id: ID
+  lengthSeconds: Int
+  owner: User
+  previewThumbnailURL: String
+  title: String
+  viewCount: Int
+}
+
+type VideoConnection {
+  edges: [VideoEdge]
+  pageInfo: PageInfo
+}
+
+type VideoEdge {
+  cursor: Cursor
+  node: Video
+}
+
+input GameClipsInput {
+  languages: [Language!]
+  period: ClipsPeriod
+  sort: ClipsSort
+}
+
+input GameOptions {
+  tags: [String!]
+}
+
+input GameStreamOptions {
+  sort: StreamSort
+  tags: [String!]
+}
+
+input SearchForTarget {
+  cursor: String
+  index: SearchIndex
+  limit: Int
+}
+
+input StreamOptions {
+  sort: StreamSort
+  tags: [String!]
+}
+
+input UserClipsInput {
+  period: ClipsPeriod
+  sort: ClipsSort
 }
 
 enum BroadcastType {
@@ -197,30 +261,6 @@ enum BroadcastType {
   PAST_PREMIERE
 }
 
-enum VideoSort {
-  TIME
-  VIEWS
-}
-
-enum SortOrder {
-  ASC
-  DESC
-}
-
-enum FollowedGamesType {
-  LIVE
-  ALL
-}
-
-input UserClipsInput {
-  period: ClipsPeriod
-}
-
-input GameClipsInput {
-  languages: [Language!]
-  period: ClipsPeriod
-}
-
 enum ClipsPeriod {
   LAST_DAY
   LAST_WEEK
@@ -228,10 +268,24 @@ enum ClipsPeriod {
   ALL_TIME
 }
 
+enum ClipsSort {
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  VIEWS_ASC
+  VIEWS_DESC
+  TRENDING
+}
+
+enum FollowedGamesType {
+  LIVE
+  ALL
+}
+
 enum Language {
   AR
   ASL
   BG
+  CA
   CS
   DA
   DE
@@ -240,31 +294,73 @@ enum Language {
   ES
   FI
   FR
+  HI
   HU
+  ID
   IT
   JA
   KO
+  MS
   NL
   NO
   OTHER
   PL
   PT
+  RO
   RU
   SK
   SV
   TH
+  TL
   TR
+  UK
   VI
   ZH
+  ZH_HK
 }
 
-type PageInfo {
-  hasNextPage: Boolean
-  hasPreviousPage: Boolean
+enum SearchIndex {
+  GAME
+  VOD
+  CHANNEL
 }
 
-scalar Time
+enum SortOrder {
+  ASC
+  DESC
+}
+
+enum StreamSort {
+  VIEWER_COUNT
+  VIEWER_COUNT_ASC
+  RECENT
+  RELEVANCE
+}
+
+enum TagScope {
+  ALL
+  CATEGORY
+}
+
+enum TagType {
+  CONTENT
+  TOP
+}
+
+enum UserLookupType {
+  ACTIVE
+  ALL
+}
+
+enum VideoSort {
+  TIME
+  TIME_ASC
+  VIEWS
+}
+
 scalar Cursor
+scalar ID
+scalar Time
 
 schema {
   query: Query

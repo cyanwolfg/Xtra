@@ -528,4 +528,6 @@
     <string name="viewers_low">視聴者数 (少ない順)</string>
     <string name="tags">タグ</string>
     <string name="show_player_mode">Show audio only button</string>
+    <string name="search_videos">Search videos</string>
+    <string name="lang_de">German</string>
 </resources>

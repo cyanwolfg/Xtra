@@ -4,21 +4,29 @@ query FollowedStreams($id: ID, $first: Int, $after: Cursor) {
             edges {
                 cursor
                 node {
+                    displayName
                     id
                     login
-                    displayName
                     profileImageURL(width: 300)
                     stream {
-                        id
-                        type
-                        title
-                        viewersCount
-                        createdAt
-                        previewImageURL
-                        game {
-                            id
-                            displayName
+                        broadcaster {
+                            broadcastSettings {
+                                title
+                            }
                         }
+                        createdAt
+                        game {
+                            displayName
+                            id
+                        }
+                        id
+                        previewImageURL
+                        tags {
+                            id
+                            localizedName
+                        }
+                        type
+                        viewersCount
                     }
                 }
             }

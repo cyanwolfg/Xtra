@@ -10,15 +10,19 @@ class ClipUrlsDeserializer : JsonDeserializer<ClipUrlsResponse> {
 
     @Throws(JsonParseException::class)
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ClipUrlsResponse {
-        val videos = mutableListOf<ClipUrlsResponse.Video>()
-        val videosJson = json.asJsonArray.first().asJsonObject.getAsJsonObject("data").getAsJsonObject("clip").getAsJsonArray("videoQualities")
-        videosJson.forEach {
-            val video = it.asJsonObject
-            videos.add(ClipUrlsResponse.Video(
-                    video.getAsJsonPrimitive("frameRate").asInt,
-                    video.getAsJsonPrimitive("quality").asString,
-                    video.getAsJsonPrimitive("sourceURL").asString.replace(Regex("https://[^/]+"),"https://clips-media-assets2.twitch.tv")))
+        val data = mutableListOf<ClipUrlsResponse.ClipInfo>()
+        val dataJson = json.asJsonArray?.first()?.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("clip")?.getAsJsonArray("videoQualities")
+        dataJson?.forEach {
+            it?.asJsonObject?.let { obj ->
+                obj.getAsJsonPrimitive("sourceURL")?.asString?.let { url ->
+                    data.add(ClipUrlsResponse.ClipInfo(
+                        obj.getAsJsonPrimitive("frameRate")?.asInt,
+                        obj.getAsJsonPrimitive("quality")?.asString,
+                        url.replace(Regex("https://[^/]+"),"https://clips-media-assets2.twitch.tv")
+                    ))
+                }
+            }
         }
-        return ClipUrlsResponse(videos)
+        return ClipUrlsResponse(data)
     }
 }

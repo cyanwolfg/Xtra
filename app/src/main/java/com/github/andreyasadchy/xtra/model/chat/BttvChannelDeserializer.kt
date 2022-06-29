@@ -11,12 +11,21 @@ class BttvChannelDeserializer : JsonDeserializer<BttvChannelResponse> {
     @Throws(JsonParseException::class)
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): BttvChannelResponse {
         val emotes = mutableListOf<BttvEmote>()
-        for (setEntry in json.asJsonObject.entrySet()) {
-            val value = setEntry.value
-            if (value.isJsonArray && setEntry.key != "bots") {
-                for (i in 0 until value.asJsonArray.size()) {
-                    val emote = value.asJsonArray.get(i).asJsonObject
-                    emotes.add(BttvEmote(emote.get("id").asString, emote.get("code").asString, emote.get("imageType").asString))
+        val dataJson = json.asJsonObject?.entrySet()
+        dataJson?.forEach { set ->
+            if (set.value?.isJsonArray == true && set.key != "bots") {
+                set.value?.asJsonArray?.forEach { emote ->
+                    emote.asJsonObject?.let { obj ->
+                        obj.get("code")?.asString?.let { name ->
+                            obj.get("id")?.asString?.let { id ->
+                                emotes.add(BttvEmote(
+                                    id = id,
+                                    name = name,
+                                    type = obj.get("imageType")?.asString?.let { type -> "image/$type" }
+                                ))
+                            }
+                        }
+                    }
                 }
             }
         }

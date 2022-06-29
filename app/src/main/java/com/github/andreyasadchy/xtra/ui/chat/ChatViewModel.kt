@@ -374,7 +374,7 @@ class ChatViewModel @Inject constructor(
         override fun start() {
             pause()
             chat = TwitchApiHelper.startChat(useSSl, user is LoggedIn, channelLogin, showUserNotice, showClearMsg, showClearChat, usePubSub, this, this, this, this, this)
-            if (user is LoggedIn) {
+            if (user is LoggedIn && !user.login.isNullOrBlank()) {
                 loggedInChat = TwitchApiHelper.startLoggedInChat(useSSl, user.login, user.gqlToken?.nullIfEmpty() ?: user.helixToken, channelLogin, showUserNotice, showClearMsg, showClearChat, usePubSub, this, this, this, this, this)
             }
             if (usePubSub && !channelId.isNullOrBlank()) {
@@ -405,7 +405,7 @@ class ChatViewModel @Inject constructor(
             if (helixClientId != null && user.helixToken?.nullIfEmpty() != null) {
                 if (savedEmoteSets != sets) {
                     viewModelScope.launch {
-                        val emotes = mutableListOf<Emote>()
+                        val emotes = mutableListOf<TwitchEmote>()
                         sets?.asReversed()?.chunked(25)?.forEach {
                             try {
                                 val list = repository.loadEmotesFromSet(helixClientId, user.helixToken, it)
@@ -429,7 +429,7 @@ class ChatViewModel @Inject constructor(
                     }
                 } else {
                     if (!emoteSetsAdded) {
-                        val emotes = mutableListOf<Emote>()
+                        val emotes = mutableListOf<TwitchEmote>()
                         savedEmotesFromSets?.let { emotes.addAll(it) }
                         if (emotes.isNotEmpty()) {
                             emoteSetsAdded = true
@@ -525,7 +525,7 @@ class ChatViewModel @Inject constructor(
         private const val TAG = "ChatViewModel"
 
         private var savedEmoteSets: List<String>? = null
-        private var savedEmotesFromSets: List<Emote>? = null
+        private var savedEmotesFromSets: List<TwitchEmote>? = null
         private var savedGlobalBadges: List<TwitchBadge>? = null
         private var globalStvEmotes: List<StvEmote>? = null
         private var globalBttvEmotes: List<BttvEmote>? = null

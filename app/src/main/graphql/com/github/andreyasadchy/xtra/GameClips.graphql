@@ -1,25 +1,25 @@
 query GameClips($id: ID, $name: String, $languages: [Language!], $sort: ClipsPeriod, $first: Int, $after: Cursor) {
     game(id: $id, name: $name) {
-        clips(criteria: { languages: $languages, period: $sort }, first: $first, after: $after) {
+        clips(first: $first, after: $after, criteria: { languages: $languages, period: $sort }) {
             edges {
                 cursor
                 node {
-                    slug
-                    title
-                    createdAt
-                    thumbnailURL
-                    viewCount
-                    durationSeconds
                     broadcaster {
                         id
                         login
                         displayName
                         profileImageURL(width: 300)
                     }
+                    createdAt
+                    durationSeconds
+                    slug
+                    thumbnailURL
+                    title
                     video {
                         id
                     }
                     videoOffsetSeconds
+                    viewCount
                 }
             }
             pageInfo {

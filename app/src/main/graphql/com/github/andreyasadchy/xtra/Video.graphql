@@ -1,19 +1,19 @@
 query Video($id: ID) {
     video(id: $id) {
-        title
-        createdAt
-        previewThumbnailURL
         broadcastType
-        lengthSeconds
-        owner {
-            id
-            login
-            displayName
-            profileImageURL(width: 300)
-        }
+        createdAt
         game {
             id
             displayName
         }
+        lengthSeconds
+        owner {
+            displayName
+            id
+            login
+            profileImageURL(width: 300)
+        }
+        previewThumbnailURL
+        title
     }
 }

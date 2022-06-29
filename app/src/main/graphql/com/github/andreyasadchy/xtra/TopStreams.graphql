@@ -1,24 +1,30 @@
-query TopStreams($languages: [Language!], $first: Int, $after: Cursor) {
-    streams(languages: $languages, first: $first, after: $after) {
+query TopStreams($tags: [String!], $first: Int, $after: Cursor) {
+    streams(first: $first, after: $after, options: { tags: $tags }) {
         edges {
             cursor
             node {
-                id
-                type
-                title
-                viewersCount
-                createdAt
-                previewImageURL
                 broadcaster {
+                    broadcastSettings {
+                        title
+                    }
+                    displayName
                     id
                     login
-                    displayName
                     profileImageURL(width: 300)
                 }
+                createdAt
                 game {
                     id
                     displayName
                 }
+                id
+                previewImageURL
+                tags {
+                    id
+                    localizedName
+                }
+                type
+                viewersCount
             }
         }
         pageInfo {

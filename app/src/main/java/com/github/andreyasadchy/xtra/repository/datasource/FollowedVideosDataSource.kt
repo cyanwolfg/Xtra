@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.Optional
 import com.github.andreyasadchy.xtra.FollowedVideosQuery
 import com.github.andreyasadchy.xtra.di.XtraModule
 import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientWithTokenFactory.apolloClientWithToken
+import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.model.helix.video.Video
 import com.github.andreyasadchy.xtra.repository.GraphQLRepository
 import com.github.andreyasadchy.xtra.type.BroadcastType
@@ -51,12 +52,24 @@ class FollowedVideosDataSource(
     private suspend fun gqlQueryInitial(params: LoadInitialParams): List<Video> {
         api = C.GQL_QUERY
         val typeList = if (gqlQueryType != null) mutableListOf(gqlQueryType) else null
-        val get1 = apolloClientWithToken(XtraModule(), gqlClientId, gqlToken)
-            .query(FollowedVideosQuery(id = Optional.Present(userId), sort = Optional.Present(gqlQuerySort), type = Optional.Present(typeList), first = Optional.Present(params.requestedLoadSize), after = Optional.Present(offset))).execute().data?.user?.followedVideos
+        val get1 = apolloClientWithToken(XtraModule(), gqlClientId, gqlToken).query(FollowedVideosQuery(
+            id = Optional.Present(userId),
+            sort = Optional.Present(gqlQuerySort),
+            type = Optional.Present(typeList),
+            first = Optional.Present(params.requestedLoadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.user?.followedVideos
         val get = get1?.edges
         val list = mutableListOf<Video>()
         if (get != null) {
             for (i in get) {
+                val tags = mutableListOf<Tag>()
+                i?.node?.contentTags?.forEach { tag ->
+                    tags.add(Tag(
+                        id = tag.id,
+                        name = tag.localizedName
+                    ))
+                }
                 list.add(
                     Video(
                         id = i?.node?.id ?: "",
@@ -68,14 +81,15 @@ class FollowedVideosDataSource(
                         type = i?.node?.broadcastType.toString(),
                         title = i?.node?.title,
                         view_count = i?.node?.viewCount,
-                        createdAt = i?.node?.createdAt,
+                        createdAt = i?.node?.createdAt.toString(),
                         duration = i?.node?.lengthSeconds.toString(),
                         thumbnail_url = i?.node?.previewThumbnailURL,
                         profileImageURL = i?.node?.owner?.profileImageURL,
+                        tags = tags
                     )
                 )
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list
@@ -100,12 +114,24 @@ class FollowedVideosDataSource(
 
     private suspend fun gqlQueryRange(params: LoadRangeParams): List<Video> {
         val typeList = if (gqlQueryType != null) mutableListOf(gqlQueryType) else null
-        val get1 = apolloClientWithToken(XtraModule(), gqlClientId, gqlToken)
-            .query(FollowedVideosQuery(id = Optional.Present(userId), sort = Optional.Present(gqlQuerySort), type = Optional.Present(typeList), first = Optional.Present(params.loadSize), after = Optional.Present(offset))).execute().data?.user?.followedVideos
+        val get1 = apolloClientWithToken(XtraModule(), gqlClientId, gqlToken).query(FollowedVideosQuery(
+            id = Optional.Present(userId),
+            sort = Optional.Present(gqlQuerySort),
+            type = Optional.Present(typeList),
+            first = Optional.Present(params.loadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.user?.followedVideos
         val get = get1?.edges
         val list = mutableListOf<Video>()
         if (get != null && nextPage && offset != null && offset != "") {
             for (i in get) {
+                val tags = mutableListOf<Tag>()
+                i?.node?.contentTags?.forEach { tag ->
+                    tags.add(Tag(
+                        id = tag.id,
+                        name = tag.localizedName
+                    ))
+                }
                 list.add(
                     Video(
                         id = i?.node?.id ?: "",
@@ -117,14 +143,15 @@ class FollowedVideosDataSource(
                         type = i?.node?.broadcastType.toString(),
                         title = i?.node?.title,
                         view_count = i?.node?.viewCount,
-                        createdAt = i?.node?.createdAt,
+                        createdAt = i?.node?.createdAt.toString(),
                         duration = i?.node?.lengthSeconds.toString(),
                         thumbnail_url = i?.node?.previewThumbnailURL,
                         profileImageURL = i?.node?.owner?.profileImageURL,
+                        tags = tags
                     )
                 )
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list

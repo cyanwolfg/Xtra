@@ -12,11 +12,20 @@ class BttvFfzDeserializer : JsonDeserializer<BttvFfzResponse> {
     @Throws(JsonParseException::class)
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): BttvFfzResponse {
         val emotes = mutableListOf<FfzEmote>()
-        for (i in 0 until json.asJsonArray.size()) {
-            val emote = json.asJsonArray.get(i).asJsonObject
-            val urls = emote.getAsJsonObject("images")
-            val url = urls.get(when (emoteQuality) {"4" -> ("4x") "3" -> ("2x") "2" -> ("2x") else -> ("1x")}).takeUnless { it?.isJsonNull == true }?.asString ?: urls.get("2x").takeUnless { it?.isJsonNull == true }?.asString ?: urls.get("1x").asString
-            emotes.add(FfzEmote(emote.get("code").asString, url, "image/" + emote.get("imageType").asString))
+        json.asJsonArray?.forEach { emote ->
+            emote.asJsonObject?.let { obj ->
+                obj.get("code")?.asString?.let { name ->
+                    val urls = obj.getAsJsonObject("images")
+                    val url = urls.get(when (emoteQuality) {"4" -> ("4x") "3" -> ("2x") "2" -> ("2x") else -> ("1x")}).takeUnless { it?.isJsonNull == true }?.asString ?: urls.get("2x").takeUnless { it?.isJsonNull == true }?.asString ?: urls.get("1x").asString
+                    url?.let {
+                        emotes.add(FfzEmote(
+                            name = name,
+                            url = url,
+                            type = obj.get("imageType")?.asString?.let { type -> "image/$type" }
+                        ))
+                    }
+                }
+            }
         }
         return BttvFfzResponse(emotes)
     }

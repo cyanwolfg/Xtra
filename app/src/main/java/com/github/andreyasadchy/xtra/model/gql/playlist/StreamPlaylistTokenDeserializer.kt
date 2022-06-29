@@ -10,7 +10,7 @@ class StreamPlaylistTokenDeserializer : JsonDeserializer<StreamPlaylistTokenResp
 
     @Throws(JsonParseException::class)
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): StreamPlaylistTokenResponse {
-        val tokenJson = json.asJsonArray.first().asJsonObject.getAsJsonObject("data").getAsJsonObject("streamPlaybackAccessToken")
-        return StreamPlaylistTokenResponse(tokenJson.getAsJsonPrimitive("value").asString, tokenJson.getAsJsonPrimitive("signature").asString)
+        val tokenJson = json.asJsonArray?.first()?.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("streamPlaybackAccessToken")
+        return StreamPlaylistTokenResponse(tokenJson?.getAsJsonPrimitive("value")?.asString, tokenJson?.getAsJsonPrimitive("signature")?.asString)
     }
 }

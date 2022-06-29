@@ -1,23 +1,27 @@
-query UserVideos($id: ID, $sort: VideoSort, $type: BroadcastType, $first: Int, $after: Cursor) {
-    user(id: $id) {
-        login
+query UserVideos($id: ID, $sort: VideoSort, $types: [BroadcastType!], $first: Int, $after: Cursor) {
+    user(id: $id, lookupType: ALL) {
         displayName
+        login
         profileImageURL(width: 300)
-        videos(sort: $sort, type: $type, first: $first, after: $after) {
+        videos(first: $first, after: $after, types: $types, sort: $sort) {
             edges {
                 cursor
                 node {
-                    id
                     broadcastType
-                    title
+                    contentTags {
+                        id
+                        localizedName
+                    }
                     createdAt
-                    previewThumbnailURL
-                    viewCount
-                    lengthSeconds
                     game {
                         id
                         displayName
                     }
+                    id
+                    lengthSeconds
+                    previewThumbnailURL
+                    title
+                    viewCount
                 }
             }
             pageInfo {

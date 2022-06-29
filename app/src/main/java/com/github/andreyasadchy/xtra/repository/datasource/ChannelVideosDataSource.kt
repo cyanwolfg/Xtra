@@ -7,6 +7,7 @@ import com.github.andreyasadchy.xtra.UserVideosQuery
 import com.github.andreyasadchy.xtra.api.HelixApi
 import com.github.andreyasadchy.xtra.di.XtraModule
 import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory
+import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.model.helix.video.BroadcastType
 import com.github.andreyasadchy.xtra.model.helix.video.Period
 import com.github.andreyasadchy.xtra.model.helix.video.Sort
@@ -81,12 +82,25 @@ class ChannelVideosDataSource (
 
     private suspend fun gqlQueryInitial(params: LoadInitialParams): List<Video> {
         api = C.GQL_QUERY
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId)
-            .query(UserVideosQuery(id = Optional.Present(channelId), sort = Optional.Present(gqlQuerySort), type = Optional.Present(gqlQueryType), first = Optional.Present(params.requestedLoadSize), after = Optional.Present(offset))).execute().data?.user
+        val typeList = if (gqlQueryType != null) mutableListOf(gqlQueryType) else null
+        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(UserVideosQuery(
+            id = Optional.Present(channelId),
+            sort = Optional.Present(gqlQuerySort),
+            types = Optional.Present(typeList),
+            first = Optional.Present(params.requestedLoadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.user
         val get = get1?.videos?.edges
         val list = mutableListOf<Video>()
         if (get != null) {
             for (i in get) {
+                val tags = mutableListOf<Tag>()
+                i?.node?.contentTags?.forEach { tag ->
+                    tags.add(Tag(
+                        id = tag.id,
+                        name = tag.localizedName
+                    ))
+                }
                 list.add(
                     Video(
                         id = i?.node?.id ?: "",
@@ -98,14 +112,15 @@ class ChannelVideosDataSource (
                         type = i?.node?.broadcastType.toString(),
                         title = i?.node?.title,
                         view_count = i?.node?.viewCount,
-                        createdAt = i?.node?.createdAt,
+                        createdAt = i?.node?.createdAt.toString(),
                         duration = i?.node?.lengthSeconds.toString(),
                         thumbnail_url = i?.node?.previewThumbnailURL,
                         profileImageURL = get1.profileImageURL,
+                        tags = tags
                     )
                 )
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.videos.pageInfo?.hasNextPage ?: true
         }
         return list
@@ -140,11 +155,25 @@ class ChannelVideosDataSource (
     }
 
     private suspend fun gqlQueryRange(params: LoadRangeParams): List<Video> {
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(UserVideosQuery(id = Optional.Present(channelId), sort = Optional.Present(gqlQuerySort), type = Optional.Present(gqlQueryType), first = Optional.Present(params.loadSize), after = Optional.Present(offset))).execute().data?.user
+        val typeList = if (gqlQueryType != null) mutableListOf(gqlQueryType) else null
+        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(UserVideosQuery(
+            id = Optional.Present(channelId),
+            sort = Optional.Present(gqlQuerySort),
+            types = Optional.Present(typeList),
+            first = Optional.Present(params.loadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.user
         val get = get1?.videos?.edges
         val list = mutableListOf<Video>()
         if (get != null && nextPage && offset != null && offset != "") {
             for (i in get) {
+                val tags = mutableListOf<Tag>()
+                i?.node?.contentTags?.forEach { tag ->
+                    tags.add(Tag(
+                        id = tag.id,
+                        name = tag.localizedName
+                    ))
+                }
                 list.add(
                     Video(
                         id = i?.node?.id ?: "",
@@ -156,14 +185,15 @@ class ChannelVideosDataSource (
                         type = i?.node?.broadcastType.toString(),
                         title = i?.node?.title,
                         view_count = i?.node?.viewCount,
-                        createdAt = i?.node?.createdAt,
+                        createdAt = i?.node?.createdAt.toString(),
                         duration = i?.node?.lengthSeconds.toString(),
                         thumbnail_url = i?.node?.previewThumbnailURL,
                         profileImageURL = get1.profileImageURL,
+                        tags = tags
                     )
                 )
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.videos.pageInfo?.hasNextPage ?: true
         }
         return list

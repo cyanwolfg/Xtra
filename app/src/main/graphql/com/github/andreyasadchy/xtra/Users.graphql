@@ -1,15 +1,15 @@
 query Users($ids: [ID!], $logins: [String!]) {
     users(ids: $ids, logins: $logins) {
-        id
-        login
-        displayName
-        profileImageURL(width: 300)
         bannerImageURL
-        profileViewCount
         createdAt
+        displayName
         followers {
             totalCount
         }
+        id
+        login
+        profileImageURL(width: 300)
+        profileViewCount
         roles {
             isAffiliate
             isGlobalMod

@@ -1,0 +1,28 @@
+query UserStreams($id: [ID!]) {
+    users(ids: $id) {
+        displayName
+        id
+        login
+        profileImageURL(width: 300)
+        stream {
+            broadcaster {
+                broadcastSettings {
+                    title
+                }
+            }
+            createdAt
+            game {
+                id
+                displayName
+            }
+            id
+            previewImageURL
+            tags {
+                id
+                localizedName
+            }
+            type
+            viewersCount
+        }
+    }
+}

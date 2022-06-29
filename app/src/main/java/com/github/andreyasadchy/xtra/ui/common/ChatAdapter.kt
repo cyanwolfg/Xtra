@@ -274,7 +274,7 @@ class ChatAdapter(
                         builder.replace(builderIndex, endIndex, ".")
                     }
                     builder.setSpan(ForegroundColorSpan(Color.TRANSPARENT), builderIndex, builderIndex + 1, SPAN_EXCLUSIVE_EXCLUSIVE)
-                    images.add(Image(emote.url, builderIndex, builderIndex + 1, true, emote.type, emote.zeroWidth))
+                    images.add(Image(emote.url, builderIndex, builderIndex + 1, true, emote.type, emote.isZeroWidth))
                     emotesFound++
                     builderIndex += 2
                     if (emote is CheerEmote) {
@@ -346,7 +346,7 @@ class ChatAdapter(
                         width = badgeSize
                         height = badgeSize
                     }
-                    if (image.zerowidth && enableZeroWidth) {
+                    if (image.isZeroWidth && enableZeroWidth) {
                         result.setBounds(-90, 0, width - 90, height)
                     } else {
                         result.setBounds(0, 0, width, height)
@@ -374,7 +374,7 @@ class ChatAdapter(
                 override fun onResourceReady(resource: WebpDrawable, transition: Transition<in WebpDrawable>?) {
                     resource.apply {
                         val size = calculateEmoteSize(this)
-                        if (image.zerowidth && enableZeroWidth) {
+                        if (image.isZeroWidth && enableZeroWidth) {
                             setBounds(-90, 0, size.first - 90, size.second)
                         } else {
                             setBounds(0, 0, size.first, size.second)
@@ -420,7 +420,7 @@ class ChatAdapter(
                 override fun onResourceReady(resource: GifDrawable, transition: Transition<in GifDrawable>?) {
                     resource.apply {
                         val size = calculateEmoteSize(this)
-                        if (image.zerowidth && enableZeroWidth) {
+                        if (image.isZeroWidth && enableZeroWidth) {
                             setBounds(-90, 0, size.first - 90, size.second)
                         } else {
                             setBounds(0, 0, size.first, size.second)
@@ -473,7 +473,7 @@ class ChatAdapter(
                         width = badgeSize
                         height = badgeSize
                     }
-                    if (image.zerowidth && enableZeroWidth) {
+                    if (image.isZeroWidth && enableZeroWidth) {
                         resource.setBounds(-90, 0, width - 90, height)
                     } else {
                         resource.setBounds(0, 0, width, height)

@@ -104,7 +104,12 @@ class ChannelClipsDataSource(
 
     private suspend fun gqlQueryInitial(params: LoadInitialParams): List<Clip> {
         api = C.GQL_QUERY
-        val get1 = apolloClient(XtraModule(), gqlClientId).query(UserClipsQuery(id = Optional.Present(channelId), sort = Optional.Present(gqlQueryPeriod), first = Optional.Present(params.requestedLoadSize), after = Optional.Present(offset))).execute().data?.user
+        val get1 = apolloClient(XtraModule(), gqlClientId).query(UserClipsQuery(
+            id = Optional.Present(channelId),
+            sort = Optional.Present(gqlQueryPeriod),
+            first = Optional.Present(params.requestedLoadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.user
         val get = get1?.clips?.edges
         val list = mutableListOf<Clip>()
         if (get != null) {
@@ -121,14 +126,14 @@ class ChannelClipsDataSource(
                         game_name = i?.node?.game?.displayName,
                         title = i?.node?.title,
                         view_count = i?.node?.viewCount,
-                        created_at = i?.node?.createdAt,
+                        created_at = i?.node?.createdAt.toString(),
                         duration = i?.node?.durationSeconds?.toDouble(),
                         thumbnail_url = i?.node?.thumbnailURL,
                         profileImageURL = get1.profileImageURL,
                     )
                 )
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.clips.pageInfo?.hasNextPage ?: true
         }
         return list
@@ -192,7 +197,12 @@ class ChannelClipsDataSource(
     }
 
     private suspend fun gqlQueryRange(params: LoadRangeParams): List<Clip> {
-        val get1 = apolloClient(XtraModule(), gqlClientId).query(UserClipsQuery(id = Optional.Present(channelId), sort = Optional.Present(gqlQueryPeriod), first = Optional.Present(params.loadSize), after = Optional.Present(offset))).execute().data?.user
+        val get1 = apolloClient(XtraModule(), gqlClientId).query(UserClipsQuery(
+            id = Optional.Present(channelId),
+            sort = Optional.Present(gqlQueryPeriod),
+            first = Optional.Present(params.loadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.user
         val get = get1?.clips?.edges
         val list = mutableListOf<Clip>()
         if (get != null && nextPage && offset != null && offset != "") {
@@ -209,14 +219,14 @@ class ChannelClipsDataSource(
                         game_name = i?.node?.game?.displayName,
                         title = i?.node?.title,
                         view_count = i?.node?.viewCount,
-                        created_at = i?.node?.createdAt,
+                        created_at = i?.node?.createdAt.toString(),
                         duration = i?.node?.durationSeconds?.toDouble(),
                         thumbnail_url = i?.node?.thumbnailURL,
                         profileImageURL = get1.profileImageURL,
                     )
                 )
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.clips.pageInfo?.hasNextPage ?: true
         }
         return list

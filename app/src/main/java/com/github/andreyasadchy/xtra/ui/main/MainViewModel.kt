@@ -120,7 +120,7 @@ class MainViewModel @Inject constructor(
                 try {
                     if (!user.helixToken.isNullOrBlank()) {
                         val response = authRepository.validate(TwitchApiHelper.addTokenPrefixHelix(user.helixToken))
-                        if (response?.clientId == helixClientId) {
+                        if (!response?.clientId.isNullOrBlank() && response?.clientId == helixClientId) {
                             User.validated()
                         } else {
                             throw IllegalStateException("401")
@@ -128,7 +128,7 @@ class MainViewModel @Inject constructor(
                     }
                     if (!user.gqlToken.isNullOrBlank()) {
                         val response = authRepository.validate(TwitchApiHelper.addTokenPrefixGQL(user.gqlToken))
-                        if (response?.clientId == gqlClientId) {
+                        if (!response?.clientId.isNullOrBlank() && response?.clientId == gqlClientId) {
                             User.validated()
                         } else {
                             throw IllegalStateException("401")

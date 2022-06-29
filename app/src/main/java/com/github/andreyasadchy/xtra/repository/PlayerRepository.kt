@@ -59,8 +59,8 @@ class PlayerRepository @Inject constructor(
                 "allow_audio_only", "true",
                 "fast_bread", "true", //low latency
                 "p", Random.nextInt(9999999).toString(),
-                "sig", accessToken.signature,
-                "token", accessToken.token
+                "sig", accessToken.signature ?: "",
+                "token", accessToken.token ?: ""
             ) to false
         }
     }
@@ -72,8 +72,8 @@ class PlayerRepository @Inject constructor(
             "allow_source", "true",
             "allow_audio_only", "true",
             "p", Random.nextInt(9999999).toString(),
-            "sig", accessToken.signature,
-            "token", accessToken.token,
+            "sig", accessToken.signature ?: "",
+            "token", accessToken.token ?: "",
         )
     }
 
@@ -83,8 +83,8 @@ class PlayerRepository @Inject constructor(
         playlistQueryOptions["allow_source"] = "true"
         playlistQueryOptions["allow_audio_only"] = "true"
         playlistQueryOptions["p"] = Random.nextInt(9999999).toString()
-        playlistQueryOptions["sig"] = accessToken.signature
-        playlistQueryOptions["token"] = accessToken.token
+        accessToken.signature?.let { playlistQueryOptions["sig"] = it }
+        accessToken.token?.let { playlistQueryOptions["token"] = it }
         usher.getVideoPlaylist(videoId, playlistQueryOptions)
     }
 

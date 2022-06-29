@@ -49,7 +49,17 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
         }
         array.add(videoAccessTokenOperation)
         val response = graphQL.getClipUrls(clientId, array)
-        response.videos.associateBy({ if (it.frameRate < 60) "${it.quality}p" else "${it.quality}p${it.frameRate}" }, { it.url })
+        response.data.withIndex().associateBy({
+            if (!it.value.quality.isNullOrBlank()) {
+                if ((it.value.frameRate ?: 0) < 60) {
+                    "${it.value.quality}p"
+                } else {
+                    "${it.value.quality}p${it.value.frameRate}"
+                }
+            } else {
+                it.index.toString()
+            }
+        }, { it.value.url })
     }
 
     suspend fun loadClipData(clientId: String?, slug: String?): ClipDataResponse {

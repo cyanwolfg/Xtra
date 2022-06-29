@@ -8,6 +8,7 @@ import com.github.andreyasadchy.xtra.api.HelixApi
 import com.github.andreyasadchy.xtra.di.XtraModule
 import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory
 import com.github.andreyasadchy.xtra.model.helix.game.Game
+import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.repository.GraphQLRepository
 import com.github.andreyasadchy.xtra.util.C
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +31,7 @@ class GamesDataSource(
             try {
                 when (apiPref.elementAt(0)?.second) {
                     C.HELIX -> if (!helixToken.isNullOrBlank() && tags.isNullOrEmpty()) helixInitial(params) else throw Exception()
-                    C.GQL_QUERY -> if (tags.isNullOrEmpty()) gqlQueryInitial(params) else throw Exception()
+                    C.GQL_QUERY -> gqlQueryInitial(params)
                     C.GQL -> gqlInitial(params)
                     else -> throw Exception()
                 }
@@ -38,7 +39,7 @@ class GamesDataSource(
                 try {
                     when (apiPref.elementAt(1)?.second) {
                         C.HELIX -> if (!helixToken.isNullOrBlank() && tags.isNullOrEmpty()) helixInitial(params) else throw Exception()
-                        C.GQL_QUERY -> if (tags.isNullOrEmpty()) gqlQueryInitial(params) else throw Exception()
+                        C.GQL_QUERY -> gqlQueryInitial(params)
                         C.GQL -> gqlInitial(params)
                         else -> throw Exception()
                     }
@@ -46,7 +47,7 @@ class GamesDataSource(
                     try {
                         when (apiPref.elementAt(2)?.second) {
                             C.HELIX -> if (!helixToken.isNullOrBlank() && tags.isNullOrEmpty()) helixInitial(params) else throw Exception()
-                            C.GQL_QUERY -> if (tags.isNullOrEmpty()) gqlQueryInitial(params) else throw Exception()
+                            C.GQL_QUERY -> gqlQueryInitial(params)
                             C.GQL -> gqlInitial(params)
                             else -> throw Exception()
                         }
@@ -69,12 +70,22 @@ class GamesDataSource(
 
     private suspend fun gqlQueryInitial(params: LoadInitialParams): List<Game> {
         api = C.GQL_QUERY
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId)
-            .query(TopGamesQuery(first = Optional.Present(params.requestedLoadSize), after = Optional.Present(offset))).execute().data?.games
+        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(TopGamesQuery(
+            tags = Optional.Present(tags),
+            first = Optional.Present(params.requestedLoadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.games
         val get = get1?.edges
         val list = mutableListOf<Game>()
         if (get != null) {
             for (i in get) {
+                val tags = mutableListOf<Tag>()
+                i?.node?.tags?.forEach { tag ->
+                    tags.add(Tag(
+                        id = tag.id,
+                        name = tag.localizedName
+                    ))
+                }
                 list.add(
                     Game(
                         id = i?.node?.id,
@@ -82,10 +93,11 @@ class GamesDataSource(
                         box_art_url = i?.node?.boxArtURL,
                         viewersCount = i?.node?.viewersCount,
                         broadcastersCount = i?.node?.broadcastersCount,
+                        tags = tags
                     )
                 )
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list
@@ -120,12 +132,22 @@ class GamesDataSource(
     }
 
     private suspend fun gqlQueryRange(params: LoadRangeParams): List<Game> {
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId)
-            .query(TopGamesQuery(first = Optional.Present(params.loadSize), after = Optional.Present(offset))).execute().data?.games
+        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(TopGamesQuery(
+            tags = Optional.Present(tags),
+            first = Optional.Present(params.loadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.games
         val get = get1?.edges
         val list = mutableListOf<Game>()
         if (get != null && nextPage && offset != null && offset != "") {
             for (i in get) {
+                val tags = mutableListOf<Tag>()
+                i?.node?.tags?.forEach { tag ->
+                    tags.add(Tag(
+                        id = tag.id,
+                        name = tag.localizedName
+                    ))
+                }
                 list.add(
                     Game(
                         id = i?.node?.id,
@@ -133,10 +155,11 @@ class GamesDataSource(
                         box_art_url = i?.node?.boxArtURL,
                         viewersCount = i?.node?.viewersCount,
                         broadcastersCount = i?.node?.broadcastersCount,
+                        tags = tags
                     )
                 )
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list

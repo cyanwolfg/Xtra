@@ -11,6 +11,7 @@ import com.github.andreyasadchy.xtra.ui.search.Searchable
 import com.github.andreyasadchy.xtra.ui.videos.BaseVideosAdapter
 import com.github.andreyasadchy.xtra.ui.videos.BaseVideosFragment
 import com.github.andreyasadchy.xtra.util.C
+import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.gone
 import com.github.andreyasadchy.xtra.util.prefs
 import kotlinx.android.synthetic.main.common_recycler_view_layout.*
@@ -43,7 +44,8 @@ class VideoSearchFragment : BaseVideosFragment<VideoSearchViewModel>(), Searchab
         if (query.isNotEmpty()) {
             viewModel.setQuery(
                 query = query,
-                gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, "")
+                gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, ""),
+                apiPref = TwitchApiHelper.listFromPrefs(requireContext().prefs().getString(C.API_PREF_SEARCH_VIDEOS, ""), TwitchApiHelper.searchVideosApiDefaults)
             )
         } else {
             adapter.submitList(null)

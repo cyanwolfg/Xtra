@@ -2,6 +2,7 @@ package com.github.andreyasadchy.xtra.ui.videos.channel
 
 import android.text.format.DateUtils
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
@@ -11,10 +12,7 @@ import com.github.andreyasadchy.xtra.model.helix.video.Video
 import com.github.andreyasadchy.xtra.ui.games.GamesFragment
 import com.github.andreyasadchy.xtra.ui.videos.BaseVideosAdapter
 import com.github.andreyasadchy.xtra.ui.videos.BaseVideosFragment
-import com.github.andreyasadchy.xtra.util.TwitchApiHelper
-import com.github.andreyasadchy.xtra.util.gone
-import com.github.andreyasadchy.xtra.util.loadImage
-import com.github.andreyasadchy.xtra.util.visible
+import com.github.andreyasadchy.xtra.util.*
 import kotlinx.android.synthetic.main.fragment_videos_list_item.view.*
 
 class ChannelVideosAdapter(
@@ -96,6 +94,20 @@ class ChannelVideosAdapter(
                 gameName.setOnClickListener(gameListener)
             } else {
                 gameName.gone()
+            }
+            if (!item.tags.isNullOrEmpty() && context.prefs().getBoolean(C.UI_TAGS, true)) {
+                tagsLayout.removeAllViews()
+                tagsLayout.visible()
+                for (tag in item.tags) {
+                    val text = TextView(context)
+                    text.text = tag.name
+                    if (tag.id != null) {
+                        text.setOnClickListener { gameClickListener.openGame(tags = listOf(tag.id)) }
+                    }
+                    tagsLayout.addView(text)
+                }
+            } else {
+                tagsLayout.gone()
             }
             options.setOnClickListener { it ->
                 PopupMenu(context, it).apply {

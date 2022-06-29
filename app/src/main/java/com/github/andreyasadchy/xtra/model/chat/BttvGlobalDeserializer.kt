@@ -11,9 +11,18 @@ class BttvGlobalDeserializer : JsonDeserializer<BttvGlobalResponse> {
     @Throws(JsonParseException::class)
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): BttvGlobalResponse {
         val emotes = mutableListOf<BttvEmote>()
-        for (i in 0 until json.asJsonArray.size()) {
-            val emote = json.asJsonArray.get(i).asJsonObject
-            emotes.add(BttvEmote(emote.get("id").asString, emote.get("code").asString, emote.get("imageType").asString))
+        json.asJsonArray?.forEach { emote ->
+            emote.asJsonObject?.let { obj ->
+                obj.get("code")?.asString?.let { name ->
+                    obj.get("id")?.asString?.let { id ->
+                        emotes.add(BttvEmote(
+                            id = id,
+                            name = name,
+                            type = obj.get("imageType")?.asString?.let { type -> "image/$type" }
+                        ))
+                    }
+                }
+            }
         }
         return BttvGlobalResponse(emotes)
     }

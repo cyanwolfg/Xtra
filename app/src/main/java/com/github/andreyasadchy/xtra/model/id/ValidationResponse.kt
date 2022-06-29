@@ -4,9 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 class ValidationResponse(
         @SerializedName("client_id")
-        val clientId: String,
-        val login: String,
-        val scopes: List<String>,
+        val clientId: String?,
+        val login: String?,
         @SerializedName("user_id")
-        val userId: String)
+        val userId: String?)
 

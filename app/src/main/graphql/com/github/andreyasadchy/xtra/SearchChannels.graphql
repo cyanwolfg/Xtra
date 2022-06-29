@@ -1,0 +1,22 @@
+query SearchChannels($query: String!, $first: Int, $after: String) {
+    searchFor(userQuery: $query, platform: "", target: { cursor: $after, index: CHANNEL, limit: $first }) {
+        channels {
+            cursor
+            items {
+                displayName
+                followers {
+                    totalCount
+                }
+                id
+                login
+                profileImageURL(width: 300)
+                stream {
+                    type
+                }
+            }
+            pageInfo {
+                hasNextPage
+            }
+        }
+    }
+}

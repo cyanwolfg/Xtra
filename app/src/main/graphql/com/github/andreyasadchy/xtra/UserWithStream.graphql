@@ -1,14 +1,17 @@
-query StreamUser($id: [ID!]) {
+query UserWithStream($id: [ID!]) {
     users(ids: $id) {
-        login
-        displayName
-        profileImageURL(width: 300)
         bannerImageURL
-        profileViewCount
         createdAt
+        displayName
         followers {
             totalCount
         }
+        lastBroadcast {
+            startedAt
+        }
+        login
+        profileImageURL(width: 300)
+        profileViewCount
         roles {
             isAffiliate
             isGlobalMod
@@ -17,19 +20,16 @@ query StreamUser($id: [ID!]) {
             isStaff
         }
         stream {
-            id
-            type
-            title
-            viewersCount
             createdAt
-            previewImageURL
             game {
                 id
                 displayName
             }
-        }
-        lastBroadcast {
-            startedAt
+            id
+            previewImageURL
+            title
+            type
+            viewersCount
         }
     }
 }

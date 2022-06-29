@@ -27,6 +27,7 @@ import com.github.andreyasadchy.xtra.model.helix.video.Video
 import com.github.andreyasadchy.xtra.repository.datasource.*
 import com.github.andreyasadchy.xtra.type.ClipsPeriod
 import com.github.andreyasadchy.xtra.type.Language
+import com.github.andreyasadchy.xtra.type.StreamSort
 import com.github.andreyasadchy.xtra.type.VideoSort
 import com.github.andreyasadchy.xtra.ui.view.chat.animateGifs
 import com.github.andreyasadchy.xtra.ui.view.chat.emoteQuality
@@ -76,8 +77,8 @@ class ApiRepository @Inject constructor(
         return Listing.create(factory, config)
     }
 
-    override fun loadGameStreams(gameId: String?, gameName: String?, helixClientId: String?, helixToken: String?, gqlClientId: String?, gqlSort: com.github.andreyasadchy.xtra.model.helix.stream.Sort?, tags: List<String>?, apiPref: ArrayList<Pair<Long?, String?>?>, thumbnailsEnabled: Boolean, coroutineScope: CoroutineScope): Listing<Stream> {
-        val factory = GameStreamsDataSource.Factory(gameId, gameName, helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, helix, gqlClientId, gqlSort, tags, gql, apiPref, coroutineScope)
+    override fun loadGameStreams(gameId: String?, gameName: String?, helixClientId: String?, helixToken: String?, gqlClientId: String?, gqlQuerySort: StreamSort?, gqlSort: com.github.andreyasadchy.xtra.model.helix.stream.Sort?, tags: List<String>?, apiPref: ArrayList<Pair<Long?, String?>?>, thumbnailsEnabled: Boolean, coroutineScope: CoroutineScope): Listing<Stream> {
+        val factory = GameStreamsDataSource.Factory(gameId, gameName, helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, helix, gqlClientId, gqlQuerySort, gqlSort, tags, gql, apiPref, coroutineScope)
         val builder = PagedList.Config.Builder().setEnablePlaceholders(false)
         if (thumbnailsEnabled) {
             builder.setPageSize(10)
@@ -158,8 +159,8 @@ class ApiRepository @Inject constructor(
         return Listing.create(factory, config)
     }
 
-    override fun loadSearchVideos(query: String, gqlClientId: String?, coroutineScope: CoroutineScope): Listing<Video> {
-        val factory = SearchVideosDataSource.Factory(query, gqlClientId, gql, coroutineScope)
+    override fun loadSearchVideos(query: String, gqlClientId: String?, apiPref: ArrayList<Pair<Long?, String?>?>?, coroutineScope: CoroutineScope): Listing<Video> {
+        val factory = SearchVideosDataSource.Factory(query, gqlClientId, gql, apiPref, coroutineScope)
         val config = PagedList.Config.Builder()
             .setPageSize(10)
             .setInitialLoadSizeHint(15)
@@ -228,12 +229,12 @@ class ApiRepository @Inject constructor(
 
     override suspend fun loadStream(channelId: String, channelLogin: String?, helixClientId: String?, helixToken: String?, gqlClientId: String?): Stream? = withContext(Dispatchers.IO) {
         try {
-            val get = apolloClient(XtraModule(), gqlClientId).query(StreamsQuery(Optional.Present(mutableListOf(channelId)))).execute().data?.users?.firstOrNull()
+            val get = apolloClient(XtraModule(), gqlClientId).query(UserStreamsQuery(Optional.Present(mutableListOf(channelId)))).execute().data?.users?.firstOrNull()
             if (get != null) {
-                Stream(id = get.stream?.id, user_id = channelId, user_login = get.login, user_name = get.displayName,
-                    game_id = get.stream?.game?.id, game_name = get.stream?.game?.displayName, type = get.stream?.type,
-                    title = get.stream?.title, viewer_count = get.stream?.viewersCount, started_at = get.stream?.createdAt,
-                    thumbnail_url = get.stream?.previewImageURL, profileImageURL = get.profileImageURL)
+                Stream(id = get.stream?.id, user_id = channelId, user_login = get.login, user_name = get.displayName, game_id = get.stream?.game?.id,
+                    game_name = get.stream?.game?.displayName, type = get.stream?.type, title = get.stream?.broadcaster?.broadcastSettings?.title,
+                    viewer_count = get.stream?.viewersCount, started_at = get.stream?.createdAt.toString(), thumbnail_url = get.stream?.previewImageURL,
+                    profileImageURL = get.profileImageURL)
             } else null
         } catch (e: Exception) {
             try {
@@ -248,7 +249,7 @@ class ApiRepository @Inject constructor(
         try {
             val userIds = mutableListOf<String>()
             userIds.add(channelId)
-            val get = apolloClient(XtraModule(), gqlClientId).query(StreamUserQuery(Optional.Present(userIds))).execute().data
+            val get = apolloClient(XtraModule(), gqlClientId).query(UserWithStreamQuery(Optional.Present(userIds))).execute().data
             if (get != null) {
                 val user = User(id = channelId, login = get.users?.first()?.login, display_name = get.users?.first()?.displayName, profile_image_url = get.users?.first()?.profileImageURL,
                     bannerImageURL = get.users?.first()?.bannerImageURL, view_count = get.users?.first()?.profileViewCount, created_at = get.users?.first()?.createdAt?.toString(),
@@ -267,7 +268,7 @@ class ApiRepository @Inject constructor(
                 )
                 Stream(id = get.users?.first()?.stream?.id, user_id = channelId, user_login = get.users?.first()?.login, user_name = get.users?.first()?.displayName,
                     game_id = get.users?.first()?.stream?.game?.id, game_name = get.users?.first()?.stream?.game?.displayName, type = get.users?.first()?.stream?.type,
-                    title = get.users?.first()?.stream?.title, viewer_count = get.users?.first()?.stream?.viewersCount, started_at = get.users?.first()?.stream?.createdAt,
+                    title = get.users?.first()?.stream?.title, viewer_count = get.users?.first()?.stream?.viewersCount, started_at = get.users?.first()?.stream?.createdAt.toString(),
                     thumbnail_url = get.users?.first()?.stream?.previewImageURL, profileImageURL = get.users?.first()?.profileImageURL, channelUser = user,
                     lastBroadcast = get.users?.first()?.lastBroadcast?.startedAt?.toString())
             } else null
@@ -281,7 +282,7 @@ class ApiRepository @Inject constructor(
             val get = apolloClient(XtraModule(), gqlClientId).query(VideoQuery(Optional.Present(videoId))).execute().data
             if (get != null) {
                 Video(id = videoId, user_id = get.video?.owner?.id, user_login = get.video?.owner?.login, user_name = get.video?.owner?.displayName,
-                    profileImageURL = get.video?.owner?.profileImageURL, title = get.video?.title, createdAt = get.video?.createdAt, thumbnail_url = get.video?.previewThumbnailURL,
+                    profileImageURL = get.video?.owner?.profileImageURL, title = get.video?.title, createdAt = get.video?.createdAt.toString(), thumbnail_url = get.video?.previewThumbnailURL,
                     type = get.video?.broadcastType.toString(), duration = get.video?.lengthSeconds.toString())
             } else null
         } catch (e: Exception) {
@@ -412,7 +413,7 @@ class ApiRepository @Inject constructor(
     }
 
     override suspend fun loadEmotesFromSet(helixClientId: String?, helixToken: String?, setIds: List<String>): List<TwitchEmote>? = withContext(Dispatchers.IO) {
-        helix.getEmotesFromSet(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, setIds).emotes
+        helix.getEmotesFromSet(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, setIds).data
     }
 
     override suspend fun loadUserFollowing(helixClientId: String?, helixToken: String?, userId: String?, channelId: String?, gqlClientId: String?, gqlToken: String?, userLogin: String?): Boolean = withContext(Dispatchers.IO) {

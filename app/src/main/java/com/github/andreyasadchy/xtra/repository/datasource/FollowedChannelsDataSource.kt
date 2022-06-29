@@ -58,25 +58,25 @@ class FollowedChannelsDataSource(
             }
             val remote = try {
                 when (apiPref.elementAt(0)?.second) {
-                    C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial(params) else throw Exception()
-                    C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) gqlQueryInitial(params) else throw Exception()
-                    C.GQL -> if (!gqlToken.isNullOrBlank()) gqlInitial(params) else throw Exception()
+                    C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial() else throw Exception()
+                    C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) gqlQueryInitial() else throw Exception()
+                    C.GQL -> if (!gqlToken.isNullOrBlank()) gqlInitial() else throw Exception()
                     else -> throw Exception()
                 }
             } catch (e: Exception) {
                 try {
                     when (apiPref.elementAt(1)?.second) {
-                        C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial(params) else throw Exception()
-                        C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) gqlQueryInitial(params) else throw Exception()
-                        C.GQL -> if (!gqlToken.isNullOrBlank()) gqlInitial(params) else throw Exception()
+                        C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial() else throw Exception()
+                        C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) gqlQueryInitial() else throw Exception()
+                        C.GQL -> if (!gqlToken.isNullOrBlank()) gqlInitial() else throw Exception()
                         else -> throw Exception()
                     }
                 } catch (e: Exception) {
                     try {
                         when (apiPref.elementAt(2)?.second) {
-                            C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial(params) else throw Exception()
-                            C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) gqlQueryInitial(params) else throw Exception()
-                            C.GQL -> if (!gqlToken.isNullOrBlank()) gqlInitial(params) else throw Exception()
+                            C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial() else throw Exception()
+                            C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) gqlQueryInitial() else throw Exception()
+                            C.GQL -> if (!gqlToken.isNullOrBlank()) gqlInitial() else throw Exception()
                             else -> throw Exception()
                         }
                     } catch (e: Exception) {
@@ -84,7 +84,7 @@ class FollowedChannelsDataSource(
                     }
                 }
             }
-            if (!remote.isNullOrEmpty()) {
+            if (remote.isNotEmpty()) {
                 for (i in remote) {
                     val item = list.find { it.to_id == i.to_id }
                     if (item == null) {
@@ -149,7 +149,7 @@ class FollowedChannelsDataSource(
         }
     }
 
-    private suspend fun helixInitial(params: LoadInitialParams): List<Follow> {
+    private suspend fun helixInitial(): List<Follow> {
         api = C.HELIX
         val get = helixApi.getFollowedChannels(helixClientId, helixToken, userId, 100, offset)
         return if (get.data != null) {
@@ -158,10 +158,13 @@ class FollowedChannelsDataSource(
         } else mutableListOf()
     }
 
-    private suspend fun gqlQueryInitial(params: LoadInitialParams): List<Follow> {
+    private suspend fun gqlQueryInitial(): List<Follow> {
         api = C.GQL_QUERY
-        val get1 = apolloClientWithToken(XtraModule(), gqlClientId, gqlToken)
-            .query(FollowedUsersQuery(id = Optional.Present(userId), first = Optional.Present(100), after = Optional.Present(offset))).execute().data?.user?.follows
+        val get1 = apolloClientWithToken(XtraModule(), gqlClientId, gqlToken).query(FollowedUsersQuery(
+            id = Optional.Present(userId),
+            first = Optional.Present(100),
+            after = Optional.Present(offset)
+        )).execute().data?.user?.follows
         val get = get1?.edges
         val list = mutableListOf<Follow>()
         if (get != null) {
@@ -183,22 +186,20 @@ class FollowedChannelsDataSource(
         return list
     }
 
-    private suspend fun gqlInitial(params: LoadInitialParams): List<Follow> {
+    private suspend fun gqlInitial(): List<Follow> {
         api = C.GQL
         val get = gqlApi.loadFollowedChannels(gqlClientId, gqlToken, 100, offset)
-        return if (!get.data.isNullOrEmpty()) {
-            offset = get.cursor
-            get.data
-        } else mutableListOf()
+        offset = get.cursor
+        return get.data
     }
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<Follow>) {
         loadRange(params, callback) {
             val list = if (!offset.isNullOrBlank()) {
                 when (api) {
-                    C.HELIX -> helixRange(params)
-                    C.GQL_QUERY -> gqlQueryRange(params)
-                    C.GQL -> gqlRange(params)
+                    C.HELIX -> helixRange()
+                    C.GQL_QUERY -> gqlQueryRange()
+                    C.GQL -> gqlRange()
                     else -> mutableListOf()
                 }
             } else mutableListOf()
@@ -235,7 +236,7 @@ class FollowedChannelsDataSource(
         }
     }
 
-    private suspend fun helixRange(params: LoadRangeParams): List<Follow> {
+    private suspend fun helixRange(): List<Follow> {
         val get = helixApi.getFollowedChannels(helixClientId, helixToken, userId, 100, offset)
         return if (get.data != null) {
             offset = get.pagination?.cursor
@@ -243,9 +244,12 @@ class FollowedChannelsDataSource(
         } else mutableListOf()
     }
 
-    private suspend fun gqlQueryRange(params: LoadRangeParams): List<Follow> {
-        val get1 = apolloClientWithToken(XtraModule(), gqlClientId, gqlToken)
-            .query(FollowedUsersQuery(id = Optional.Present(userId), first = Optional.Present(100), after = Optional.Present(offset))).execute().data?.user?.follows
+    private suspend fun gqlQueryRange(): List<Follow> {
+        val get1 = apolloClientWithToken(XtraModule(), gqlClientId, gqlToken).query(FollowedUsersQuery(
+            id = Optional.Present(userId),
+            first = Optional.Present(100),
+            after = Optional.Present(offset)
+        )).execute().data?.user?.follows
         val get = get1?.edges
         val list = mutableListOf<Follow>()
         if (get != null && nextPage && offset != null && offset != "") {
@@ -267,12 +271,10 @@ class FollowedChannelsDataSource(
         return list
     }
 
-    private suspend fun gqlRange(params: LoadRangeParams): List<Follow> {
+    private suspend fun gqlRange(): List<Follow> {
         val get = gqlApi.loadFollowedChannels(gqlClientId, gqlToken, 100, offset)
-        return if (!get.data.isNullOrEmpty()) {
-            offset = get.cursor
-            get.data
-        } else mutableListOf()
+        offset = get.cursor
+        return get.data
     }
 
     private fun updateLocalUser(context: Context, userId: String, profileImageURL: String) {

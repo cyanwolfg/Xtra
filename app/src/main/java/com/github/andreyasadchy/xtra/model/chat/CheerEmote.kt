@@ -2,7 +2,7 @@ package com.github.andreyasadchy.xtra.model.chat
 
 class CheerEmote(
     override val name: String,
+    override val url: String,
+    override val type: String?,
     val minBits: Int,
-    val color: String? = null,
-    override val type: String,
-    override val url: String) : Emote()
+    val color: String? = null) : Emote()

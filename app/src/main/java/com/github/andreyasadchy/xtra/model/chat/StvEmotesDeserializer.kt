@@ -12,14 +12,21 @@ class StvEmotesDeserializer : JsonDeserializer<StvEmotesResponse> {
     @Throws(JsonParseException::class)
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): StvEmotesResponse {
         val emotes = mutableListOf<StvEmote>()
-        for (i in 0 until json.asJsonArray.size()) {
-            val emote = json.asJsonArray.get(i).asJsonObject
-            val urls = emote.getAsJsonArray("urls")
-            val quality = urls.get(when (emoteQuality) {"4" -> 3 "3" -> 2 "2" -> 1 else -> 0}).asJsonArray
-            val url = quality.get(1)
-            val visibility = emote.getAsJsonArray("visibility_simple")
-            val zerowidth = visibility.toString().contains("ZERO_WIDTH")
-            emotes.add(StvEmote(emote.get("name").asString, emote.get("mime").asString, url.asString, zerowidth))
+        json.asJsonArray?.forEach { emote ->
+            emote.asJsonObject?.let { obj ->
+                obj.get("name")?.asString?.let { name ->
+                    val urls = obj.getAsJsonArray("urls")
+                    val url = urls.get(when (emoteQuality) {"4" -> 3 "3" -> 2 "2" -> 1 else -> 0})?.asJsonArray?.get(1)?.takeUnless { it?.isJsonNull == true }?.asString ?: urls.get(2)?.asJsonArray?.get(1)?.takeUnless { it?.isJsonNull == true }?.asString ?: urls.get(1)?.asJsonArray?.get(1)?.takeUnless { it?.isJsonNull == true }?.asString ?: urls.get(0)?.asJsonArray?.get(1)?.asString
+                    url?.let {
+                        emotes.add(StvEmote(
+                            name = name,
+                            url = url,
+                            type = obj.get("mime")?.asString,
+                            isZeroWidth = obj.getAsJsonArray("visibility_simple")?.toString()?.contains("ZERO_WIDTH") == true
+                        ))
+                    }
+                }
+            }
         }
         return StvEmotesResponse(emotes)
     }

@@ -544,6 +544,7 @@ Removes a timeout on a user.</string>
     <string name="lang_auto">System default</string>
     <string name="lang_en">English</string>
     <string name="lang_ar">Arabic</string>
+    <string name="lang_de">German</string>
     <string name="lang_es">Spanish</string>
     <string name="lang_ja">Japanese</string>
     <string name="lang_pt">Portuguese (Brazil)</string>
@@ -554,4 +555,5 @@ Removes a timeout on a user.</string>
     <string name="viewers_low">Viewers (low to high)</string>
     <string name="tags">Tags</string>
     <string name="show_player_mode">Show audio only button</string>
+    <string name="search_videos">Search videos</string>
 </resources>

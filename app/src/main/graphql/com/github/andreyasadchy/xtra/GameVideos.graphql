@@ -1,22 +1,26 @@
 query GameVideos($id: ID, $name: String, $languages: [String!], $sort: VideoSort, $type: [BroadcastType!], $first: Int, $after: Cursor) {
     game(id: $id, name: $name) {
-        videos(languages: $languages, sort: $sort, types: $type, first: $first, after: $after) {
+        videos(first: $first, after: $after, languages: $languages, types: $type, sort: $sort) {
             edges {
                 cursor
                 node {
-                    id
                     broadcastType
-                    title
+                    contentTags {
+                        id
+                        localizedName
+                    }
                     createdAt
-                    previewThumbnailURL
-                    viewCount
+                    id
                     lengthSeconds
                     owner {
+                        displayName
                         id
                         login
-                        displayName
                         profileImageURL(width: 300)
                     }
+                    previewThumbnailURL
+                    title
+                    viewCount
                 }
             }
             pageInfo {

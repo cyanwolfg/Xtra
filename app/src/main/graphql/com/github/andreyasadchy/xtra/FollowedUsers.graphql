@@ -5,13 +5,13 @@ query FollowedUsers($id: ID, $first: Int, $after: Cursor) {
                 cursor
                 followedAt
                 node {
-                    id
-                    login
                     displayName
-                    profileImageURL(width: 300)
+                    id
                     lastBroadcast {
                         startedAt
                     }
+                    login
+                    profileImageURL(width: 300)
                 }
             }
             pageInfo {

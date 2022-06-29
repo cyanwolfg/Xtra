@@ -8,6 +8,7 @@ import com.github.andreyasadchy.xtra.api.HelixApi
 import com.github.andreyasadchy.xtra.di.XtraModule
 import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory
 import com.github.andreyasadchy.xtra.model.helix.stream.Stream
+import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.repository.GraphQLRepository
 import com.github.andreyasadchy.xtra.util.C
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +31,7 @@ class StreamsDataSource private constructor(
             try {
                 when (apiPref.elementAt(0)?.second) {
                     C.HELIX -> if (!helixToken.isNullOrBlank() && tags.isNullOrEmpty()) helixInitial(params) else throw Exception()
-                    C.GQL_QUERY -> if (tags.isNullOrEmpty()) gqlQueryInitial(params) else throw Exception()
+                    C.GQL_QUERY -> gqlQueryInitial(params)
                     C.GQL -> gqlInitial(params)
                     else -> throw Exception()
                 }
@@ -38,7 +39,7 @@ class StreamsDataSource private constructor(
                 try {
                     when (apiPref.elementAt(1)?.second) {
                         C.HELIX -> if (!helixToken.isNullOrBlank() && tags.isNullOrEmpty()) helixInitial(params) else throw Exception()
-                        C.GQL_QUERY -> if (tags.isNullOrEmpty()) gqlQueryInitial(params) else throw Exception()
+                        C.GQL_QUERY -> gqlQueryInitial(params)
                         C.GQL -> gqlInitial(params)
                         else -> throw Exception()
                     }
@@ -46,7 +47,7 @@ class StreamsDataSource private constructor(
                     try {
                         when (apiPref.elementAt(2)?.second) {
                             C.HELIX -> if (!helixToken.isNullOrBlank() && tags.isNullOrEmpty()) helixInitial(params) else throw Exception()
-                            C.GQL_QUERY -> if (tags.isNullOrEmpty()) gqlQueryInitial(params) else throw Exception()
+                            C.GQL_QUERY -> gqlQueryInitial(params)
                             C.GQL -> gqlInitial(params)
                             else -> throw Exception()
                         }
@@ -84,12 +85,22 @@ class StreamsDataSource private constructor(
 
     private suspend fun gqlQueryInitial(params: LoadInitialParams): List<Stream> {
         api = C.GQL_QUERY
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId)
-            .query(TopStreamsQuery(first = Optional.Present(params.requestedLoadSize), after = Optional.Present(offset))).execute().data?.streams
+        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(TopStreamsQuery(
+            tags = Optional.Present(tags),
+            first = Optional.Present(params.requestedLoadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.streams
         val get = get1?.edges
         val list = mutableListOf<Stream>()
         if (get != null) {
             for (i in get) {
+                val tags = mutableListOf<Tag>()
+                i?.node?.tags?.forEach { tag ->
+                    tags.add(Tag(
+                        id = tag.id,
+                        name = tag.localizedName
+                    ))
+                }
                 list.add(Stream(
                     id = i?.node?.id,
                     user_id = i?.node?.broadcaster?.id,
@@ -98,14 +109,15 @@ class StreamsDataSource private constructor(
                     game_id = i?.node?.game?.id,
                     game_name = i?.node?.game?.displayName,
                     type = i?.node?.type,
-                    title = i?.node?.title,
+                    title = i?.node?.broadcaster?.broadcastSettings?.title,
                     viewer_count = i?.node?.viewersCount,
-                    started_at = i?.node?.createdAt,
+                    started_at = i?.node?.createdAt.toString(),
                     thumbnail_url = i?.node?.previewImageURL,
-                    profileImageURL = i?.node?.broadcaster?.profileImageURL
+                    profileImageURL = i?.node?.broadcaster?.profileImageURL,
+                    tags = tags
                 ))
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list
@@ -155,12 +167,22 @@ class StreamsDataSource private constructor(
     }
 
     private suspend fun gqlQueryRange(params: LoadRangeParams): List<Stream> {
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId)
-            .query(TopStreamsQuery(first = Optional.Present(params.loadSize), after = Optional.Present(offset))).execute().data?.streams
+        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(TopStreamsQuery(
+            tags = Optional.Present(tags),
+            first = Optional.Present(params.loadSize),
+            after = Optional.Present(offset)
+        )).execute().data?.streams
         val get = get1?.edges
         val list = mutableListOf<Stream>()
         if (get != null && nextPage && offset != null && offset != "") {
             for (i in get) {
+                val tags = mutableListOf<Tag>()
+                i?.node?.tags?.forEach { tag ->
+                    tags.add(Tag(
+                        id = tag.id,
+                        name = tag.localizedName
+                    ))
+                }
                 list.add(Stream(
                     id = i?.node?.id,
                     user_id = i?.node?.broadcaster?.id,
@@ -169,14 +191,15 @@ class StreamsDataSource private constructor(
                     game_id = i?.node?.game?.id,
                     game_name = i?.node?.game?.displayName,
                     type = i?.node?.type,
-                    title = i?.node?.title,
+                    title = i?.node?.broadcaster?.broadcastSettings?.title,
                     viewer_count = i?.node?.viewersCount,
-                    started_at = i?.node?.createdAt,
+                    started_at = i?.node?.createdAt.toString(),
                     thumbnail_url = i?.node?.previewImageURL,
-                    profileImageURL = i?.node?.broadcaster?.profileImageURL
+                    profileImageURL = i?.node?.broadcaster?.profileImageURL,
+                    tags = tags
                 ))
             }
-            offset = get.lastOrNull()?.cursor
+            offset = get.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list

@@ -11,14 +11,14 @@ class ClipDataDeserializer : JsonDeserializer<ClipDataResponse> {
 
     @Throws(JsonParseException::class)
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ClipDataResponse {
-        val obj = json.asJsonObject.getAsJsonObject("data").getAsJsonObject("clip")
+        val obj = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("clip")
         val data = (Clip(
             id = "",
-            broadcaster_id = if (!(obj.get("broadcaster").isJsonNull)) { obj.getAsJsonObject("broadcaster").getAsJsonPrimitive("id").asString } else null,
-            broadcaster_login = if (!(obj.get("broadcaster").isJsonNull)) { obj.getAsJsonObject("broadcaster").getAsJsonPrimitive("login").asString } else null,
-            broadcaster_name = if (!(obj.get("broadcaster").isJsonNull)) { obj.getAsJsonObject("broadcaster").getAsJsonPrimitive("displayName").asString } else null,
-            profileImageURL = if (!(obj.get("broadcaster").isJsonNull)) { obj.getAsJsonObject("broadcaster").getAsJsonPrimitive("profileImageURL").asString } else null,
-            videoOffsetSeconds = if (!(obj.get("videoOffsetSeconds").isJsonNull)) { obj.getAsJsonPrimitive("videoOffsetSeconds").asInt } else null,
+            broadcaster_id = obj?.getAsJsonObject("broadcaster")?.getAsJsonPrimitive("id")?.asString,
+            broadcaster_login = obj?.getAsJsonObject("broadcaster")?.getAsJsonPrimitive("login")?.asString,
+            broadcaster_name = obj?.getAsJsonObject("broadcaster")?.getAsJsonPrimitive("displayName")?.asString,
+            profileImageURL = obj?.getAsJsonObject("broadcaster")?.getAsJsonPrimitive("profileImageURL")?.asString,
+            videoOffsetSeconds = obj?.getAsJsonPrimitive("videoOffsetSeconds")?.asInt,
         ))
         return ClipDataResponse(data)
     }

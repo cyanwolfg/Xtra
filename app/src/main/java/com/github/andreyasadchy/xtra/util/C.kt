@@ -143,6 +143,7 @@ object C {
     const val API_PREF_GAME_CLIPS = "api_pref_game_clips"
     const val API_PREF_CHANNEL_VIDEOS = "api_pref_channel_videos"
     const val API_PREF_CHANNEL_CLIPS = "api_pref_channel_clips"
+    const val API_PREF_SEARCH_VIDEOS = "api_pref_search_videos"
     const val API_PREF_SEARCH_CHANNEL = "api_pref_search_channel"
     const val API_PREF_SEARCH_GAMES = "api_pref_search_games"
     const val API_PREF_FOLLOWED_STREAMS = "api_pref_followed_streams"

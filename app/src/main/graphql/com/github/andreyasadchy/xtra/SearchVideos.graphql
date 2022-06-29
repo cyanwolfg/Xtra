@@ -1,0 +1,33 @@
+query SearchVideos($query: String!, $first: Int, $after: String) {
+    searchFor(userQuery: $query, platform: "", target: { cursor: $after, index: VOD, limit: $first }) {
+        videos {
+            cursor
+            items {
+                broadcastType
+                contentTags {
+                    id
+                    localizedName
+                }
+                createdAt
+                game {
+                    displayName
+                    id
+                }
+                id
+                lengthSeconds
+                owner {
+                    displayName
+                    id
+                    login
+                    profileImageURL(width: 300)
+                }
+                previewThumbnailURL
+                title
+                viewCount
+            }
+            pageInfo {
+                hasNextPage
+            }
+        }
+    }
+}

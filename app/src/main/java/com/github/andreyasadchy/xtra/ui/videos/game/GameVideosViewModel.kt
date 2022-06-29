@@ -55,9 +55,7 @@ class GameVideosViewModel @Inject constructor(
         } else null
         repository.loadGameVideos(it.gameId, it.gameName, it.helixClientId, it.helixToken, it.period, it.broadcastType, language?.lowercase(), it.sort, it.gqlClientId,
             if (language != null) {
-                val langList = mutableListOf<String>()
-                langList.add(language)
-                langList
+                listOf(language)
             } else null,
             when (it.broadcastType) {
                 BroadcastType.ARCHIVE -> com.github.andreyasadchy.xtra.type.BroadcastType.ARCHIVE
