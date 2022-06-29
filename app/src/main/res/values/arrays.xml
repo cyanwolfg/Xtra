@@ -160,6 +160,7 @@
         <item>@string/lang_auto</item>
         <item>@string/lang_en</item>
         <item>@string/lang_ar</item>
+        <item>@string/lang_de</item>
         <item>@string/lang_es</item>
         <item>@string/lang_ja</item>
         <item>@string/lang_pt</item>
@@ -171,6 +172,7 @@
         <item>auto</item>
         <item>en</item>
         <item>ar</item>
+        <item>de</item>
         <item>es</item>
         <item>ja</item>
         <item>pt</item>
