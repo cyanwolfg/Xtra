@@ -36,7 +36,7 @@
     <string name="chat_reward">Списание баллов канала</string>
     <string name="chat_timeout">%1$s был отстранён от чата на %2$s</string>
     <string name="clips">Клипы</string>
-    <string name="compact_streams_description">Не показывать предварительный просмотр</string>
+    <string name="compact_streams_description">Не показывать предпросмотр</string>
     <string name="compact_streams_title">Компактный интерфейс трансляций на экране подписок</string>
     <string name="connection_error">Ошибка подключения. Пожалуйста, попробуйте ещё раз</string>
     <string name="connection_restored">Соединение восстановлено</string>
@@ -150,15 +150,15 @@
     <string name="set">Старт</string>
     <string name="settings">Настройки</string>
     <string name="settings_chat">ЧАТ</string>
-    <string name="settings_player">ПЛЕЕР</string>
+    <string name="settings_player">ПРОИГРЫВАТЕЛЬ</string>
     <string name="settings_ui">ИНТЕРФЕЙС</string>
-    <string name="show_clearchat">Показывать отстранения и блокировки</string>
-    <string name="show_clearmsg">Показывать удаления отдельных сообщений</string>
+    <string name="show_clearchat">Показать отстранения и блокировки</string>
+    <string name="show_clearmsg">Показать удаления отдельных сообщений</string>
     <string name="show_follow_button">Показать кнопку «Отслеживать»</string>
     <string name="show_scrolltop">Показать прокрутку до верхней кнопки</string>
-    <string name="show_tags">Показывать теги</string>
-    <string name="show_uptime">Показывать время работы стримов</string>
-    <string name="show_usernotice">Показывать уведомления пользователей (подписки, рейды)</string>
+    <string name="show_tags">Показать теги</string>
+    <string name="show_uptime">Показать время работы стримов</string>
+    <string name="show_usernotice">Показать уведомления пользователей (подписки, рейды)</string>
     <string name="skip">Пропустить</string>
     <string name="sleep_timer">Таймер сна</string>
     <string name="sort">Сортировка</string>
@@ -208,7 +208,7 @@
     <string name="video_subscribers_only">Видео доступно только для подписчиков</string>
     <string name="video_type_archive">Прошедшая трансляция</string>
     <string name="video_type_highlight">Яркий момент</string>
-    <string name="video_type_rerun">Повторный запуск</string>
+    <string name="video_type_rerun">Повтор</string>
     <string name="video_type_upload">Отправлено</string>
     <string name="videos">Видео</string>
     <string name="view_count">По числу просмотров</string>
@@ -388,18 +388,18 @@ Use “/subscribersoff” to disable.</string>
     <string name="irc_notice_usage_timeout">Usage: “/timeout &lt;username&gt; [duration][time unit] [reason]”
 Temporarily prevent a user from chatting. Duration (optional, default=10 minutes) must be a positive integer; time unit (optional, default=s) must be one of s, m, h, d, w; maximum duration is 2 weeks. Combinations like 1d2h are also allowed. Reason is optional and will be shown to the target user and other moderators.
 Use “untimeout” to remove a timeout.</string>
-    <string name="irc_notice_usage_unban">Usage: “/unban &lt;username&gt;“
-Removes a ban on a user.</string>
-    <string name="irc_notice_usage_unhost">Usage: “/unhost”
-Stop hosting another channel.</string>
-    <string name="irc_notice_usage_unmod">Usage: “/unmod &lt;username&gt;” - Revoke moderator status from a user. Use “/mods” to list the moderators of this channel.</string>
-    <string name="irc_notice_usage_unraid">Usage: “/unraid”
-Cancel the Raid.</string>
-    <string name="irc_notice_usage_untimeout">Usage: “/untimeout &lt;username&gt;“
-Removes a timeout on a user.</string>
-    <string name="irc_notice_usage_unvip">Usage: “/unvip &lt;username&gt;” - Revoke VIP status from a user. Use “/vips” to list the VIPs of this channel.</string>
-    <string name="irc_notice_usage_user">Usage: “/user” &lt;username&gt; - Display information about a specific user on this channel.</string>
-    <string name="irc_notice_usage_vip">Usage: “/vip &lt;username&gt;” - Grant VIP status to a user. Use “/vips” to list the VIPs of this channel.</string>
+    <string name="irc_notice_usage_unban">Использование: “/unban &lt;username&gt;“
+Убрать блокировку пользователя.</string>
+    <string name="irc_notice_usage_unhost">Использование: “/unhost”
+Остановить хост другого канала.</string>
+    <string name="irc_notice_usage_unmod">Использование: “/unmod &lt;username&gt;” - Забрать статус модератора у пользователя. Используйте “/mods”, чтобы вывести список всех модераторов этого канала.</string>
+    <string name="irc_notice_usage_unraid">Использование: “/unraid”
+Отменить рейд.</string>
+    <string name="irc_notice_usage_untimeout">Использование: “/untimeout &lt;username&gt;“
+Убрать отстранение пользователя.</string>
+    <string name="irc_notice_usage_unvip">Использование: “/unvip &lt;username&gt;” - Забрать статус VIP у пользователя. Используйте “/vips”, чтобы вывести список всех VIP-пользователей этого канала.</string>
+    <string name="irc_notice_usage_user">Использование: “/user” &lt;username&gt; - Отобразить сведения о конкретном пользователе этого канала.</string>
+    <string name="irc_notice_usage_vip">Использование: “/vip &lt;username&gt;” - Выдать статус VIP пользователю. Используйте “/vips”, чтобы вывести список всех VIP-пользователей этого канала.</string>
     <string name="irc_notice_usage_vips">Использование: “/vips” - Выводит список VIP-пользователей этого канала.</string>
     <string name="irc_notice_usage_whisper">Использование: “/w &lt;username&gt; &lt;message&gt;”</string>
     <string name="irc_notice_vip_success">Вы добавили %s в качестве VIP-пользователя этого канала.</string>
@@ -459,7 +459,7 @@ Removes a timeout on a user.</string>
     <string name="irc_msgid_announcement">Объявление</string>
     <string name="debug_secondview">Перемещаемая картинка-в-картинке</string>
     <string name="add_bookmark">Добавить закладку</string>
-    <string name="show_vod_time_left">Показывать оставшееся время в видеоматериале из закладки</string>
+    <string name="show_vod_time_left">Показать оставшееся время в видеоматериале из закладки</string>
     <string name="vod_time_left">Автоматически удалено в %s</string>
     <string name="vod_ignore_user">Игнорировать автоудаление для этого пользователя</string>
     <string name="bookmarks">Закладки</string>
@@ -503,7 +503,7 @@ Removes a timeout on a user.</string>
     <string name="toggle_chat">Переключить чат</string>
     <string name="viewer_list">Список зрителей</string>
     <string name="vod_games">Игры в этом видео</string>
-    <string name="disconnect_chat">Отсоединиться от чата</string>
+    <string name="disconnect_chat">Отключиться от чата</string>
     <string name="volume">Громкость</string>
     <string name="aspect_ratio">Соотношение сторон</string>
     <string name="player_menu">Меню проигрывателя</string>
@@ -519,7 +519,7 @@ Removes a timeout on a user.</string>
     <string name="hide">Скрыть</string>
     <string name="follow_account">Отслеживать с помощью аккаунта Твича</string>
     <string name="follow_local">Отслеживать локально</string>
-    <string name="chat_ssl">Подключаться с SSL</string>
+    <string name="chat_ssl">Подключение через SSL</string>
     <string name="redeemed">Активировал(а) %s</string>
     <string name="user_redeemed">%1$s активировал(а) %2$s</string>
     <string name="enable_pubsub">Включить PubSub</string>
@@ -544,6 +544,6 @@ Removes a timeout on a user.</string>
     <string name="viewers_low">Зрители (по возрастанию)</string>
     <string name="tags">Теги</string>
     <string name="show_player_mode">Кнопка режима «только звук»</string>
-    <string name="lang_de">German</string>
-    <string name="search_videos">Search videos</string>
+    <string name="lang_de">Немецкий</string>
+    <string name="search_videos">Поиск видео</string>
 </resources>
