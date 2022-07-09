@@ -1,10 +1,8 @@
-package com.github.andreyasadchy.xtra.api;
+package com.github.andreyasadchy.xtra.api
 
 import okhttp3.ResponseBody
 import retrofit2.Response
-
-import kotlin.jvm.JvmSuppressWildcards;
-import retrofit2.http.GET;
+import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.QueryMap
 

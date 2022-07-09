@@ -14,6 +14,8 @@ import com.github.andreyasadchy.xtra.model.gql.playlist.StreamPlaylistTokenDeser
 import com.github.andreyasadchy.xtra.model.gql.playlist.StreamPlaylistTokenResponse
 import com.github.andreyasadchy.xtra.model.gql.playlist.VideoPlaylistTokenDeserializer
 import com.github.andreyasadchy.xtra.model.gql.playlist.VideoPlaylistTokenResponse
+import com.github.andreyasadchy.xtra.model.gql.points.ChannelPointsContextDataDeserializer
+import com.github.andreyasadchy.xtra.model.gql.points.ChannelPointsContextDataResponse
 import com.github.andreyasadchy.xtra.model.gql.search.*
 import com.github.andreyasadchy.xtra.model.gql.stream.StreamDataDeserializer
 import com.github.andreyasadchy.xtra.model.gql.stream.StreamDataResponse
@@ -164,6 +166,7 @@ class XtraModule {
                 .registerTypeAdapter(FollowUserDataResponse::class.java, FollowUserDataDeserializer())
                 .registerTypeAdapter(FollowingUserDataResponse::class.java, FollowingUserDataDeserializer())
                 .registerTypeAdapter(FollowingGameDataResponse::class.java, FollowingGameDataDeserializer())
+                .registerTypeAdapter(ChannelPointsContextDataResponse::class.java, ChannelPointsContextDataDeserializer())
                 .create())
     }
 

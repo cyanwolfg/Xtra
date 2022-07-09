@@ -33,13 +33,14 @@ import kotlinx.android.synthetic.main.fragment_media_pager.*
 class ChannelPagerFragment : MediaPagerFragment(), FollowFragment, Scrollable {
 
     companion object {
-        fun newInstance(id: String?, login: String?, name: String?, channelLogo: String?, updateLocal: Boolean = false) = ChannelPagerFragment().apply {
+        fun newInstance(id: String?, login: String?, name: String?, channelLogo: String?, updateLocal: Boolean = false, streamId: String? = null) = ChannelPagerFragment().apply {
             arguments = Bundle().apply {
                 putString(C.CHANNEL_ID, id)
                 putString(C.CHANNEL_LOGIN, login)
                 putString(C.CHANNEL_DISPLAYNAME, name)
                 putString(C.CHANNEL_PROFILEIMAGE, channelLogo)
                 putBoolean(C.CHANNEL_UPDATELOCAL, updateLocal)
+                putString(C.STREAM_ID, streamId)
             }
         }
     }
@@ -165,7 +166,7 @@ class ChannelPagerFragment : MediaPagerFragment(), FollowFragment, Scrollable {
                 watchLive.text = getString(R.string.watch_live)
                 watchLive.setOnClickListener { activity.startStream(stream) }
             } else {
-                watchLive.setOnClickListener { activity.startStream(Stream(user_id = requireArguments().getString(C.CHANNEL_ID), user_login = requireArguments().getString(C.CHANNEL_LOGIN), user_name = requireArguments().getString(C.CHANNEL_DISPLAYNAME), profileImageURL = requireArguments().getString(C.CHANNEL_PROFILEIMAGE))) }
+                watchLive.setOnClickListener { activity.startStream(Stream(id = requireArguments().getString(C.STREAM_ID), user_id = requireArguments().getString(C.CHANNEL_ID), user_login = requireArguments().getString(C.CHANNEL_LOGIN), user_name = requireArguments().getString(C.CHANNEL_DISPLAYNAME), profileImageURL = requireArguments().getString(C.CHANNEL_PROFILEIMAGE))) }
                 if (stream?.lastBroadcast != null) {
                     TwitchApiHelper.formatTimeString(requireContext(), stream.lastBroadcast).let {
                         if (it != null)  {
@@ -201,6 +202,11 @@ class ChannelPagerFragment : MediaPagerFragment(), FollowFragment, Scrollable {
                 requireArguments().putString(C.CHANNEL_LOGIN, it)
             }
         }
+        stream?.id.let {
+            if (it != null && it != requireArguments().getString(C.STREAM_ID)) {
+                requireArguments().putString(C.STREAM_ID, it)
+            }
+        }
         if (stream?.title != null) {
             streamLayout.visible()
             title.visible()
@@ -221,7 +227,7 @@ class ChannelPagerFragment : MediaPagerFragment(), FollowFragment, Scrollable {
         if (stream?.viewer_count != null) {
             streamLayout.visible()
             viewers.visible()
-            viewers.text = TwitchApiHelper.formatViewersCount(requireContext(), stream.viewer_count)
+            viewers.text = TwitchApiHelper.formatViewersCount(requireContext(), stream.viewer_count ?: 0)
         } else {
             viewers.gone()
         }
@@ -315,6 +321,7 @@ class ChannelPagerFragment : MediaPagerFragment(), FollowFragment, Scrollable {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 3 && resultCode == Activity.RESULT_OK) {

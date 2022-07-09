@@ -3,6 +3,7 @@ package com.github.andreyasadchy.xtra.util
 object C {
     const val GAME_ID = "game_id"
     const val GAME_NAME = "game_name"
+    const val STREAM_ID = "stream_id"
     const val CHANNEL_ID = "channel_id"
     const val CHANNEL_LOGIN = "channel_login"
     const val CHANNEL_DISPLAYNAME = "channel_displayname"
@@ -122,6 +123,8 @@ object C {
     const val CHAT_DISABLE = "chat_disable"
     const val CHAT_USE_SSL = "chat_use_ssl"
     const val CHAT_PUBSUB_ENABLED = "chat_pubsub_enabled"
+    const val CHAT_POINTS_COLLECT = "chat_points_collect"
+    const val CHAT_POINTS_NOTIFY = "chat_points_notify"
     const val TOKEN_XDEVICEID = "token_xdeviceid"
     const val TOKEN_DEVICEID = "token_deviceid"
     const val TOKEN_RANDOM_DEVICEID = "token_random_deviceid"

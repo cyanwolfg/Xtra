@@ -546,4 +546,8 @@ Use “untimeout” to remove a timeout.</string>
     <string name="show_player_mode">Кнопка режима «только звук»</string>
     <string name="lang_de">Немецкий</string>
     <string name="search_videos">Поиск видео</string>
+    <string name="points_earned">Received %d channel points</string>
+    <string name="points_notify">Notify when earning channel points</string>
+    <string name="points_collect">Collect channel points automatically</string>
+    <string name="connect_chat">Connect to chat</string>
 </resources>

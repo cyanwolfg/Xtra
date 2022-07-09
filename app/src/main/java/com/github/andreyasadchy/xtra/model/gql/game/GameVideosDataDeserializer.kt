@@ -14,27 +14,29 @@ class GameVideosDataDeserializer : JsonDeserializer<GameVideosDataResponse> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): GameVideosDataResponse {
         val data = mutableListOf<Video>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("game")?.getAsJsonObject("videos")?.getAsJsonArray("edges")
-        val cursor = dataJson?.lastOrNull()?.asJsonObject?.get("cursor")?.asString
-        dataJson?.forEach {
-            it?.asJsonObject?.getAsJsonObject("node")?.let { obj ->
+        val cursor = dataJson?.lastOrNull()?.asJsonObject?.get("cursor")?.takeIf { !it.isJsonNull }?.asString
+        dataJson?.forEach { item ->
+            item?.asJsonObject?.getAsJsonObject("node")?.let { obj ->
                 val tags = mutableListOf<Tag>()
-                obj.getAsJsonArray("contentTags")?.forEach { tag ->
-                    tags.add(Tag(
-                        id = tag.asJsonObject?.getAsJsonPrimitive("id")?.asString,
-                        name = tag.asJsonObject?.getAsJsonPrimitive("localizedName")?.asString
-                    ))
+                obj.get("contentTags")?.takeIf { it.isJsonArray }?.asJsonArray?.forEach { tagElement ->
+                    tagElement?.takeIf { it.isJsonObject }?.asJsonObject.let { tag ->
+                        tags.add(Tag(
+                            id = tag?.get("id")?.takeIf { !it.isJsonNull }?.asString,
+                            name = tag?.get("localizedName")?.takeIf { !it.isJsonNull }?.asString,
+                        ))
+                    }
                 }
                 data.add(Video(
-                    id = obj.getAsJsonPrimitive("id")?.asString ?: "",
-                    user_id = obj.getAsJsonObject("owner")?.getAsJsonPrimitive("id")?.asString,
-                    user_login = obj.getAsJsonObject("owner")?.getAsJsonPrimitive("login")?.asString,
-                    user_name = obj.getAsJsonObject("owner")?.getAsJsonPrimitive("displayName")?.asString,
-                    title = obj.getAsJsonPrimitive("title")?.asString,
-                    createdAt = obj.getAsJsonPrimitive("publishedAt")?.asString,
-                    thumbnail_url = obj.getAsJsonPrimitive("previewThumbnailURL")?.asString,
-                    view_count = obj.getAsJsonPrimitive("viewCount")?.asInt,
-                    duration = obj.getAsJsonPrimitive("lengthSeconds")?.asString,
-                    profileImageURL = obj.getAsJsonObject("owner")?.getAsJsonPrimitive("profileImageURL")?.asString,
+                    id = obj.get("id")?.takeIf { !it.isJsonNull }?.asString ?: "",
+                    user_id = obj.get("owner")?.takeIf { it.isJsonObject }?.asJsonObject?.get("id")?.takeIf { !it.isJsonNull }?.asString,
+                    user_login = obj.get("owner")?.takeIf { it.isJsonObject }?.asJsonObject?.get("login")?.takeIf { !it.isJsonNull }?.asString,
+                    user_name = obj.get("owner")?.takeIf { it.isJsonObject }?.asJsonObject?.get("displayName")?.takeIf { !it.isJsonNull }?.asString,
+                    title = obj.get("title")?.takeIf { !it.isJsonNull }?.asString,
+                    createdAt = obj.get("publishedAt")?.takeIf { !it.isJsonNull }?.asString,
+                    thumbnail_url = obj.get("previewThumbnailURL")?.takeIf { !it.isJsonNull }?.asString,
+                    view_count = obj.get("viewCount")?.takeIf { !it.isJsonNull }?.asInt,
+                    duration = obj.get("lengthSeconds")?.takeIf { !it.isJsonNull }?.asString,
+                    profileImageURL = obj.get("owner")?.takeIf { it.isJsonObject }?.asJsonObject?.get("profileImageURL")?.takeIf { !it.isJsonNull }?.asString,
                     tags = tags
                 ))
             }

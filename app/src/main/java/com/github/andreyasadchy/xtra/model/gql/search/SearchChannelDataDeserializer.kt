@@ -13,17 +13,17 @@ class SearchChannelDataDeserializer : JsonDeserializer<SearchChannelDataResponse
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): SearchChannelDataResponse {
         val data = mutableListOf<ChannelSearch>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("searchFor")?.getAsJsonObject("channels")
-        val cursor = dataJson?.getAsJsonPrimitive("cursor")?.asString
-        dataJson?.getAsJsonArray("edges")?.forEach {
-            it?.asJsonObject?.getAsJsonObject("item")?.let { obj ->
+        val cursor = dataJson?.get("cursor")?.takeIf { !it.isJsonNull }?.asString
+        dataJson?.getAsJsonArray("edges")?.forEach { item ->
+            item?.asJsonObject?.getAsJsonObject("item")?.let { obj ->
                 data.add(ChannelSearch(
-                    id = obj.getAsJsonPrimitive("id")?.asString,
-                    broadcaster_login = obj.getAsJsonPrimitive("login")?.asString,
-                    display_name = obj.getAsJsonPrimitive("displayName")?.asString,
+                    id = obj.get("id")?.takeIf { !it.isJsonNull }?.asString,
+                    broadcaster_login = obj.get("login")?.takeIf { !it.isJsonNull }?.asString,
+                    display_name = obj.get("displayName")?.takeIf { !it.isJsonNull }?.asString,
                     is_live = obj.get("stream")?.isJsonObject,
-                    profileImageURL = obj.getAsJsonPrimitive("profileImageURL")?.asString,
-                    followers_count = obj.getAsJsonObject("followers")?.getAsJsonPrimitive("totalCount")?.asInt,
-                    type = obj.getAsJsonObject("stream")?.getAsJsonPrimitive("type")?.asString
+                    profileImageURL = obj.get("profileImageURL")?.takeIf { !it.isJsonNull }?.asString,
+                    followers_count = obj.get("followers")?.takeIf { it.isJsonObject }?.asJsonObject?.get("totalCount")?.takeIf { !it.isJsonNull }?.asInt,
+                    type = obj.get("stream")?.takeIf { it.isJsonObject }?.asJsonObject?.get("type")?.takeIf { !it.isJsonNull }?.asString,
                 ))
             }
         }

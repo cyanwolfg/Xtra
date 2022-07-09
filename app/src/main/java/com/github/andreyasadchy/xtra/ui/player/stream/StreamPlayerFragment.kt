@@ -54,7 +54,7 @@ class StreamPlayerFragment : BasePlayerFragment(), RadioButtonDialogFragment.OnS
             if (it != null) {
                 it as ChatFragment
             } else {
-                val fragment = ChatFragment.newInstance(channelId, channelLogin, channelName)
+                val fragment = ChatFragment.newInstance(channelId, channelLogin, channelName, stream.id)
                 childFragmentManager.beginTransaction().replace(R.id.chatFragmentContainer, fragment).commit()
                 fragment
             }
@@ -94,7 +94,7 @@ class StreamPlayerFragment : BasePlayerFragment(), RadioButtonDialogFragment.OnS
         }
         viewModel.stream.observe(viewLifecycleOwner) {
             if (it?.viewer_count != null) {
-                viewers.text = TwitchApiHelper.formatCount(requireContext(), it.viewer_count)
+                viewers.text = TwitchApiHelper.formatCount(requireContext(), it.viewer_count ?: 0)
                 if (prefs.getBoolean(C.PLAYER_VIEWERICON, true)) {
                     viewerIcon.visible()
                 }

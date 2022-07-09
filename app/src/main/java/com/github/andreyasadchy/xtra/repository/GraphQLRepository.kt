@@ -13,6 +13,7 @@ import com.github.andreyasadchy.xtra.model.gql.game.GameClipsDataResponse
 import com.github.andreyasadchy.xtra.model.gql.game.GameDataResponse
 import com.github.andreyasadchy.xtra.model.gql.game.GameStreamsDataResponse
 import com.github.andreyasadchy.xtra.model.gql.game.GameVideosDataResponse
+import com.github.andreyasadchy.xtra.model.gql.points.ChannelPointsContextDataResponse
 import com.github.andreyasadchy.xtra.model.gql.search.SearchChannelDataResponse
 import com.github.andreyasadchy.xtra.model.gql.search.SearchGameDataResponse
 import com.github.andreyasadchy.xtra.model.gql.search.SearchVideosDataResponse
@@ -660,6 +661,41 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
             })
         }
         return graphQL.getFollowingGame(clientId, token, json)
+    }
+
+    suspend fun loadChannelPointsContext(clientId: String?, token: String?, channelLogin: String?): ChannelPointsContextDataResponse {
+        val json = JsonObject().apply {
+            addProperty("operationName", "ChannelPointsContext")
+            add("variables", JsonObject().apply {
+                addProperty("channelLogin", channelLogin)
+            })
+            add("extensions", JsonObject().apply {
+                add("persistedQuery", JsonObject().apply {
+                    addProperty("version", 1)
+                    addProperty("sha256Hash", "1530a003a7d374b0380b79db0be0534f30ff46e61cffa2bc0e2468a909fbc024")
+                })
+            })
+        }
+        return graphQL.getChannelPointsContext(clientId, token, json)
+    }
+
+    suspend fun loadClaimPoints(clientId: String?, token: String?, channelId: String?, claimId: String?) {
+        val json = JsonObject().apply {
+            addProperty("operationName", "ClaimCommunityPoints")
+            add("variables", JsonObject().apply {
+                add("input", JsonObject().apply {
+                    addProperty("channelID", channelId)
+                    addProperty("claimID", claimId)
+                })
+            })
+            add("extensions", JsonObject().apply {
+                add("persistedQuery", JsonObject().apply {
+                    addProperty("version", 1)
+                    addProperty("sha256Hash", "46aaeebe02c99afdf4fc97c7c0cba964124bf6b0af229395f1f6d1feed05b3d0")
+                })
+            })
+        }
+        return graphQL.getClaimPoints(clientId, token, json)
     }
 
     suspend fun loadChannelPanel(channelId: String): String? = withContext(Dispatchers.IO) {

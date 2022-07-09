@@ -12,13 +12,13 @@ class ClipUrlsDeserializer : JsonDeserializer<ClipUrlsResponse> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ClipUrlsResponse {
         val data = mutableListOf<ClipUrlsResponse.ClipInfo>()
         val dataJson = json.asJsonArray?.first()?.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("clip")?.getAsJsonArray("videoQualities")
-        dataJson?.forEach {
-            it?.asJsonObject?.let { obj ->
-                obj.getAsJsonPrimitive("sourceURL")?.asString?.let { url ->
+        dataJson?.forEach { item ->
+            item?.asJsonObject?.let { obj ->
+                obj.get("sourceURL")?.takeIf { !it.isJsonNull }?.asString?.let { url ->
                     data.add(ClipUrlsResponse.ClipInfo(
-                        obj.getAsJsonPrimitive("frameRate")?.asInt,
-                        obj.getAsJsonPrimitive("quality")?.asString,
-                        url.replace(Regex("https://[^/]+"),"https://clips-media-assets2.twitch.tv")
+                        frameRate = obj.get("frameRate")?.takeIf { !it.isJsonNull }?.asInt,
+                        quality = obj.get("quality")?.takeIf { !it.isJsonNull }?.asString,
+                        url = url.replace(Regex("https://[^/]+"),"https://clips-media-assets2.twitch.tv")
                     ))
                 }
             }

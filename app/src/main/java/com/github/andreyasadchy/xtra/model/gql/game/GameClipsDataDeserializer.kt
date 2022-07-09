@@ -13,20 +13,20 @@ class GameClipsDataDeserializer : JsonDeserializer<GameClipsDataResponse> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): GameClipsDataResponse {
         val data = mutableListOf<Clip>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("game")?.getAsJsonObject("clips")?.getAsJsonArray("edges")
-        val cursor = dataJson?.lastOrNull()?.asJsonObject?.get("cursor")?.asString
-        dataJson?.forEach {
-            it?.asJsonObject?.getAsJsonObject("node")?.let { obj ->
+        val cursor = dataJson?.lastOrNull()?.asJsonObject?.get("cursor")?.takeIf { !it.isJsonNull }?.asString
+        dataJson?.forEach { item ->
+            item?.asJsonObject?.getAsJsonObject("node")?.let { obj ->
                 data.add(Clip(
-                    id = obj.getAsJsonPrimitive("slug")?.asString ?: "",
-                    broadcaster_id = obj.getAsJsonObject("broadcaster")?.getAsJsonPrimitive("id")?.asString,
-                    broadcaster_login = obj.getAsJsonObject("broadcaster")?.getAsJsonPrimitive("login")?.asString,
-                    broadcaster_name = obj.getAsJsonObject("broadcaster")?.getAsJsonPrimitive("displayName")?.asString,
-                    title = obj.getAsJsonPrimitive("title")?.asString,
-                    view_count = obj.getAsJsonPrimitive("viewCount")?.asInt,
-                    created_at = obj.getAsJsonPrimitive("createdAt")?.asString,
-                    thumbnail_url = obj.getAsJsonPrimitive("thumbnailURL")?.asString,
-                    duration = obj.getAsJsonPrimitive("durationSeconds")?.asDouble,
-                    profileImageURL = obj.getAsJsonObject("broadcaster")?.getAsJsonPrimitive("profileImageURL")?.asString
+                    id = obj.get("slug")?.takeIf { !it.isJsonNull }?.asString ?: "",
+                    broadcaster_id = obj.get("broadcaster")?.takeIf { it.isJsonObject }?.asJsonObject?.get("id")?.takeIf { !it.isJsonNull }?.asString,
+                    broadcaster_login = obj.get("broadcaster")?.takeIf { it.isJsonObject }?.asJsonObject?.get("login")?.takeIf { !it.isJsonNull }?.asString,
+                    broadcaster_name = obj.get("broadcaster")?.takeIf { it.isJsonObject }?.asJsonObject?.get("displayName")?.takeIf { !it.isJsonNull }?.asString,
+                    title = obj.get("title")?.takeIf { !it.isJsonNull }?.asString,
+                    view_count = obj.get("viewCount")?.takeIf { !it.isJsonNull }?.asInt,
+                    created_at = obj.get("createdAt")?.takeIf { !it.isJsonNull }?.asString,
+                    thumbnail_url = obj.get("thumbnailURL")?.takeIf { !it.isJsonNull }?.asString,
+                    duration = obj.get("durationSeconds")?.takeIf { !it.isJsonNull }?.asDouble,
+                    profileImageURL = obj.get("broadcaster")?.takeIf { it.isJsonObject }?.asJsonObject?.get("profileImageURL")?.takeIf { !it.isJsonNull }?.asString
                 ))
             }
         }

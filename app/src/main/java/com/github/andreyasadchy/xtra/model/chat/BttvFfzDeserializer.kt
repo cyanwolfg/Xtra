@@ -21,7 +21,7 @@ class BttvFfzDeserializer : JsonDeserializer<BttvFfzResponse> {
                         emotes.add(FfzEmote(
                             name = name,
                             url = url,
-                            type = obj.get("imageType")?.asString?.let { type -> "image/$type" }
+                            type = obj.get("imageType")?.takeIf { !it.isJsonNull }?.asString?.let { type -> "image/$type" }
                         ))
                     }
                 }

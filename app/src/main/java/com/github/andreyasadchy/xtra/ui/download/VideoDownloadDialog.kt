@@ -50,6 +50,7 @@ class VideoDownloadDialog : BaseDownloadDialog() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?  =
             inflater.inflate(R.layout.dialog_video_download, container, false)
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.videoInfo.observe(viewLifecycleOwner, Observer {

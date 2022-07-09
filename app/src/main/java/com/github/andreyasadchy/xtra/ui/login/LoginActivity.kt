@@ -124,11 +124,13 @@ class LoginActivity : AppCompatActivity(), Injectable {
             settings.javaScriptEnabled = true
             webViewClient = object : WebViewClient() {
 
+                @Deprecated("Deprecated in Java")
                 override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                     loginIfValidUrl(url, gqlAuthUrl, apiSetting)
                     return false
                 }
 
+                @Deprecated("Deprecated in Java")
                 override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
                     val errorMessage = if (errorCode == -11) {
                         getString(R.string.browser_workaround)

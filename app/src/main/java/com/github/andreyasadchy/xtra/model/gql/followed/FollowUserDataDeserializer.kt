@@ -10,7 +10,7 @@ class FollowUserDataDeserializer : JsonDeserializer<FollowUserDataResponse> {
 
     @Throws(JsonParseException::class)
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): FollowUserDataResponse {
-        val error = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("followUser")?.get("error")?.asString
+        val error = json.takeIf { it.isJsonObject }?.asJsonObject?.get("data")?.takeIf { it.isJsonObject }?.asJsonObject?.get("followUser")?.takeIf { it.isJsonObject }?.asJsonObject?.get("error")?.takeIf { !it.isJsonNull }?.asString
         return FollowUserDataResponse(error)
     }
 }

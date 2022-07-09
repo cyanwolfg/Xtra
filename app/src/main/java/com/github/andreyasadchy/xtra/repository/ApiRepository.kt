@@ -1,5 +1,6 @@
 package com.github.andreyasadchy.xtra.repository
 
+import android.util.Base64
 import androidx.core.util.Pair
 import androidx.paging.PagedList
 import com.apollographql.apollo3.api.Optional
@@ -11,6 +12,7 @@ import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory.apolloCli
 import com.github.andreyasadchy.xtra.model.chat.CheerEmote
 import com.github.andreyasadchy.xtra.model.chat.TwitchEmote
 import com.github.andreyasadchy.xtra.model.chat.VideoMessagesResponse
+import com.github.andreyasadchy.xtra.model.gql.points.ChannelPointsContextDataResponse
 import com.github.andreyasadchy.xtra.model.helix.channel.ChannelSearch
 import com.github.andreyasadchy.xtra.model.helix.channel.ChannelViewerList
 import com.github.andreyasadchy.xtra.model.helix.clip.Clip
@@ -32,9 +34,11 @@ import com.github.andreyasadchy.xtra.type.VideoSort
 import com.github.andreyasadchy.xtra.ui.view.chat.animateGifs
 import com.github.andreyasadchy.xtra.ui.view.chat.emoteQuality
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
+import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -240,7 +244,7 @@ class ApiRepository @Inject constructor(
             try {
                 helix.getStreams(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, mutableListOf(channelId)).data?.firstOrNull()
             } catch (e: Exception) {
-                Stream(viewer_count = gql.loadViewerCount(gqlClientId, channelLogin).viewers)
+                null
             }
         }
     }
@@ -442,6 +446,44 @@ class ApiRepository @Inject constructor(
 
     override suspend fun loadChannelViewerListGQL(clientId: String?, channelLogin: String?): ChannelViewerList = withContext(Dispatchers.IO) {
         gql.loadChannelViewerList(clientId, channelLogin).data
+    }
+
+    override suspend fun loadChannelPointsContext(gqlClientId: String?, gqlToken: String?, channelLogin: String?): ChannelPointsContextDataResponse = withContext(Dispatchers.IO){
+        gql.loadChannelPointsContext(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, channelLogin)
+    }
+
+    override suspend fun loadClaimPoints(gqlClientId: String?, gqlToken: String?, channelId: String?, claimID: String?) = withContext(Dispatchers.IO) {
+        gql.loadClaimPoints(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, channelId, claimID)
+    }
+
+    override suspend fun loadMinuteWatched(userId: String?, streamId: String?, channelId: String?, channelLogin: String?) = withContext(Dispatchers.IO) {
+        try {
+            val pageResponse = channelLogin?.let { misc.getChannelPage(it).string() }
+            if (!pageResponse.isNullOrBlank()) {
+                val settingsRegex = Regex("(https://static.twitchcdn.net/config/settings.*?js)")
+                val settingsUrl = settingsRegex.find(pageResponse)?.value
+                val settingsResponse = settingsUrl?.let { misc.getUrl(it).string() }
+                if (!settingsResponse.isNullOrBlank()) {
+                    val spadeRegex = Regex("\"spade_url\":\"(.*?)\"")
+                    val spadeUrl = spadeRegex.find(settingsResponse)?.groups?.get(1)?.value
+                    if (!spadeUrl.isNullOrBlank()) {
+                        val json = JsonObject().apply {
+                            addProperty("event", "minute-watched")
+                            add("properties", JsonObject().apply {
+                                addProperty("channel_id", channelId)
+                                addProperty("broadcast_id", streamId)
+                                addProperty("player", "site")
+                                addProperty("user_id", userId?.toInt())
+                            })
+                        }
+                        val spadeRequest = Base64.encodeToString(json.toString().toByteArray(), Base64.NO_WRAP).toRequestBody()
+                        misc.postUrl(spadeUrl, spadeRequest)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+
+        }
     }
 
     override suspend fun followUser(gqlClientId: String?, gqlToken: String?, userId: String?): Boolean = withContext(Dispatchers.IO) {

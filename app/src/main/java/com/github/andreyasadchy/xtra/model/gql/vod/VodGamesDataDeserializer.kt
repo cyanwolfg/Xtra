@@ -13,14 +13,14 @@ class VodGamesDataDeserializer : JsonDeserializer<VodGamesDataResponse> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): VodGamesDataResponse {
         val data = mutableListOf<Game>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("video")?.getAsJsonObject("moments")?.getAsJsonArray("edges")
-        dataJson?.forEach {
-            it.asJsonObject.getAsJsonObject("node")?.let { obj ->
+        dataJson?.forEach { item ->
+            item.asJsonObject.getAsJsonObject("node")?.let { obj ->
                 data.add(Game(
-                    id = obj.getAsJsonObject("details")?.getAsJsonObject("game")?.getAsJsonPrimitive("id")?.asString,
-                    name = obj.getAsJsonObject("details")?.getAsJsonObject("game")?.getAsJsonPrimitive("displayName")?.asString,
-                    box_art_url = obj.getAsJsonObject("details")?.getAsJsonObject("game")?.getAsJsonPrimitive("boxArtURL")?.asString,
-                    vodPosition = obj.getAsJsonPrimitive("positionMilliseconds")?.asInt,
-                    vodDuration = obj.getAsJsonPrimitive("durationMilliseconds")?.asInt,
+                    id = obj.get("details")?.takeIf { it.isJsonObject }?.asJsonObject?.get("game")?.takeIf { it.isJsonObject }?.asJsonObject?.get("id")?.takeIf { !it.isJsonNull }?.asString,
+                    name = obj.get("details")?.takeIf { it.isJsonObject }?.asJsonObject?.get("game")?.takeIf { it.isJsonObject }?.asJsonObject?.get("displayName")?.takeIf { !it.isJsonNull }?.asString,
+                    box_art_url = obj.get("details")?.takeIf { it.isJsonObject }?.asJsonObject?.get("game")?.takeIf { it.isJsonObject }?.asJsonObject?.get("boxArtURL")?.takeIf { !it.isJsonNull }?.asString,
+                    vodPosition = obj.get("positionMilliseconds")?.takeIf { !it.isJsonNull }?.asInt,
+                    vodDuration = obj.get("durationMilliseconds")?.takeIf { !it.isJsonNull }?.asInt,
                 ))
             }
         }

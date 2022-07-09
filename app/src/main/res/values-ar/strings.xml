@@ -546,4 +546,8 @@ Removes a timeout on a user.</string>
     <string name="show_player_mode">Show audio only button</string>
     <string name="search_videos">Search videos</string>
     <string name="lang_de">German</string>
+    <string name="points_earned">Received %d channel points</string>
+    <string name="points_notify">Notify when earning channel points</string>
+    <string name="points_collect">Collect channel points automatically</string>
+    <string name="connect_chat">Connect to chat</string>
 </resources>

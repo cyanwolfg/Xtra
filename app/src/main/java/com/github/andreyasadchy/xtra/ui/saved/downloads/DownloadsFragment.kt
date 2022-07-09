@@ -35,6 +35,7 @@ class DownloadsFragment : Fragment(), Injectable, Scrollable {
         return inflater.inflate(R.layout.fragment_saved, container, false)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val activity = requireActivity() as MainActivity
@@ -71,6 +72,7 @@ class DownloadsFragment : Fragment(), Injectable, Scrollable {
         recyclerView?.scrollToPosition(0)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 3 && resultCode == Activity.RESULT_OK) {

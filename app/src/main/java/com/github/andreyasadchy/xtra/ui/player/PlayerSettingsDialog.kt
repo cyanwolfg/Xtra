@@ -123,11 +123,20 @@ class PlayerSettingsDialog : ExpandingBottomSheetDialogFragment(), RadioButtonDi
                         }
                     }
                 }
-                if ((parentFragment as? StreamPlayerFragment)?.chatFragment?.isActive() == true && requireContext().prefs().getBoolean(C.PLAYER_MENU_CHAT_DISCONNECT, false)) {
+                if (requireContext().prefs().getBoolean(C.PLAYER_MENU_CHAT_DISCONNECT, false)) {
                     menuChatDisconnect.visible()
-                    menuChatDisconnect.setOnClickListener {
-                        (parentFragment as? StreamPlayerFragment)?.chatFragment?.disconnect()
-                        dismiss()
+                    if ((parentFragment as? StreamPlayerFragment)?.chatFragment?.isActive() == false) {
+                        menuChatDisconnect.text = requireContext().getString(R.string.connect_chat)
+                        menuChatDisconnect.setOnClickListener {
+                            (parentFragment as? StreamPlayerFragment)?.chatFragment?.reconnect()
+                            dismiss()
+                        }
+                    } else {
+                        menuChatDisconnect.text = requireContext().getString(R.string.disconnect_chat)
+                        menuChatDisconnect.setOnClickListener {
+                            (parentFragment as? StreamPlayerFragment)?.chatFragment?.disconnect()
+                            dismiss()
+                        }
                     }
                 }
             }

@@ -8,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Stream(
-        val id: String? = null,
+        var id: String? = null,
         val user_id: String? = null,
         val user_login: String? = null,
         val user_name: String? = null,
@@ -16,7 +16,7 @@ data class Stream(
         val game_name: String? = null,
         val type: String? = null,
         val title: String? = null,
-        val viewer_count: Int? = null,
+        var viewer_count: Int? = null,
         val started_at: String? = null,
         val language: String? = null,
         val thumbnail_url: String? = null,

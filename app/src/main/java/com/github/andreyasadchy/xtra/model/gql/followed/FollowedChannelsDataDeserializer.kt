@@ -13,15 +13,15 @@ class FollowedChannelsDataDeserializer : JsonDeserializer<FollowedChannelsDataRe
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): FollowedChannelsDataResponse {
         val data = mutableListOf<Follow>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("user")?.getAsJsonObject("follows")?.getAsJsonArray("edges")
-        val cursor = dataJson?.lastOrNull()?.asJsonObject?.get("cursor")?.asString
-        dataJson?.forEach {
-            it?.asJsonObject?.getAsJsonObject("node")?.let { obj ->
+        val cursor = dataJson?.lastOrNull()?.asJsonObject?.get("cursor")?.takeIf { !it.isJsonNull }?.asString
+        dataJson?.forEach { item ->
+            item?.asJsonObject?.getAsJsonObject("node")?.let { obj ->
                 data.add(Follow(
-                    to_id = obj.getAsJsonPrimitive("id")?.asString,
-                    to_login = obj.getAsJsonPrimitive("login")?.asString,
-                    to_name = obj.getAsJsonPrimitive("displayName")?.asString,
-                    followed_at = obj.getAsJsonObject("self")?.getAsJsonObject("follower")?.getAsJsonPrimitive("followedAt")?.asString,
-                    profileImageURL = obj.getAsJsonPrimitive("profileImageURL")?.asString,
+                    to_id = obj.get("id")?.takeIf { !it.isJsonNull }?.asString,
+                    to_login = obj.get("login")?.takeIf { !it.isJsonNull }?.asString,
+                    to_name = obj.get("displayName")?.takeIf { !it.isJsonNull }?.asString,
+                    followed_at = obj.get("self")?.takeIf { it.isJsonObject }?.asJsonObject?.get("follower")?.takeIf { it.isJsonObject }?.asJsonObject?.get("followedAt")?.takeIf { !it.isJsonNull }?.asString,
+                    profileImageURL = obj.get("profileImageURL")?.takeIf { !it.isJsonNull }?.asString,
                 ))
             }
         }

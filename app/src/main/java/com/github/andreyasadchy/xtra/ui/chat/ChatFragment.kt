@@ -32,6 +32,7 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
         val channelId = args.getString(KEY_CHANNEL_ID)
         val channelLogin = args.getString(KEY_CHANNEL_LOGIN)
         val channelName = args.getString(KEY_CHANNEL_NAME)
+        val streamId = args.getString(KEY_STREAM_ID)
         val user = User.get(requireContext())
         val userIsLoggedIn = user is LoggedIn
         val useSSl = requireContext().prefs().getBoolean(C.CHAT_USE_SSL, true)
@@ -41,6 +42,8 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
         val showUserNotice = requireContext().prefs().getBoolean(C.CHAT_SHOW_USERNOTICE, true)
         val showClearMsg = requireContext().prefs().getBoolean(C.CHAT_SHOW_CLEARMSG, true)
         val showClearChat = requireContext().prefs().getBoolean(C.CHAT_SHOW_CLEARCHAT, true)
+        val collectPoints = requireContext().prefs().getBoolean(C.CHAT_POINTS_COLLECT, true)
+        val notifyPoints = requireContext().prefs().getBoolean(C.CHAT_POINTS_NOTIFY, false)
         val enableRecentMsg = requireContext().prefs().getBoolean(C.CHAT_RECENT, true)
         val recentMsgLimit = requireContext().prefs().getInt(C.CHAT_RECENT_LIMIT, 100)
         val disableChat = requireContext().prefs().getBoolean(C.CHAT_DISABLE, false)
@@ -49,7 +52,7 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
             false
         } else {
             if (isLive) {
-                viewModel.startLive(useSSl, usePubSub, user, helixClientId, gqlClientId, channelId, channelLogin, channelName, showUserNotice, showClearMsg, showClearChat, enableRecentMsg, recentMsgLimit.toString())
+                viewModel.startLive(useSSl, usePubSub, user, helixClientId, gqlClientId, channelId, channelLogin, channelName, streamId, showUserNotice, showClearMsg, showClearChat, collectPoints, notifyPoints, enableRecentMsg, recentMsgLimit.toString())
                 chatView.init(this)
                 chatView.setCallback(viewModel)
                 if (userIsLoggedIn) {
@@ -88,6 +91,7 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
             viewModel.roomState.observe(viewLifecycleOwner) { chatView.notifyRoomState(it) }
             viewModel.command.observe(viewLifecycleOwner) { chatView.notifyCommand(it) }
             viewModel.reward.observe(viewLifecycleOwner) { chatView.notifyReward(it) }
+            viewModel.pointsEarned.observe(viewLifecycleOwner) { chatView.notifyPointsEarned(it) }
         }
     }
 
@@ -97,6 +101,10 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
 
     fun disconnect() {
         (viewModel.chat as? ChatViewModel.LiveChatController)?.disconnect()
+    }
+
+    fun reconnect() {
+        (viewModel.chat as? ChatViewModel.LiveChatController)?.start()
     }
 
     fun hideKeyboard() {
@@ -146,16 +154,18 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
         private const val KEY_CHANNEL_ID = "channel_id"
         private const val KEY_CHANNEL_LOGIN = "channel_login"
         private const val KEY_CHANNEL_NAME = "channel_name"
+        private const val KEY_STREAM_ID = "streamId"
         private const val KEY_VIDEO_ID = "videoId"
         private const val KEY_START_TIME_EMPTY = "startTime_empty"
         private const val KEY_START_TIME = "startTime"
 
-        fun newInstance(channelId: String?, channelLogin: String?, channelName: String?) = ChatFragment().apply {
+        fun newInstance(channelId: String?, channelLogin: String?, channelName: String?, streamId: String?) = ChatFragment().apply {
             arguments = Bundle().apply {
                 putBoolean(KEY_IS_LIVE, true)
                 putString(KEY_CHANNEL_ID, channelId)
                 putString(KEY_CHANNEL_LOGIN, channelLogin)
                 putString(KEY_CHANNEL_NAME, channelName)
+                putString(KEY_STREAM_ID, streamId)
             }
         }
 

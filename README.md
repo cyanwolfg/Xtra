@@ -9,6 +9,10 @@ Xtra is a Twitch player and browser for Android.
 
 ## Download
 
+[<img src="https://f-droid.org/badge/get-it-on.png"
+      alt="Get it on F-Droid"
+      height="80">](https://f-droid.org/packages/com.github.andreyasadchy.xtra/)
+
 You can find released APKs [here](https://github.com/crackededed/Xtra/releases/tag/latest). Requires Android 5 or higher.
 
 [Here](https://github.com/crackededed/Xtra/releases/tag/api16) is a version for Android 4.1.

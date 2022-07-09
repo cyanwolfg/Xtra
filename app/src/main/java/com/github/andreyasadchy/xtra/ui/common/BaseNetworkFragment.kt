@@ -42,6 +42,7 @@ abstract class BaseNetworkFragment : Fragment(), Injectable {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (enableNetworkCheck) {
@@ -82,6 +83,7 @@ abstract class BaseNetworkFragment : Fragment(), Injectable {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (enableNetworkCheck) {

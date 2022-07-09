@@ -10,7 +10,10 @@ class ViewersDataDeserializer : JsonDeserializer<ViewersDataResponse> {
 
     @Throws(JsonParseException::class)
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ViewersDataResponse {
-        val obj = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("user")?.getAsJsonObject("stream")?.getAsJsonPrimitive("viewersCount")?.asInt
-        return ViewersDataResponse(obj)
+        val obj = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("user")?.getAsJsonObject("stream")
+        return ViewersDataResponse(
+            streamId = obj?.get("id")?.takeIf { !it.isJsonNull }?.asString,
+            viewers = obj?.getAsJsonPrimitive("viewersCount")?.asInt
+        )
     }
 }

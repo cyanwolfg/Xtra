@@ -14,20 +14,22 @@ class FollowedGamesDataDeserializer : JsonDeserializer<FollowedGamesDataResponse
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): FollowedGamesDataResponse {
         val data = mutableListOf<Game>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("currentUser")?.getAsJsonObject("followedGames")?.getAsJsonArray("nodes")
-        dataJson?.forEach {
-            it?.asJsonObject?.let { obj ->
+        dataJson?.forEach { item ->
+            item?.asJsonObject?.let { obj ->
                 val tags = mutableListOf<Tag>()
-                obj.getAsJsonArray("tags")?.forEach { tag ->
-                    tags.add(Tag(
-                        id = tag.asJsonObject?.getAsJsonPrimitive("id")?.asString,
-                        name = tag.asJsonObject?.getAsJsonPrimitive("localizedName")?.asString
-                    ))
+                obj.get("tags")?.takeIf { it.isJsonArray }?.asJsonArray?.forEach { tagElement ->
+                    tagElement?.takeIf { it.isJsonObject }?.asJsonObject.let { tag ->
+                        tags.add(Tag(
+                            id = tag?.get("id")?.takeIf { !it.isJsonNull }?.asString,
+                            name = tag?.get("localizedName")?.takeIf { !it.isJsonNull }?.asString,
+                        ))
+                    }
                 }
                 data.add(Game(
-                    id = obj.getAsJsonPrimitive("id")?.asString,
-                    name = obj.getAsJsonPrimitive("displayName")?.asString,
-                    box_art_url = obj.getAsJsonPrimitive("boxArtURL")?.asString,
-                    viewersCount = obj.getAsJsonPrimitive("viewersCount")?.asInt ?: 0, // returns null if 0
+                    id = obj.get("id")?.takeIf { !it.isJsonNull }?.asString,
+                    name = obj.get("displayName")?.takeIf { !it.isJsonNull }?.asString,
+                    box_art_url = obj.get("boxArtURL")?.takeIf { !it.isJsonNull }?.asString,
+                    viewersCount = obj.get("viewersCount")?.takeIf { !it.isJsonNull }?.asInt ?: 0, // returns null if 0
                     tags = tags
                 ))
             }

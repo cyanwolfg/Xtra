@@ -25,6 +25,7 @@ import com.github.andreyasadchy.xtra.ui.common.ChatAdapter
 import com.github.andreyasadchy.xtra.ui.view.SlidingLayout
 import com.github.andreyasadchy.xtra.util.*
 import com.github.andreyasadchy.xtra.util.chat.Command
+import com.github.andreyasadchy.xtra.util.chat.PointsEarned
 import com.github.andreyasadchy.xtra.util.chat.RoomState
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.auto_complete_emotes_list_item.view.*
@@ -152,8 +153,6 @@ class ChatView : ConstraintLayout {
                 "0" -> textEmote.gone()
                 "1" -> textEmote.visible()
             }
-        } else {
-            textEmote.gone()
         }
         if (roomState.followers != null) {
             when (roomState.followers) {
@@ -167,16 +166,12 @@ class ChatView : ConstraintLayout {
                     textFollowers.visible()
                 }
             }
-        } else {
-            textFollowers.gone()
         }
         if (roomState.unique != null) {
             when (roomState.unique) {
                 "0" -> textUnique.gone()
                 "1" -> textUnique.visible()
             }
-        } else {
-            textUnique.gone()
         }
         if (roomState.slow != null) {
             when (roomState.slow) {
@@ -186,16 +181,12 @@ class ChatView : ConstraintLayout {
                     textSlow.visible()
                 }
             }
-        } else {
-            textSlow.gone()
         }
         if (roomState.subs != null) {
             when (roomState.subs) {
                 "0" -> textSubs.gone()
                 "1" -> textSubs.visible()
             }
-        } else {
-            textSubs.gone()
         }
         if (textEmote.isGone && textFollowers.isGone && textUnique.isGone && textSlow.isGone && textSubs.isGone) {
             showFlexbox = false
@@ -259,6 +250,12 @@ class ChatView : ConstraintLayout {
                 }
             }
         }
+    }
+
+    fun notifyPointsEarned(points: PointsEarned) {
+        val message = context.getString(R.string.points_earned, points.pointsGained)
+        adapter.messages?.add(LiveChatMessage(message = message, color = "#999999", isAction = true, timestamp = points.timestamp, fullMsg = points.fullMsg))
+        notifyMessageAdded()
     }
 
     fun addRecentMessages(list: List<LiveChatMessage>) {

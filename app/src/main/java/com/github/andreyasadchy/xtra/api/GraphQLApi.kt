@@ -14,6 +14,7 @@ import com.github.andreyasadchy.xtra.model.gql.game.GameStreamsDataResponse
 import com.github.andreyasadchy.xtra.model.gql.game.GameVideosDataResponse
 import com.github.andreyasadchy.xtra.model.gql.playlist.StreamPlaylistTokenResponse
 import com.github.andreyasadchy.xtra.model.gql.playlist.VideoPlaylistTokenResponse
+import com.github.andreyasadchy.xtra.model.gql.points.ChannelPointsContextDataResponse
 import com.github.andreyasadchy.xtra.model.gql.search.SearchChannelDataResponse
 import com.github.andreyasadchy.xtra.model.gql.search.SearchGameDataResponse
 import com.github.andreyasadchy.xtra.model.gql.search.SearchVideosDataResponse
@@ -135,6 +136,12 @@ interface GraphQLApi {
 
     @POST(".")
     suspend fun getFollowingGame(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Body json: JsonObject): FollowingGameDataResponse
+
+    @POST(".")
+    suspend fun getChannelPointsContext(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Body json: JsonObject): ChannelPointsContextDataResponse
+
+    @POST(".")
+    suspend fun getClaimPoints(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Body json: JsonObject)
 
     @POST(".")
     suspend fun getChannelPanel(@Body json: JsonArray): Response<ResponseBody>

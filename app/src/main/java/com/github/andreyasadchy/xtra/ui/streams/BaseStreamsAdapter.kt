@@ -28,7 +28,7 @@ abstract class BaseStreamsAdapter(
         }) {
 
     override fun bind(item: Stream, view: View) {
-        val channelListener: (View) -> Unit = { channelClickListener.viewChannel(item.user_id, item.user_login, item.user_name, item.channelLogo) }
+        val channelListener: (View) -> Unit = { channelClickListener.viewChannel(item.user_id, item.user_login, item.user_name, item.channelLogo, streamId = item.id) }
         val gameListener: (View) -> Unit = { gameClickListener.openGame(item.game_id, item.game_name) }
         with(view) {
             setOnClickListener { clickListener.startStream(item) }

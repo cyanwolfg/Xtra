@@ -98,6 +98,7 @@ class AudioPlayerService : Service() {
         }
         player.apply {
             addListener(object : Player.EventListener {
+                @Deprecated("Deprecated in Java")
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     if (restorePosition && playbackState == Player.STATE_READY) {
                         restorePosition = false
@@ -120,23 +121,23 @@ class AudioPlayerService : Service() {
             }
         }
         playerNotificationManager = CustomPlayerNotificationManager(
-                this,
-                channelId,
-                System.currentTimeMillis().toInt(),
-                DescriptionAdapter(intent.getStringExtra(KEY_TITLE), intent.getStringExtra(KEY_CHANNEL_NAME) ?: "", intent.getStringExtra(KEY_IMAGE_URL) ?: ""),
-                object : PlayerNotificationManager.NotificationListener {
-                    override fun onNotificationPosted(notificationId: Int, notification: Notification, ongoing: Boolean) {
-                        startForeground(notificationId, notification)
-                    }
+            this,
+            channelId,
+            System.currentTimeMillis().toInt(),
+            DescriptionAdapter(intent.getStringExtra(KEY_TITLE), intent.getStringExtra(KEY_CHANNEL_NAME) ?: "", intent.getStringExtra(KEY_IMAGE_URL) ?: ""),
+            object : PlayerNotificationManager.NotificationListener {
+                override fun onNotificationPosted(notificationId: Int, notification: Notification, ongoing: Boolean) {
+                    startForeground(notificationId, notification)
+                }
 
-                    override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            stopForeground(STOP_FOREGROUND_REMOVE)
-                        } else {
-                            stopForeground(true)
-                        }
+                override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        stopForeground(STOP_FOREGROUND_REMOVE)
+                    } else {
+                        stopForeground(true)
                     }
-                },
+                }
+            },
             !usePlayPause
         ).apply {
             setUseNavigationActions(false)
@@ -168,11 +169,11 @@ class AudioPlayerService : Service() {
 
     private fun createMediaSource() {
         mediaSource = HlsMediaSource.Factory(DefaultDataSourceFactory(this, Util.getUserAgent(this, getString(R.string.app_name))))
-                .setAllowChunklessPreparation(true)
-                .setPlaylistParserFactory(DefaultHlsPlaylistParserFactory())
-                .setPlaylistTrackerFactory(DefaultHlsPlaylistTracker.FACTORY)
-                .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(6))
-                .createMediaSource(playlistUrl)
+            .setAllowChunklessPreparation(true)
+            .setPlaylistParserFactory(DefaultHlsPlaylistParserFactory())
+            .setPlaylistTrackerFactory(DefaultHlsPlaylistTracker.FACTORY)
+            .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(6))
+            .createMediaSource(playlistUrl)
     }
 
     inner class AudioBinder : Binder() {
@@ -206,9 +207,9 @@ class AudioPlayerService : Service() {
     }
 
     private inner class DescriptionAdapter(
-            private val text: String?,
-            private val title: String,
-            private val imageUrl: String) : PlayerNotificationManager.MediaDescriptionAdapter {
+        private val text: String?,
+        private val title: String,
+        private val imageUrl: String) : PlayerNotificationManager.MediaDescriptionAdapter {
 
         private var largeIcon: Bitmap? = null
 
@@ -228,17 +229,17 @@ class AudioPlayerService : Service() {
             if (largeIcon == null) {
                 try {
                     GlideApp.with(this@AudioPlayerService)
-                            .asBitmap()
-                            .load(imageUrl)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .into(object : CustomTarget<Bitmap>() {
-                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                    callback.onBitmap(resource)
-                                    largeIcon = resource
-                                }
+                        .asBitmap()
+                        .load(imageUrl)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(object : CustomTarget<Bitmap>() {
+                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                callback.onBitmap(resource)
+                                largeIcon = resource
+                            }
 
-                                override fun onLoadCleared(placeholder: Drawable?) {}
-                            })
+                            override fun onLoadCleared(placeholder: Drawable?) {}
+                        })
                 } catch (e: Exception) {
 
                 }

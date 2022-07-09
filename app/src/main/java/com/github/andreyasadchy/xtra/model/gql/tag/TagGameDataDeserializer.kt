@@ -13,12 +13,12 @@ class TagGameDataDeserializer : JsonDeserializer<TagGameDataResponse> {
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): TagGameDataResponse {
         val data = mutableListOf<Tag>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonArray("searchCategoryTags")
-        dataJson?.forEach {
-            it?.asJsonObject?.let { obj ->
+        dataJson?.forEach { item ->
+            item?.asJsonObject?.let { obj ->
                 data.add(Tag(
-                    id = obj.getAsJsonPrimitive("id")?.asString,
-                    name = obj.getAsJsonPrimitive("localizedName")?.asString,
-                    scope = obj.getAsJsonPrimitive("scope")?.asString,
+                    id = obj.get("id")?.takeIf { !it.isJsonNull }?.asString,
+                    name = obj.get("localizedName")?.takeIf { !it.isJsonNull }?.asString,
+                    scope = obj.get("scope")?.takeIf { !it.isJsonNull }?.asString,
                 ))
             }
         }

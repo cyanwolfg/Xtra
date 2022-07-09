@@ -21,7 +21,7 @@ class TwitchBadgesDeserializer : JsonDeserializer<TwitchBadgesResponse> {
                             id = set.key,
                             version = version.key,
                             url = url,
-                            title = obj.get("title")?.asString
+                            title = obj.get("title")?.takeIf { !it.isJsonNull }?.asString
                         ))
                     }
                 }

@@ -4,6 +4,7 @@ import androidx.core.util.Pair
 import com.github.andreyasadchy.xtra.model.chat.CheerEmote
 import com.github.andreyasadchy.xtra.model.chat.TwitchEmote
 import com.github.andreyasadchy.xtra.model.chat.VideoMessagesResponse
+import com.github.andreyasadchy.xtra.model.gql.points.ChannelPointsContextDataResponse
 import com.github.andreyasadchy.xtra.model.helix.channel.ChannelSearch
 import com.github.andreyasadchy.xtra.model.helix.channel.ChannelViewerList
 import com.github.andreyasadchy.xtra.model.helix.clip.Clip
@@ -56,6 +57,9 @@ interface TwitchService {
     suspend fun loadVideoChatAfter(gqlClientId: String?, videoId: String, cursor: String): VideoMessagesResponse
     suspend fun loadVodGamesGQL(clientId: String?, videoId: String?): List<Game>?
     suspend fun loadChannelViewerListGQL(clientId: String?, channelLogin: String?): ChannelViewerList
+    suspend fun loadChannelPointsContext(gqlClientId: String?, gqlToken: String?, channelLogin: String?): ChannelPointsContextDataResponse
+    suspend fun loadClaimPoints(gqlClientId: String?, gqlToken: String?, channelId: String?, claimID: String?)
+    suspend fun loadMinuteWatched(userId: String?, streamId: String?, channelId: String?, channelLogin: String?)
     suspend fun followUser(gqlClientId: String?, gqlToken: String?, userId: String?): Boolean
     suspend fun unfollowUser(gqlClientId: String?, gqlToken: String?, userId: String?): Boolean
     suspend fun followGame(gqlClientId: String?, gqlToken: String?, gameId: String?): Boolean

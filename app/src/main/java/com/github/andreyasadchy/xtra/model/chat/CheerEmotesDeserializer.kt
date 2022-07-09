@@ -27,7 +27,7 @@ class CheerEmotesDeserializer : JsonDeserializer<CheerEmotesResponse> {
                         url = url,
                         type = if (animated) "image/gif" else null,
                         minBits = obj.get("min_bits").asInt,
-                        color = obj.get("color")?.asString
+                        color = obj.get("color")?.takeIf { !it.isJsonNull }?.asString
                     ))
                 }
             }

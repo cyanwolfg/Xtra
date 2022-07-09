@@ -26,6 +26,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+var stream_id: String? = null
+
 class StreamPlayerViewModel @Inject constructor(
     context: Application,
     private val playerRepository: PlayerRepository,
@@ -83,12 +85,30 @@ class StreamPlayerViewModel @Inject constructor(
                     try {
                         val s = when {
                             stream.user_id != null -> {
-                                repository.loadStream(stream.user_id, stream.user_login, helixClientId, user.helixToken, gqlClientId)
+                                repository.loadStream(stream.user_id, stream.user_login, helixClientId, user.helixToken, gqlClientId) ?:
+                                gql.loadViewerCount(gqlClientId, stream.user_login).let { get ->
+                                    _stream.value?.apply {
+                                        if (!get.streamId.isNullOrBlank()) {
+                                            id = get.streamId
+                                        }
+                                        viewer_count = get.viewers
+                                    }
+                                }
                             }
                             stream.user_login != null -> {
-                                Stream(viewer_count = gql.loadViewerCount(gqlClientId, stream.user_login).viewers)
+                                gql.loadViewerCount(gqlClientId, stream.user_login).let { get ->
+                                    _stream.value?.apply {
+                                        if (!get.streamId.isNullOrBlank()) {
+                                            id = get.streamId
+                                        }
+                                        viewer_count = get.viewers
+                                    }
+                                }
                             }
                             else -> null
+                        }
+                        if (!s?.id.isNullOrBlank()) {
+                            stream_id = s?.id
                         }
                         _stream.postValue(s)
                         delay(300000L)

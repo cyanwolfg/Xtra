@@ -18,7 +18,7 @@ class BttvGlobalDeserializer : JsonDeserializer<BttvGlobalResponse> {
                         emotes.add(BttvEmote(
                             id = id,
                             name = name,
-                            type = obj.get("imageType")?.asString?.let { type -> "image/$type" }
+                            type = obj.get("imageType")?.takeIf { !it.isJsonNull }?.asString?.let { type -> "image/$type" }
                         ))
                     }
                 }

@@ -13,12 +13,12 @@ class TagGameStreamDataDeserializer : JsonDeserializer<TagGameStreamDataResponse
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): TagGameStreamDataResponse {
         val data = mutableListOf<Tag>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("game")?.getAsJsonArray("tags")
-        dataJson?.forEach {
-            it?.asJsonObject?.let { obj ->
+        dataJson?.forEach { item ->
+            item?.asJsonObject?.let { obj ->
                 data.add(Tag(
-                    id = obj.getAsJsonPrimitive("id")?.asString,
-                    name = obj.getAsJsonPrimitive("localizedName")?.asString,
-                    scope = obj.getAsJsonPrimitive("scope")?.asString,
+                    id = obj.get("id")?.takeIf { !it.isJsonNull }?.asString,
+                    name = obj.get("localizedName")?.takeIf { !it.isJsonNull }?.asString,
+                    scope = obj.get("scope")?.takeIf { !it.isJsonNull }?.asString,
                 ))
             }
         }

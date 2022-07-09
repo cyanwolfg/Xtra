@@ -11,11 +11,16 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 class PubSubWebSocket(
-    channelId: String,
+    private val channelId: String,
+    private val userId: String?,
+    private val gqlToken: String?,
+    private val collectPoints: Boolean,
+    private val notifyPoints: Boolean,
     private val coroutineScope: CoroutineScope,
     private val listener: OnMessageReceivedListener) {
     private var client: OkHttpClient? = null
     private var socket: WebSocket? = null
+    private var isActive = false
     private var pongReceived = false
     private val topics = listOf("community-points-channel-v1.$channelId")
 
@@ -27,15 +32,18 @@ class PubSubWebSocket(
     }
 
     fun disconnect() {
+        isActive = false
         socket?.close(1000, null)
         client?.dispatcher?.cancelAll()
     }
 
     private fun reconnect() {
-        coroutineScope.launch {
-            disconnect()
-            delay(1000)
-            connect()
+        if (isActive) {
+            coroutineScope.launch {
+                disconnect()
+                delay(1000)
+                connect()
+            }
         }
     }
 
@@ -43,33 +51,74 @@ class PubSubWebSocket(
         val message = JSONObject().apply {
             put("type", "LISTEN")
             put("data", JSONObject().apply {
-                put("topics", JSONArray().apply { topics.forEach { put(it) } })
+                put("topics", JSONArray().apply {
+                    topics.forEach { put(it) }
+                    if (!userId.isNullOrBlank() && !gqlToken.isNullOrBlank()) {
+                        if (collectPoints) {
+                            put("community-points-user-v1.$userId")
+                        }
+                    }
+                })
+                if (!userId.isNullOrBlank() && !gqlToken.isNullOrBlank() && collectPoints) {
+                    put("auth_token", gqlToken)
+                }
             })
         }.toString()
         socket?.send(message)
     }
 
     private fun ping() {
-        val ping = JSONObject().apply { put("type", "PING") }.toString()
-        socket?.send(ping)
-        checkPong()
+        if (isActive) {
+            val ping = JSONObject().apply { put("type", "PING") }.toString()
+            socket?.send(ping)
+            checkPong()
+        }
     }
 
     private fun checkPong() {
-        tickerFlow().onCompletion {
-            if (pongReceived) {
-                pongReceived = false
-                delay(270000)
-                ping()
-            } else {
-                reconnect()
+        tickerFlowPong().onCompletion {
+            if (isActive) {
+                if (pongReceived) {
+                    pongReceived = false
+                    checkPongWait()
+                } else {
+                    reconnect()
+                }
             }
         }.launchIn(coroutineScope)
     }
 
-    private fun tickerFlow() = flow {
+    private fun tickerFlowPong() = flow {
         for (i in 10 downTo 0) {
-            if (pongReceived) {
+            if (pongReceived || !isActive) {
+                emit(i downTo 0)
+            } else {
+                emit(i)
+                delay(1000)
+            }
+        }
+    }
+
+    private fun checkPongWait() {
+        tickerFlowActive(270).onCompletion {
+            if (isActive) {
+                ping()
+            }
+        }.launchIn(coroutineScope)
+    }
+
+    private fun minuteWatched() {
+        tickerFlowActive(60).onCompletion {
+            if (isActive) {
+                listener.onMinuteWatched()
+                minuteWatched()
+            }
+        }.launchIn(coroutineScope)
+    }
+
+    private fun tickerFlowActive(seconds: Int) = flow {
+        for (i in seconds downTo 0) {
+            if (!isActive) {
                 emit(i downTo 0)
             } else {
                 emit(i)
@@ -80,28 +129,52 @@ class PubSubWebSocket(
 
     private inner class PubSubListener : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
+            isActive = true
             listen()
             ping()
+            if (collectPoints && !userId.isNullOrBlank() && !gqlToken.isNullOrBlank()) {
+                minuteWatched()
+            }
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
-            val json = if (text.isNotBlank()) JSONObject(text) else null
-            when (json?.optString("type")) {
-                "MESSAGE" -> {
-                    val data = json.optString("data").let { if (it.isNotBlank()) JSONObject(it) else null }
-                    val topic = data?.optString("topic")
-                    val messageType = data?.optString("message")?.let { if (it.isNotBlank()) JSONObject(it) else null }?.optString("type")
-                    when {
-                        (topic?.startsWith("community-points-channel") == true) && (messageType?.startsWith("reward-redeemed") == true) -> listener.onPointReward(text)
+            try {
+                val json = if (text.isNotBlank()) JSONObject(text) else null
+                when (json?.optString("type")) {
+                    "MESSAGE" -> {
+                        val data = json.optString("data").let { if (it.isNotBlank()) JSONObject(it) else null }
+                        val topic = data?.optString("topic")
+                        val message = data?.optString("message")?.let { if (it.isNotBlank()) JSONObject(it) else null }
+                        val messageType = message?.optString("type")
+                        when {
+                            (topic?.startsWith("community-points-channel") == true) && (messageType?.startsWith("reward-redeemed") == true) -> listener.onPointReward(text)
+                            topic?.startsWith("community-points-user") == true -> {
+                                when {
+                                    messageType?.startsWith("points-earned") == true && notifyPoints -> {
+                                        val messageData = message.optString("data").let { if (it.isNotBlank()) JSONObject(it) else null }
+                                        val messageChannelId = messageData?.optString("channel_id")
+                                        if (channelId == messageChannelId) {
+                                            listener.onPointsEarned(text)
+                                        }
+                                    }
+                                    messageType?.startsWith("claim-available") == true && collectPoints -> listener.onClaimPoints(text)
+                                }
+                            }
+                        }
                     }
+                    "PONG" -> pongReceived = true
+                    "RECONNECT" -> reconnect()
                 }
-                "PONG" -> pongReceived = true
-                "RECONNECT" -> reconnect()
+            } catch (e: Exception) {
+
             }
         }
     }
 
     interface OnMessageReceivedListener {
         fun onPointReward(text: String)
+        fun onPointsEarned(text: String)
+        fun onClaimPoints(text: String)
+        fun onMinuteWatched()
     }
 }

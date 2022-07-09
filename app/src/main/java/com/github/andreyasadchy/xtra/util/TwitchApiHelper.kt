@@ -214,8 +214,8 @@ object TwitchApiHelper {
         return LoggedInChatThread(useSSl, userName, userToken, channelName, MessageListenerImpl(newMessageListener, UserStateListener, RoomStateListener, CommandListener, callbackReward, showUserNotice, showClearMsg, showClearChat, usePubSub)).apply { start() }
     }
 
-    fun startPubSub(channelId: String, coroutineScope: CoroutineScope, newMessageListener: OnChatMessageReceivedListener, callbackReward: OnRewardReceivedListener): PubSubWebSocket {
-        return PubSubWebSocket(channelId, coroutineScope, PubSubListenerImpl(newMessageListener, callbackReward)).apply { connect() }
+    fun startPubSub(channelId: String, userId: String?, gqlToken: String?, collectPoints: Boolean, notifyPoints: Boolean, coroutineScope: CoroutineScope, newMessageListener: OnChatMessageReceivedListener, callbackReward: OnRewardReceivedListener, callbackPointsEarned: OnPointsEarnedListener, callbackClaim: OnClaimPointsListener, callbackMinute: OnMinuteWatchedListener): PubSubWebSocket {
+        return PubSubWebSocket(channelId, userId, gqlToken, collectPoints, notifyPoints, coroutineScope, PubSubListenerImpl(newMessageListener, callbackReward, callbackPointsEarned, callbackClaim, callbackMinute)).apply { connect() }
     }
 
     fun parseClipOffset(url: String): Double {

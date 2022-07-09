@@ -165,8 +165,8 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:padding="12dp"
-            android:text="@string/disconnect_chat"
             android:visibility="gone"
+            tools:text="@string/disconnect_chat"
             tools:visibility="visible" />
 
     </LinearLayout>

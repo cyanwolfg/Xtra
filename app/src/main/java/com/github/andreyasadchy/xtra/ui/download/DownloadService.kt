@@ -88,6 +88,7 @@ class DownloadService : IntentService(TAG) {
         setIntentRedelivery(true)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreate() {
         AndroidInjection.inject(this)
         super.onCreate()
@@ -100,6 +101,7 @@ class DownloadService : IntentService(TAG) {
         })
     }
 
+    @Deprecated("Deprecated in Java")
     @SuppressLint("CheckResult")
     override fun onHandleIntent(intent: Intent?) {
         request = intent!!.getParcelableExtra(KEY_REQUEST)!!
@@ -212,6 +214,7 @@ class DownloadService : IntentService(TAG) {
         fetch.close()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onDestroy() {
         unregisterReceiver(notificationActionReceiver)
         super.onDestroy()

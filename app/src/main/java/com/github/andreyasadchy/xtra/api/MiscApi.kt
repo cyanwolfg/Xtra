@@ -1,13 +1,21 @@
 package com.github.andreyasadchy.xtra.api
 
 import com.github.andreyasadchy.xtra.model.chat.*
+import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface MiscApi {
+
+    @GET("https://www.twitch.tv/{channelLogin}")
+    suspend fun getChannelPage(@Path("channelLogin") channelLogin: String): ResponseBody
+
+    @GET
+    suspend fun getUrl(@Url url: String): ResponseBody
+
+    @POST
+    suspend fun postUrl(@Url url: String, @Body body: RequestBody): Response<Unit>
 
     @GET("https://api.twitch.tv/v5/videos/{id}/comments")
     suspend fun getVideoChatLog(@Header("Client-ID") clientId: String?, @Path("id") videoId: String?, @Query("content_offset_seconds") offsetSeconds: Double, @Query("limit") limit: Int): VideoMessagesResponse
