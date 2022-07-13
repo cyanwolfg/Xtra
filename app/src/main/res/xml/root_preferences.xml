@@ -288,6 +288,18 @@
         app:iconSpaceReserved="false"/>
 
     <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="chat_raids_show"
+        android:title="@string/show_raids"
+        app:iconSpaceReserved="false"/>
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="chat_raids_auto_switch"
+        android:title="@string/auto_switch_raids"
+        app:iconSpaceReserved="false"/>
+
+    <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="chat_disable"
         android:title="@string/disable_chat"

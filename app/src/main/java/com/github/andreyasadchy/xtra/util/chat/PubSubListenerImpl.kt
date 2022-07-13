@@ -9,7 +9,8 @@ class PubSubListenerImpl(
     private val callbackReward: OnRewardReceivedListener,
     private val callbackPointsEarned: OnPointsEarnedListener,
     private val callbackClaim: OnClaimPointsListener,
-    private val callbackMinute: OnMinuteWatchedListener) : PubSubWebSocket.OnMessageReceivedListener {
+    private val callbackMinute: OnMinuteWatchedListener,
+    private val callbackRaid: OnRaidListener) : PubSubWebSocket.OnMessageReceivedListener {
 
     override fun onPointReward(text: String) {
         val data = if (text.isNotBlank()) JSONObject(text).optJSONObject("data") else null
@@ -69,5 +70,20 @@ class PubSubListenerImpl(
 
     override fun onMinuteWatched() {
         callbackMinute.onMinuteWatched()
+    }
+
+    override fun onRaidUpdate(text: String, openStream: Boolean) {
+        val data = if (text.isNotBlank()) JSONObject(text).optJSONObject("data") else null
+        val message = data?.optString("message")?.let { if (it.isNotBlank() && !data.isNull("message")) JSONObject(it) else null }
+        val raid = message?.optString("raid")?.let { if (it.isNotBlank() && !message.isNull("raid")) JSONObject(it) else null }
+        callbackRaid.onRaidUpdate(Raid(
+            raidId = raid?.optString("id"),
+            targetId = raid?.optString("target_id"),
+            targetLogin = raid?.optString("target_login"),
+            targetName = raid?.optString("target_display_name"),
+            targetProfileImage = raid?.optString("target_profile_image"),
+            viewerCount = raid?.optInt("viewer_count"),
+            openStream = openStream
+        ))
     }
 }

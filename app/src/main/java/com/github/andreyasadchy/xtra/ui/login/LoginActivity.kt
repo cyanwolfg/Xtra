@@ -2,6 +2,7 @@ package com.github.andreyasadchy.xtra.ui.login
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.webkit.CookieManager
 import android.webkit.WebView
@@ -112,8 +113,16 @@ class LoginActivity : AppCompatActivity(), Injectable {
                     .show()
         }
         clearCookies()
+        val theme = if (prefs().getBoolean(C.UI_THEME_FOLLOW_SYSTEM, false)) {
+            when (resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                Configuration.UI_MODE_NIGHT_YES -> prefs().getString(C.UI_THEME_DARK_ON, "0")!!
+                else -> prefs().getString(C.UI_THEME_DARK_OFF, "2")!!
+            }
+        } else {
+            prefs().getString(C.THEME, "0")!!
+        }
         with(webView) {
-            if (prefs().getString(C.THEME, "0") != "2") {
+            if (theme != "2") {
                 if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
                     WebSettingsCompat.setForceDark(this.settings, WebSettingsCompat.FORCE_DARK_ON)
                 }

@@ -18,7 +18,6 @@
         <item name="android:alertDialogTheme">@style/DialogDark</item> <!--delete video, permissions?-->
         <item name="radioButtonStyle">@style/RadioButton</item>
         <item name="chatStatus">@color/chatStatusDark</item>
-        <item name="chatRedeem">@color/accent</item>
         <item name="preferenceTheme">@style/prefDark</item>
     </style>
 
@@ -40,7 +39,6 @@
         <item name="android:alertDialogTheme">@style/DialogLight</item>
         <item name="radioButtonStyle">@style/RadioButton</item>
         <item name="chatStatus">@color/chatStatusLight</item>
-        <item name="chatRedeem">@color/accent</item>
         <item name="preferenceTheme">@style/prefLight</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
@@ -64,7 +62,6 @@
         <item name="android:alertDialogTheme">@style/DialogAmoled</item>
         <item name="radioButtonStyle">@style/RadioButton</item>
         <item name="chatStatus">@color/chatStatusDark</item>
-        <item name="chatRedeem">@color/accent</item>
         <item name="preferenceTheme">@style/prefDark</item>
     </style>
 
@@ -86,7 +83,6 @@
         <item name="android:alertDialogTheme">@style/DialogBlue</item>
         <item name="radioButtonStyle">@style/RadioButton</item>
         <item name="chatStatus">@color/chatStatusDark</item>
-        <item name="chatRedeem">@color/accent</item>
         <item name="preferenceTheme">@style/prefDark</item>
     </style>
 

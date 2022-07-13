@@ -18,12 +18,12 @@
     <string name="sort_and_period">分類: %1$s. 期間: %2$s</string>
     <string name="trending">トレンド</string>
     <string name="live">ライブ</string>
-    <string name="videos">ビデオ</string>
+    <string name="videos">動画</string>
     <string name="clips">クリップ</string>
     <string name="scroll_down">さらにメッセージが続きます</string>
     <string name="auto">自動</string>
     <string name="source">ソース</string>
-    <string name="audio_only">オーディオのみ</string>
+    <string name="audio_only">音声のみ</string>
     <string name="chat_only">チャットのみ</string>
     <string name="select_quality">画質を選ぶ</string>
     <string name="download">ダウンロード</string>
@@ -79,7 +79,7 @@
     <string name="no">いいえ</string>
     <string name="search">検索</string>
     <string name="chat_replay_unavailable">チャットリプレイは利用できません</string>
-    <string name="video_subscribers_only">このビデオはサブスクライバーのみ視聴可能です</string>
+    <string name="video_subscribers_only">この動画はサブスクライバーのみ視聴可能です</string>
     <string name="player_error">プレイヤーエラーです。再試行します</string>
     <string name="picture_in_picture">ピクチャーインピクチャー</string>
     <string name="adblock_not_working">TTV.LOLはオフラインです。Adblockを無効にすると配信を視聴することができます</string>
@@ -103,7 +103,7 @@
     <string name="notification_playback_channel_title">プレイバック</string>
     <string name="notification_playback_channel_id" translatable="false">xtra_playback_channel</string>
     <string name="channels">チャンネル</string>
-    <string name="watch_video">フルサイズのビデオを視聴する</string>
+    <string name="watch_video">フルサイズの動画を視聴する</string>
     <string name="animated_emotes">アニメーションエモート</string>
     <string name="sleep_timer">スリープタイマー</string>
     <string name="start">スタート</string>
@@ -527,11 +527,16 @@
     <string name="viewers_high">視聴者数 (多い順)</string>
     <string name="viewers_low">視聴者数 (少ない順)</string>
     <string name="tags">タグ</string>
-    <string name="show_player_mode">Show audio only button</string>
-    <string name="search_videos">Search videos</string>
-    <string name="lang_de">German</string>
-    <string name="points_earned">Received %d channel points</string>
-    <string name="points_notify">Notify when earning channel points</string>
-    <string name="points_collect">Collect channel points automatically</string>
-    <string name="connect_chat">Connect to chat</string>
+    <string name="show_player_mode">音声のみボタンの表示</string>
+    <string name="search_videos">動画検索</string>
+    <string name="lang_de">ドイツ語</string>
+    <string name="points_earned">チャンネルポイントを %d 獲得しました</string>
+    <string name="points_notify">チャンネルポイントの獲得時に通知する</string>
+    <string name="points_collect">チャンネルポイントを自動的に獲得する</string>
+    <string name="connect_chat">チャットの接続</string>
+    <string name="raid_text">Raiding %1$s with %2$d viewers</string>
+    <string name="show_raids">Show raids and hosts</string>
+    <string name="auto_switch_raids">Switch stream on raid automatically</string>
+    <string name="host_text">Hosting %s</string>
+    <string name="watch_stream">Watch stream</string>
 </resources>

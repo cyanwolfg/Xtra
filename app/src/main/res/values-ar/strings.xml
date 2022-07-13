@@ -550,4 +550,9 @@ Removes a timeout on a user.</string>
     <string name="points_notify">Notify when earning channel points</string>
     <string name="points_collect">Collect channel points automatically</string>
     <string name="connect_chat">Connect to chat</string>
+    <string name="raid_text">Raiding %1$s with %2$d viewers</string>
+    <string name="show_raids">Show raids and hosts</string>
+    <string name="auto_switch_raids">Switch stream on raid automatically</string>
+    <string name="host_text">Hosting %s</string>
+    <string name="watch_stream">Watch stream</string>
 </resources>

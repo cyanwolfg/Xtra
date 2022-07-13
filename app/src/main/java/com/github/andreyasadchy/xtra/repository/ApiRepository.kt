@@ -448,12 +448,35 @@ class ApiRepository @Inject constructor(
         gql.loadChannelViewerList(clientId, channelLogin).data
     }
 
+    override suspend fun loadHosting(clientId: String?, channelId: String?, channelLogin: String?): Stream? = withContext(Dispatchers.IO) {
+        try {
+            apolloClient(XtraModule(), clientId).query(HostingQuery(Optional.Present(channelId), Optional.Present(channelLogin))).execute().data?.user?.hosting?.let { get ->
+                Stream(
+                    user_id = get.id,
+                    user_login = get.login,
+                    user_name = get.displayName,
+                    profileImageURL = get.profileImageURL,
+                )
+            }
+        } catch (e: Exception) {
+            if (!channelLogin.isNullOrBlank()) {
+                gql.loadHosting(clientId, channelLogin).data
+            } else {
+                null
+            }
+        }
+    }
+
     override suspend fun loadChannelPointsContext(gqlClientId: String?, gqlToken: String?, channelLogin: String?): ChannelPointsContextDataResponse = withContext(Dispatchers.IO){
         gql.loadChannelPointsContext(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, channelLogin)
     }
 
     override suspend fun loadClaimPoints(gqlClientId: String?, gqlToken: String?, channelId: String?, claimID: String?) = withContext(Dispatchers.IO) {
         gql.loadClaimPoints(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, channelId, claimID)
+    }
+
+    override suspend fun loadJoinRaid(gqlClientId: String?, gqlToken: String?, raidId: String?) = withContext(Dispatchers.IO) {
+        gql.loadJoinRaid(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, raidId)
     }
 
     override suspend fun loadMinuteWatched(userId: String?, streamId: String?, channelId: String?, channelLogin: String?) = withContext(Dispatchers.IO) {

@@ -125,6 +125,8 @@ object C {
     const val CHAT_PUBSUB_ENABLED = "chat_pubsub_enabled"
     const val CHAT_POINTS_COLLECT = "chat_points_collect"
     const val CHAT_POINTS_NOTIFY = "chat_points_notify"
+    const val CHAT_RAIDS_SHOW = "chat_raids_show"
+    const val CHAT_RAIDS_AUTO_SWITCH = "chat_raids_auto_switch"
     const val TOKEN_XDEVICEID = "token_xdeviceid"
     const val TOKEN_DEVICEID = "token_deviceid"
     const val TOKEN_RANDOM_DEVICEID = "token_random_deviceid"

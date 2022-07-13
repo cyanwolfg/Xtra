@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.andreyasadchy.xtra.model.LoggedIn
 import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.chat.*
+import com.github.andreyasadchy.xtra.model.helix.stream.Stream
 import com.github.andreyasadchy.xtra.repository.PlayerRepository
 import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.ui.common.BaseViewModel
@@ -74,6 +75,14 @@ class ChatViewModel @Inject constructor(
     val command = MutableLiveData<Command>()
     val reward = MutableLiveData<ChatMessage>()
     val pointsEarned = MutableLiveData<PointsEarned>()
+    var showRaids = false
+    val raid = MutableLiveData<Raid>()
+    val raidClicked = MutableLiveData<Boolean>()
+    var raidAutoSwitch = false
+    var raidNewId = true
+    var raidClosed = false
+    val host = MutableLiveData<Stream>()
+    val hostClicked = MutableLiveData<Boolean>()
 
     private val _chatMessages by lazy {
         MutableLiveData<MutableList<ChatMessage>>().apply { value = Collections.synchronizedList(ArrayList(MAX_ADAPTER_COUNT + 1)) }
@@ -93,9 +102,11 @@ class ChatViewModel @Inject constructor(
     val chatters: Collection<Chatter>
         get() = (chat as LiveChatController).chatters.values
 
-    fun startLive(useSSl: Boolean, usePubSub: Boolean, user: User, helixClientId: String?, gqlClientId: String, channelId: String?, channelLogin: String?, channelName: String?, streamId: String?, showUserNotice: Boolean, showClearMsg: Boolean, showClearChat: Boolean, collectPoints: Boolean, notifyPoints: Boolean, enableRecentMsg: Boolean? = false, recentMsgLimit: String? = null) {
+    fun startLive(useSSl: Boolean, usePubSub: Boolean, user: User, helixClientId: String?, gqlClientId: String, channelId: String?, channelLogin: String?, channelName: String?, streamId: String?, showUserNotice: Boolean, showClearMsg: Boolean, showClearChat: Boolean, collectPoints: Boolean, notifyPoints: Boolean, showRaids: Boolean, autoSwitchRaids: Boolean, enableRecentMsg: Boolean? = false, recentMsgLimit: String? = null) {
         if (chat == null && channelLogin != null && channelName != null) {
             stream_id = streamId
+            this.showRaids = showRaids
+            raidAutoSwitch = autoSwitchRaids
             chat = LiveChatController(
                 useSSl = useSSl,
                 usePubSub = usePubSub,
@@ -351,12 +362,13 @@ class ChatViewModel @Inject constructor(
             private val showClearMsg: Boolean,
             private val showClearChat: Boolean,
             private val collectPoints: Boolean,
-            private val notifyPoints: Boolean) : ChatController(), OnUserStateReceivedListener, OnRoomStateReceivedListener, OnCommandReceivedListener, OnRewardReceivedListener, OnPointsEarnedListener, OnClaimPointsListener, OnMinuteWatchedListener {
+            private val notifyPoints: Boolean) : ChatController(), OnUserStateReceivedListener, OnRoomStateReceivedListener, OnCommandReceivedListener, OnRewardReceivedListener, OnPointsEarnedListener, OnClaimPointsListener, OnMinuteWatchedListener, OnRaidListener, ChatView.RaidCallback {
 
         private var chat: LiveChatThread? = null
         private var loggedInChat: LoggedInChatThread? = null
         private var pubSub: PubSubWebSocket? = null
         private val allEmotesMap = mutableMapOf<String, Emote>()
+        private var usedRaidId: String? = null
 
         val chatters = ConcurrentHashMap<String?, Chatter>()
 
@@ -387,7 +399,7 @@ class ChatViewModel @Inject constructor(
                 loggedInChat = TwitchApiHelper.startLoggedInChat(useSSl, user.login, user.gqlToken?.nullIfEmpty() ?: user.helixToken, channelLogin, showUserNotice, showClearMsg, showClearChat, usePubSub, this, this, this, this, this)
             }
             if (usePubSub && !channelId.isNullOrBlank()) {
-                pubSub = TwitchApiHelper.startPubSub(channelId, user.id, user.gqlToken, collectPoints, notifyPoints, viewModelScope, this, this, this, this, this)
+                pubSub = TwitchApiHelper.startPubSub(channelId, user.id, user.gqlToken, collectPoints, notifyPoints, showRaids, viewModelScope, this, this, this, this, this, this)
             }
         }
 
@@ -489,6 +501,41 @@ class ChatViewModel @Inject constructor(
             }
         }
 
+        override fun onRaidUpdate(message: Raid) {
+            raidNewId = message.raidId != usedRaidId
+            raid.postValue(message)
+            if (raidNewId) {
+                usedRaidId = message.raidId
+                if (collectPoints && !user.gqlToken.isNullOrBlank()) {
+                    viewModelScope.launch {
+                        repository.loadJoinRaid(gqlClientId, user.gqlToken, message.raidId)
+                    }
+                }
+            }
+        }
+
+        override fun onRaidClicked() {
+            raidAutoSwitch = false
+            raidClicked.postValue(true)
+        }
+
+        override fun onRaidClose() {
+            raidAutoSwitch = false
+            raidClosed = true
+        }
+
+        override fun onHostClicked() {
+            hostClicked.postValue(true)
+        }
+
+        override fun onCheckHost() {
+            viewModelScope.launch {
+                repository.loadHosting(gqlClientId, channelId, channelLogin)?.let {
+                    host.postValue(it)
+                }
+            }
+        }
+
         fun addEmotes(list: List<Emote>) {
             if (user is LoggedIn) {
                 allEmotesMap.putAll(list.associateBy { it.name })
@@ -504,7 +551,7 @@ class ChatViewModel @Inject constructor(
                 chat?.disconnect()
                 loggedInChat?.disconnect()
                 pubSub?.disconnect()
-                roomState.postValue(RoomState(null, null, null, null, null))
+                roomState.postValue(RoomState("0", "-1", "0", "0", "0"))
                 command.postValue(Command(type = "disconnect_command"))
             }
         }

@@ -4,6 +4,7 @@ import com.github.andreyasadchy.xtra.model.chat.EmoteCardResponse
 import com.github.andreyasadchy.xtra.model.gql.channel.ChannelClipsDataResponse
 import com.github.andreyasadchy.xtra.model.gql.channel.ChannelVideosDataResponse
 import com.github.andreyasadchy.xtra.model.gql.channel.ChannelViewerListDataResponse
+import com.github.andreyasadchy.xtra.model.gql.channel.HostingDataResponse
 import com.github.andreyasadchy.xtra.model.gql.clip.ClipDataResponse
 import com.github.andreyasadchy.xtra.model.gql.clip.ClipUrlsResponse
 import com.github.andreyasadchy.xtra.model.gql.clip.ClipVideoResponse
@@ -105,6 +106,9 @@ interface GraphQLApi {
     suspend fun getViewerCount(@Header("Client-ID") clientId: String?, @Body json: JsonObject): ViewersDataResponse
 
     @POST(".")
+    suspend fun getHosting(@Header("Client-ID") clientId: String?, @Body json: JsonObject): HostingDataResponse
+
+    @POST(".")
     suspend fun getEmoteCard(@Header("Client-ID") clientId: String?, @Body json: JsonObject): EmoteCardResponse
 
     @POST(".")
@@ -142,6 +146,9 @@ interface GraphQLApi {
 
     @POST(".")
     suspend fun getClaimPoints(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Body json: JsonObject)
+
+    @POST(".")
+    suspend fun getJoinRaid(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Body json: JsonObject)
 
     @POST(".")
     suspend fun getChannelPanel(@Body json: JsonArray): Response<ResponseBody>

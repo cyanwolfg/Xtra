@@ -27,9 +27,9 @@
     <string name="chatFirstMsgEntries3">Показывать как обычные сообщения</string>
     <string name="chat_ban">%s был навсегда заблокирован</string>
     <string name="chat_clear">Чат был очищен модератором</string>
-    <string name="chat_clearmsg">Сообщение удалено из %1$s: %2$s</string>
+    <string name="chat_clearmsg">Сообщение от %1$s удалено: %2$s</string>
     <string name="chat_first">Первый раз в чате</string>
-    <string name="chat_firstmsg_visibility">Первые сообщения и выплаты с текстом</string>
+    <string name="chat_firstmsg_visibility">Первые сообщения и оплаты с текстом</string>
     <string name="chat_join">Подключён к %s</string>
     <string name="chat_only">Только чат</string>
     <string name="chat_replay_unavailable">Повтор чата недоступен</string>
@@ -85,7 +85,7 @@
     <string name="logout_title">Выйти?</string>
     <string name="message_limit">Ограничение сообщений</string>
     <string name="minutes">мин</string>
-    <string name="navigationBarColor">Цвет панели навигации</string>
+    <string name="navigationBarColor">Закрашивать панель навигации</string>
     <string name="never">Никогда</string>
     <string name="no">Нет</string>
     <string name="no_browser_found">Не удалось найти установленный браузер</string>
@@ -135,8 +135,8 @@
     <string name="room_emote">Смайлы</string>
     <string name="room_followers">Отслеживающие</string>
     <string name="room_followers_min">Отслеживающие %s</string>
-    <string name="room_slow">Медленно, %s</string>
-    <string name="room_subs">Субтитры</string>
+    <string name="room_slow">Медленно %s</string>
+    <string name="room_subs">Подписчики</string>
     <string name="room_unique">Уникальное</string>
     <string name="rounduserimage">Круглые аватарки</string>
     <string name="save_to">Сохранить в</string>
@@ -171,7 +171,7 @@
     <string name="speed1">Обычная</string>
     <string name="start">Старт</string>
     <string name="startonfollowed">Запуск со страницы отслеживания</string>
-    <string name="statusBarColor">Цвет строки состояния</string>
+    <string name="statusBarColor">Закрашивать строку состояния</string>
     <string name="stop">Стоп</string>
     <string name="storage_permission_message">Для скачивания видео необходимо разрешение на доступ к памяти.</string>
     <string name="storage_permission_title">Приложению необходимо разрешение</string>
@@ -298,13 +298,13 @@
     <string name="irc_notice_msg_duplicate">Ваше сообщение не было отправлено, поскольку оно идентично предыдущему, отправленному вами менее 30 секунд назад.</string>
     <string name="irc_notice_msg_emoteonly">Эта комната находится в режиме только для смайлов. Вы можете найти доступные в данный момент смайлики, нажав на смайлик около чата.</string>
     <string name="irc_notice_msg_followersonly">Эта комната находится в режиме только для отслеживающих %1$s. Начните отслеживание %2$s, чтобы присоединиться к сообществу!</string>
-    <string name="irc_notice_msg_followersonly_followed">This room is in %1$s followers-only mode. You have been following for %2$s. Continue following to chat!</string>
-    <string name="irc_notice_msg_followersonly_zero">This room is in followers-only mode. Follow %s to join the community!</string>
-    <string name="irc_notice_msg_r9k">This room is in unique-chat mode and the message you attempted to send is not unique.</string>
-    <string name="irc_notice_msg_ratelimit">Your message was not sent because you are sending messages too quickly.</string>
-    <string name="irc_notice_msg_rejected">Hey! Your message is being checked by mods and has not been sent.</string>
-    <string name="irc_notice_msg_rejected_mandatory">Your message wasn’t posted due to conflicts with the channel’s moderation settings.</string>
-    <string name="irc_notice_msg_slowmode">This room is in slow mode and you are sending messages too quickly. You will be able to talk again in %s seconds.</string>
+    <string name="irc_notice_msg_followersonly_followed">Эта комната в режиме только для подписчиков %1$. Вы подписаны в течение %2$s. Продолжайте отслеживать чат!</string>
+    <string name="irc_notice_msg_followersonly_zero">Эта комната в режиме только для подписчиков. Начните отслеживание %s, чтобы присоединиться к сообществу!</string>
+    <string name="irc_notice_msg_r9k">Эта комната находится в режиме уникальных сообщений чата, и сообщение, которое вы пытались отправить, не является таковым.</string>
+    <string name="irc_notice_msg_ratelimit">Ваше сообщение не было отправлено, потому что вы отправляете сообщения слишком быстро.</string>
+    <string name="irc_notice_msg_rejected">Ваше сообщение проверяется модераторами и не было отправлено.</string>
+    <string name="irc_notice_msg_rejected_mandatory">Ваше сообщение не было опубликовано из-за конфликтов с настройками модерации канала.</string>
+    <string name="irc_notice_msg_slowmode">Эта комната в медленном режиме, и вы отправляете сообщения слишком быстро. Вы сможете снова отправить через % секунд.</string>
     <string name="irc_notice_msg_subsonly">This room is in subscribers only mode. To talk, purchase a channel subscription at https://www.twitch.tv/products/%s/ticket?ref=subscriber_only_mode_chat.</string>
     <string name="irc_notice_msg_suspended">You don’t have permission to perform that action.</string>
     <string name="irc_notice_msg_timedout">You are timed out for %s more seconds.</string>
@@ -497,8 +497,8 @@ Use “untimeout” to remove a timeout.</string>
     <string name="save_sort_game">Запомните варианты выбора для этой игры</string>
     <string name="show_chat">Показать чат</string>
     <string name="hide_chat">Скрыть чат</string>
-    <string name="show_chat_bar">Показать ввод чата</string>
-    <string name="hide_chat_bar">Скрыть ввод чата</string>
+    <string name="show_chat_bar">Показать область ввода чата</string>
+    <string name="hide_chat_bar">Скрыть область ввода чата</string>
     <string name="toggle_chat_bar">Переключить ввода чата</string>
     <string name="toggle_chat">Переключить чат</string>
     <string name="viewer_list">Список зрителей</string>
@@ -546,8 +546,13 @@ Use “untimeout” to remove a timeout.</string>
     <string name="show_player_mode">Кнопка режима «только звук»</string>
     <string name="lang_de">Немецкий</string>
     <string name="search_videos">Поиск видео</string>
-    <string name="points_earned">Received %d channel points</string>
-    <string name="points_notify">Notify when earning channel points</string>
-    <string name="points_collect">Collect channel points automatically</string>
-    <string name="connect_chat">Connect to chat</string>
+    <string name="points_earned">Получено баллов канала: %d</string>
+    <string name="points_notify">Уведомлять о получении баллов канала</string>
+    <string name="points_collect">Забирать баллы канала автоматически</string>
+    <string name="connect_chat">Подключиться к чату</string>
+    <string name="raid_text">Raiding %1$s with %2$d viewers</string>
+    <string name="show_raids">Show raids and hosts</string>
+    <string name="auto_switch_raids">Switch stream on raid automatically</string>
+    <string name="host_text">Hosting %s</string>
+    <string name="watch_stream">Watch stream</string>
 </resources>

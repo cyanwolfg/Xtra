@@ -357,6 +357,10 @@ abstract class BasePlayerFragment : BaseNetworkFragment(), Injectable, Lifecycle
 
     //    abstract fun play(obj: Parcelable) //TODO instead maybe add livedata in mainactivity and observe it
 
+    fun isSleepTimerActive(): Boolean {
+        return viewModel.timerTimeLeft > 0L
+    }
+
     fun setResizeMode() {
         resizeMode = (resizeMode + 1).let { if (it < 5) it else 0 }
         playerView.resizeMode = resizeMode

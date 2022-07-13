@@ -10,12 +10,14 @@ import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.LoggedIn
 import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.chat.Emote
+import com.github.andreyasadchy.xtra.model.helix.stream.Stream
 import com.github.andreyasadchy.xtra.ui.common.BaseNetworkFragment
 import com.github.andreyasadchy.xtra.ui.main.MainActivity
 import com.github.andreyasadchy.xtra.ui.player.BasePlayerFragment
 import com.github.andreyasadchy.xtra.ui.view.chat.ChatView
 import com.github.andreyasadchy.xtra.ui.view.chat.MessageClickedDialog
 import com.github.andreyasadchy.xtra.util.*
+import com.github.andreyasadchy.xtra.util.chat.Raid
 import kotlinx.android.synthetic.main.view_chat.view.*
 
 class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDialog.OnButtonClickListener {
@@ -44,6 +46,8 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
         val showClearChat = requireContext().prefs().getBoolean(C.CHAT_SHOW_CLEARCHAT, true)
         val collectPoints = requireContext().prefs().getBoolean(C.CHAT_POINTS_COLLECT, true)
         val notifyPoints = requireContext().prefs().getBoolean(C.CHAT_POINTS_NOTIFY, false)
+        val showRaids = requireContext().prefs().getBoolean(C.CHAT_RAIDS_SHOW, true)
+        val autoSwitchRaids = requireContext().prefs().getBoolean(C.CHAT_RAIDS_AUTO_SWITCH, true)
         val enableRecentMsg = requireContext().prefs().getBoolean(C.CHAT_RECENT, true)
         val recentMsgLimit = requireContext().prefs().getInt(C.CHAT_RECENT_LIMIT, 100)
         val disableChat = requireContext().prefs().getBoolean(C.CHAT_DISABLE, false)
@@ -52,9 +56,9 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
             false
         } else {
             if (isLive) {
-                viewModel.startLive(useSSl, usePubSub, user, helixClientId, gqlClientId, channelId, channelLogin, channelName, streamId, showUserNotice, showClearMsg, showClearChat, collectPoints, notifyPoints, enableRecentMsg, recentMsgLimit.toString())
+                viewModel.startLive(useSSl, usePubSub, user, helixClientId, gqlClientId, channelId, channelLogin, channelName, streamId, showUserNotice, showClearMsg, showClearChat, collectPoints, notifyPoints, showRaids, autoSwitchRaids, enableRecentMsg, recentMsgLimit.toString())
                 chatView.init(this)
-                chatView.setCallback(viewModel)
+                chatView.setCallback(viewModel, (viewModel.chat as? ChatViewModel.LiveChatController))
                 if (userIsLoggedIn) {
                     user.login?.let { chatView.setUsername(it) }
                     chatView.setChatters(viewModel.chatters)
@@ -92,6 +96,10 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
             viewModel.command.observe(viewLifecycleOwner) { chatView.notifyCommand(it) }
             viewModel.reward.observe(viewLifecycleOwner) { chatView.notifyReward(it) }
             viewModel.pointsEarned.observe(viewLifecycleOwner) { chatView.notifyPointsEarned(it) }
+            viewModel.raid.observe(viewLifecycleOwner) { onRaidUpdate(it) }
+            viewModel.raidClicked.observe(viewLifecycleOwner) { onRaidClicked() }
+            viewModel.host.observe(viewLifecycleOwner) { onHost(it) }
+            viewModel.hostClicked.observe(viewLifecycleOwner) { onHostClicked() }
         }
     }
 
@@ -105,6 +113,60 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
 
     fun reconnect() {
         (viewModel.chat as? ChatViewModel.LiveChatController)?.start()
+    }
+
+    private fun onRaidUpdate(raid: Raid) {
+        if (viewModel.raidClosed && viewModel.raidNewId) {
+            viewModel.raidAutoSwitch = requireContext().prefs().getBoolean(C.CHAT_RAIDS_AUTO_SWITCH, true)
+            viewModel.raidClosed = false
+        }
+        if (raid.openStream) {
+            if (!viewModel.raidClosed) {
+                if (viewModel.raidAutoSwitch) {
+                    if (parentFragment is BasePlayerFragment && (parentFragment as? BasePlayerFragment)?.isSleepTimerActive() != true) {
+                        onRaidClicked()
+                    }
+                } else {
+                    viewModel.raidAutoSwitch = requireContext().prefs().getBoolean(C.CHAT_RAIDS_AUTO_SWITCH, true)
+                }
+                chatView.hideRaid()
+            } else {
+                viewModel.raidAutoSwitch = requireContext().prefs().getBoolean(C.CHAT_RAIDS_AUTO_SWITCH, true)
+                viewModel.raidClosed = false
+            }
+        } else {
+            if (!viewModel.raidClosed) {
+                chatView.notifyRaid(raid, viewModel.raidNewId)
+            }
+        }
+    }
+
+    private fun onRaidClicked() {
+        viewModel.raid.value?.let {
+            (requireActivity() as MainActivity).startStream(Stream(
+                user_id = it.targetId,
+                user_login = it.targetLogin,
+                user_name = it.targetName,
+                profileImageURL = it.targetProfileImage,
+            ))
+        }
+    }
+
+    private fun onHost(stream: Stream) {
+        if (viewModel.showRaids) {
+            chatView.notifyHost(stream)
+        }
+    }
+
+    override fun onHostClicked() {
+        viewModel.host.value?.let {
+            (requireActivity() as MainActivity).startStream(Stream(
+                user_id = it.user_id,
+                user_login = it.user_login,
+                user_name = it.user_name,
+                profileImageURL = it.channelLogo,
+            ))
+        }
     }
 
     fun hideKeyboard() {

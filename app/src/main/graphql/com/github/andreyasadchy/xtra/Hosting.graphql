@@ -1,0 +1,10 @@
+query Hosting($id: ID, $login: String) {
+    user(id: $id, login: $login) {
+        hosting {
+            displayName
+            id
+            login
+            profileImageURL(width: 300)
+        }
+    }
+}

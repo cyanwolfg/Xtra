@@ -27,6 +27,7 @@ class MessageClickedDialog : ExpandingBottomSheetDialogFragment(), Injectable {
         fun onReplyClicked(userName: String)
         fun onCopyMessageClicked(message: String)
         fun onViewProfileClicked(id: String?, login: String?, name: String?, channelLogo: String?)
+        fun onHostClicked()
     }
 
     companion object {
@@ -34,10 +35,11 @@ class MessageClickedDialog : ExpandingBottomSheetDialogFragment(), Injectable {
         private const val KEY_ORIGINAL = "original"
         private const val KEY_FORMATTED = "formatted"
         private const val KEY_USERID = "userid"
+        private const val KEY_HOST = "host"
         private val savedUsers = mutableListOf<User>()
 
-        fun newInstance(messagingEnabled: Boolean, originalMessage: CharSequence, formattedMessage: CharSequence, userId: String?, fullMsg: String?) = MessageClickedDialog().apply {
-            arguments = bundleOf(KEY_MESSAGING to messagingEnabled, KEY_ORIGINAL to originalMessage, KEY_FORMATTED to formattedMessage, KEY_USERID to userId); this.fullMsg = fullMsg
+        fun newInstance(messagingEnabled: Boolean, originalMessage: CharSequence, formattedMessage: CharSequence, userId: String?, fullMsg: String?, host: Boolean) = MessageClickedDialog().apply {
+            arguments = bundleOf(KEY_MESSAGING to messagingEnabled, KEY_ORIGINAL to originalMessage, KEY_FORMATTED to formattedMessage, KEY_USERID to userId, KEY_HOST to host); this.fullMsg = fullMsg
         }
     }
 
@@ -98,6 +100,13 @@ class MessageClickedDialog : ExpandingBottomSheetDialogFragment(), Injectable {
         copyClip.setOnClickListener {
             clipboard?.setPrimaryClip(ClipData.newPlainText("label", if (userId != null) msg.substring(msg.indexOf(':') + 2) else msg))
             dismiss()
+        }
+        if (args.getBoolean(KEY_HOST)) {
+            watchHost.visible()
+            watchHost.setOnClickListener {
+                listener.onHostClicked()
+                dismiss()
+            }
         }
         if (requireContext().prefs().getBoolean(C.DEBUG_CHAT_FULLMSG, false) && fullMsg != null) {
             copyFullMsg.visible()

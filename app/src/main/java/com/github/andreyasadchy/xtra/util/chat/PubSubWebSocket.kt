@@ -16,13 +16,13 @@ class PubSubWebSocket(
     private val gqlToken: String?,
     private val collectPoints: Boolean,
     private val notifyPoints: Boolean,
+    private val showRaids: Boolean,
     private val coroutineScope: CoroutineScope,
     private val listener: OnMessageReceivedListener) {
     private var client: OkHttpClient? = null
     private var socket: WebSocket? = null
     private var isActive = false
     private var pongReceived = false
-    private val topics = listOf("community-points-channel-v1.$channelId")
 
     fun connect() {
         if (client == null) {
@@ -52,7 +52,10 @@ class PubSubWebSocket(
             put("type", "LISTEN")
             put("data", JSONObject().apply {
                 put("topics", JSONArray().apply {
-                    topics.forEach { put(it) }
+                    put("community-points-channel-v1.$channelId")
+                    if (showRaids) {
+                        put("raid.$channelId")
+                    }
                     if (!userId.isNullOrBlank() && !gqlToken.isNullOrBlank()) {
                         if (collectPoints) {
                             put("community-points-user-v1.$userId")
@@ -160,6 +163,12 @@ class PubSubWebSocket(
                                     messageType?.startsWith("claim-available") == true && collectPoints -> listener.onClaimPoints(text)
                                 }
                             }
+                            topic?.startsWith("raid") == true && showRaids -> {
+                                when {
+                                    messageType?.startsWith("raid_update") == true -> listener.onRaidUpdate(text, false)
+                                    messageType?.startsWith("raid_go") == true -> listener.onRaidUpdate(text, true)
+                                }
+                            }
                         }
                     }
                     "PONG" -> pongReceived = true
@@ -176,5 +185,6 @@ class PubSubWebSocket(
         fun onPointsEarned(text: String)
         fun onClaimPoints(text: String)
         fun onMinuteWatched()
+        fun onRaidUpdate(text: String, openStream: Boolean)
     }
 }
