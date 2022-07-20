@@ -21,7 +21,7 @@ class SearchChannelDataDeserializer : JsonDeserializer<SearchChannelDataResponse
                     broadcaster_login = obj.get("login")?.takeIf { !it.isJsonNull }?.asString,
                     display_name = obj.get("displayName")?.takeIf { !it.isJsonNull }?.asString,
                     is_live = obj.get("stream")?.isJsonObject,
-                    profileImageURL = obj.get("profileImageURL")?.takeIf { !it.isJsonNull }?.asString,
+                    thumbnail_url = obj.get("profileImageURL")?.takeIf { !it.isJsonNull }?.asString,
                     followers_count = obj.get("followers")?.takeIf { it.isJsonObject }?.asJsonObject?.get("totalCount")?.takeIf { !it.isJsonNull }?.asInt,
                     type = obj.get("stream")?.takeIf { it.isJsonObject }?.asJsonObject?.get("type")?.takeIf { !it.isJsonNull }?.asString,
                 ))

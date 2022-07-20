@@ -20,6 +20,7 @@ import com.github.andreyasadchy.xtra.ui.saved.downloads.DownloadsFragment
 import com.github.andreyasadchy.xtra.ui.search.SearchFragment
 import com.github.andreyasadchy.xtra.ui.search.channels.ChannelSearchFragment
 import com.github.andreyasadchy.xtra.ui.search.games.GameSearchFragment
+import com.github.andreyasadchy.xtra.ui.search.streams.StreamSearchFragment
 import com.github.andreyasadchy.xtra.ui.search.tags.BaseTagSearchFragment
 import com.github.andreyasadchy.xtra.ui.search.tags.TagSearchFragment
 import com.github.andreyasadchy.xtra.ui.search.videos.VideoSearchFragment
@@ -95,6 +96,9 @@ abstract class FragmentBuilderModule {
 
     @ContributesAndroidInjector
     abstract fun contributeVideoSearchFragment(): VideoSearchFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeStreamSearchFragment(): StreamSearchFragment
 
     @ContributesAndroidInjector
     abstract fun contributeBaseTagSearchFragment(): BaseTagSearchFragment

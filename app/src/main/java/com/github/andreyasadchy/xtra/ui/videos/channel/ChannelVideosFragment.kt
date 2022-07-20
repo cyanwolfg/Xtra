@@ -2,6 +2,7 @@ package com.github.andreyasadchy.xtra.ui.videos.channel
 
 import androidx.fragment.app.viewModels
 import com.github.andreyasadchy.xtra.R
+import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.helix.video.BroadcastType
 import com.github.andreyasadchy.xtra.model.helix.video.Period
 import com.github.andreyasadchy.xtra.model.helix.video.Sort
@@ -39,7 +40,7 @@ class ChannelVideosFragment : BaseVideosFragment<ChannelVideosViewModel>(), Vide
             channelId = requireArguments().getString(C.CHANNEL_ID),
             channelLogin = requireArguments().getString(C.CHANNEL_LOGIN),
             helixClientId = requireContext().prefs().getString(C.HELIX_CLIENT_ID, ""),
-            helixToken = requireContext().prefs().getString(C.TOKEN, ""),
+            helixToken = User.get(requireContext()).helixToken,
             gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, ""),
             apiPref = TwitchApiHelper.listFromPrefs(requireContext().prefs().getString(C.API_PREF_CHANNEL_VIDEOS, ""), TwitchApiHelper.channelVideosApiDefaults)
         )

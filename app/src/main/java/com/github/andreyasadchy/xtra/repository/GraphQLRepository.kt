@@ -4,11 +4,12 @@ import android.util.Log
 import com.github.andreyasadchy.xtra.api.GraphQLApi
 import com.github.andreyasadchy.xtra.model.chat.EmoteCardResponse
 import com.github.andreyasadchy.xtra.model.gql.channel.ChannelClipsDataResponse
+import com.github.andreyasadchy.xtra.model.gql.channel.ChannelHostingDataResponse
 import com.github.andreyasadchy.xtra.model.gql.channel.ChannelVideosDataResponse
 import com.github.andreyasadchy.xtra.model.gql.channel.ChannelViewerListDataResponse
-import com.github.andreyasadchy.xtra.model.gql.channel.HostingDataResponse
 import com.github.andreyasadchy.xtra.model.gql.clip.ClipDataResponse
 import com.github.andreyasadchy.xtra.model.gql.clip.ClipVideoResponse
+import com.github.andreyasadchy.xtra.model.gql.emote.UserEmotesDataResponse
 import com.github.andreyasadchy.xtra.model.gql.followed.*
 import com.github.andreyasadchy.xtra.model.gql.game.GameClipsDataResponse
 import com.github.andreyasadchy.xtra.model.gql.game.GameDataResponse
@@ -472,7 +473,7 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
         return graphQL.getViewerCount(clientId, json)
     }
 
-    suspend fun loadHosting(clientId: String?, channelLogin: String?): HostingDataResponse {
+    suspend fun loadChannelHosting(clientId: String?, channelLogin: String?): ChannelHostingDataResponse {
         val json = JsonObject().apply {
             addProperty("operationName", "UseHosting")
             add("variables", JsonObject().apply {
@@ -485,7 +486,7 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
                 })
             })
         }
-        return graphQL.getHosting(clientId, json)
+        return graphQL.getChannelHosting(clientId, json)
     }
 
     suspend fun loadEmoteCard(clientId: String?, emoteId: String?): EmoteCardResponse {
@@ -731,6 +732,23 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
             })
         }
         return graphQL.getJoinRaid(clientId, token, json)
+    }
+
+    suspend fun loadUserEmotes(clientId: String?, token: String?, channelId: String?): UserEmotesDataResponse {
+        val json = JsonObject().apply {
+            addProperty("operationName", "AvailableEmotesForChannel")
+            add("variables", JsonObject().apply {
+                addProperty("channelID", channelId)
+                addProperty("withOwner", true)
+            })
+            add("extensions", JsonObject().apply {
+                add("persistedQuery", JsonObject().apply {
+                    addProperty("version", 1)
+                    addProperty("sha256Hash", "b9ce64d02e26c6fe9adbfb3991284224498b295542f9c5a51eacd3610e659cfb")
+                })
+            })
+        }
+        return graphQL.getUserEmotes(clientId, token, json)
     }
 
     suspend fun loadChannelPanel(channelId: String): String? = withContext(Dispatchers.IO) {

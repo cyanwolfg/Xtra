@@ -1,4 +1,4 @@
-query UserStreams($id: [ID!]) {
+query UsersStream($id: [ID!]) {
     users(ids: $id) {
         displayName
         id

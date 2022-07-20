@@ -24,6 +24,7 @@ import android.widget.TextView
 import androidx.core.content.edit
 import androidx.core.util.Pair
 import androidx.fragment.app.Fragment
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.andreyasadchy.xtra.R
@@ -56,18 +57,20 @@ class DragListFragment : Fragment() {
         views.add(Pair(view.findViewById(R.id.apiSettingsList7), Pair(C.API_PREF_CHANNEL_CLIPS, TwitchApiHelper.channelClipsApiDefaults)))
         view.findViewById<TextView>(R.id.apiSettingsText8).text = requireContext().getString(R.string.search_videos)
         views.add(Pair(view.findViewById(R.id.apiSettingsList8), Pair(C.API_PREF_SEARCH_VIDEOS, TwitchApiHelper.searchVideosApiDefaults)))
-        view.findViewById<TextView>(R.id.apiSettingsText9).text = requireContext().getString(R.string.search_channels)
-        views.add(Pair(view.findViewById(R.id.apiSettingsList9), Pair(C.API_PREF_SEARCH_CHANNEL, TwitchApiHelper.searchChannelsApiDefaults)))
-        view.findViewById<TextView>(R.id.apiSettingsText10).text = requireContext().getString(R.string.search_games)
-        views.add(Pair(view.findViewById(R.id.apiSettingsList10), Pair(C.API_PREF_SEARCH_GAMES, TwitchApiHelper.searchGamesApiDefaults)))
-        view.findViewById<TextView>(R.id.apiSettingsText11).text = requireContext().getString(R.string.followed_streams)
-        views.add(Pair(view.findViewById(R.id.apiSettingsList11), Pair(C.API_PREF_FOLLOWED_STREAMS, TwitchApiHelper.followedStreamsApiDefaults)))
-        view.findViewById<TextView>(R.id.apiSettingsText12).text = requireContext().getString(R.string.followed_videos)
-        views.add(Pair(view.findViewById(R.id.apiSettingsList12), Pair(C.API_PREF_FOLLOWED_VIDEOS, TwitchApiHelper.followedVideosApiDefaults)))
-        view.findViewById<TextView>(R.id.apiSettingsText13).text = requireContext().getString(R.string.followed_channels)
-        views.add(Pair(view.findViewById(R.id.apiSettingsList13), Pair(C.API_PREF_FOLLOWED_CHANNELS, TwitchApiHelper.followedChannelsApiDefaults)))
-        view.findViewById<TextView>(R.id.apiSettingsText14).text = requireContext().getString(R.string.followed_games)
-        views.add(Pair(view.findViewById(R.id.apiSettingsList14), Pair(C.API_PREF_FOLLOWED_GAMES, TwitchApiHelper.followedGamesApiDefaults)))
+        view.findViewById<TextView>(R.id.apiSettingsText9).text = requireContext().getString(R.string.search_streams)
+        views.add(Pair(view.findViewById(R.id.apiSettingsList9), Pair(C.API_PREF_SEARCH_STREAMS, TwitchApiHelper.searchStreamsApiDefaults)))
+        view.findViewById<TextView>(R.id.apiSettingsText10).text = requireContext().getString(R.string.search_channels)
+        views.add(Pair(view.findViewById(R.id.apiSettingsList10), Pair(C.API_PREF_SEARCH_CHANNEL, TwitchApiHelper.searchChannelsApiDefaults)))
+        view.findViewById<TextView>(R.id.apiSettingsText11).text = requireContext().getString(R.string.search_games)
+        views.add(Pair(view.findViewById(R.id.apiSettingsList11), Pair(C.API_PREF_SEARCH_GAMES, TwitchApiHelper.searchGamesApiDefaults)))
+        view.findViewById<TextView>(R.id.apiSettingsText12).text = requireContext().getString(R.string.followed_streams)
+        views.add(Pair(view.findViewById(R.id.apiSettingsList12), Pair(C.API_PREF_FOLLOWED_STREAMS, TwitchApiHelper.followedStreamsApiDefaults)))
+        view.findViewById<TextView>(R.id.apiSettingsText13).text = requireContext().getString(R.string.followed_videos)
+        views.add(Pair(view.findViewById(R.id.apiSettingsList13), Pair(C.API_PREF_FOLLOWED_VIDEOS, TwitchApiHelper.followedVideosApiDefaults)))
+        view.findViewById<TextView>(R.id.apiSettingsText14).text = requireContext().getString(R.string.followed_channels)
+        views.add(Pair(view.findViewById(R.id.apiSettingsList14), Pair(C.API_PREF_FOLLOWED_CHANNELS, TwitchApiHelper.followedChannelsApiDefaults)))
+        view.findViewById<TextView>(R.id.apiSettingsText15).text = requireContext().getString(R.string.followed_games)
+        views.add(Pair(view.findViewById(R.id.apiSettingsList15), Pair(C.API_PREF_FOLLOWED_GAMES, TwitchApiHelper.followedGamesApiDefaults)))
         for (i in views) {
             setupListRecyclerView(i.first, i.second)
         }
@@ -106,6 +109,20 @@ class DragListFragment : Fragment() {
     class ApiSettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.api_preferences, rootKey)
+            findPreference<Preference>("api_token_settings")?.setOnPreferenceClickListener {
+                parentFragment!!.parentFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.settings, ApiTokenSettingsFragment())
+                    .addToBackStack(null)
+                    .commit()
+                true
+            }
+        }
+    }
+
+    class ApiTokenSettingsFragment : PreferenceFragmentCompat() {
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+            setPreferencesFromResource(R.xml.api_token_preferences, rootKey)
         }
     }
 }

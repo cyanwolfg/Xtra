@@ -9,6 +9,7 @@ import android.widget.RadioButton
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.github.andreyasadchy.xtra.R
+import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.helix.video.BroadcastType
 import com.github.andreyasadchy.xtra.model.helix.video.Period
 import com.github.andreyasadchy.xtra.model.helix.video.Period.*
@@ -24,7 +25,6 @@ import com.github.andreyasadchy.xtra.ui.videos.game.GameVideosFragment
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.FragmentUtils
 import com.github.andreyasadchy.xtra.util.gone
-import com.github.andreyasadchy.xtra.util.prefs
 import kotlinx.android.synthetic.main.common_recycler_view_layout.*
 import kotlinx.android.synthetic.main.dialog_videos_sort.*
 
@@ -96,7 +96,7 @@ class VideosSortDialog : ExpandingBottomSheetDialogFragment(), RadioButtonDialog
                 saveSort.gone()
             }
             is GameVideosFragment -> {
-                if (requireContext().prefs().getString(C.TOKEN, "").isNullOrBlank()) {
+                if (User.get(requireContext()).helixToken.isNullOrBlank()) {
                     period.gone()
                 }
                 saveSort.text = requireContext().getString(R.string.save_sort_game)

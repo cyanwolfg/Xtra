@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.github.andreyasadchy.xtra.R
-import com.github.andreyasadchy.xtra.model.LoggedIn
 import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.chat.Emote
 import com.github.andreyasadchy.xtra.model.helix.stream.Stream
@@ -36,11 +35,11 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
         val channelName = args.getString(KEY_CHANNEL_NAME)
         val streamId = args.getString(KEY_STREAM_ID)
         val user = User.get(requireContext())
-        val userIsLoggedIn = user is LoggedIn
+        val isLoggedIn = !user.login.isNullOrBlank() && (!user.gqlToken.isNullOrBlank() || !user.helixToken.isNullOrBlank())
         val useSSl = requireContext().prefs().getBoolean(C.CHAT_USE_SSL, true)
         val usePubSub = requireContext().prefs().getBoolean(C.CHAT_PUBSUB_ENABLED, true)
         val helixClientId = requireContext().prefs().getString(C.HELIX_CLIENT_ID, "")
-        val gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, "") ?: ""
+        val gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, "")
         val showUserNotice = requireContext().prefs().getBoolean(C.CHAT_SHOW_USERNOTICE, true)
         val showClearMsg = requireContext().prefs().getBoolean(C.CHAT_SHOW_CLEARMSG, true)
         val showClearChat = requireContext().prefs().getBoolean(C.CHAT_SHOW_CLEARCHAT, true)
@@ -56,14 +55,15 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
             false
         } else {
             if (isLive) {
-                viewModel.startLive(useSSl, usePubSub, user, helixClientId, gqlClientId, channelId, channelLogin, channelName, streamId, showUserNotice, showClearMsg, showClearChat, collectPoints, notifyPoints, showRaids, autoSwitchRaids, enableRecentMsg, recentMsgLimit.toString())
+                viewModel.startLive(useSSl, usePubSub, user, isLoggedIn, helixClientId, gqlClientId, channelId, channelLogin, channelName, streamId, showUserNotice, showClearMsg, showClearChat, collectPoints, notifyPoints, showRaids, autoSwitchRaids, enableRecentMsg, recentMsgLimit.toString())
                 chatView.init(this)
                 chatView.setCallback(viewModel, (viewModel.chat as? ChatViewModel.LiveChatController))
-                if (userIsLoggedIn) {
+                chatView.setChannelId(channelId)
+                if (isLoggedIn) {
                     user.login?.let { chatView.setUsername(it) }
                     chatView.setChatters(viewModel.chatters)
                     val emotesObserver = Observer(chatView::addEmotes)
-                    viewModel.emotesFromSets.observe(viewLifecycleOwner, emotesObserver)
+                    viewModel.userEmotes.observe(viewLifecycleOwner, emotesObserver)
                     viewModel.recentEmotes.observe(viewLifecycleOwner, emotesObserver)
                     viewModel.newChatter.observe(viewLifecycleOwner, Observer(chatView::addChatter))
                 }
@@ -74,6 +74,7 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
                         chatView.init(this)
                         val getCurrentPosition = (parentFragment as ChatReplayPlayerFragment)::getCurrentPosition
                         viewModel.startReplay(user, helixClientId, gqlClientId, channelId, it, args.getDouble(KEY_START_TIME), getCurrentPosition)
+                        chatView.setChannelId(channelId)
                         true
                     } else {
                         chatView.chatReplayUnavailable.visible()
@@ -83,7 +84,7 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
             }
         }
         if (enableChat) {
-            chatView.enableChatInteraction(isLive && userIsLoggedIn)
+            chatView.enableChatInteraction(isLive && isLoggedIn)
             viewModel.chatMessages.observe(viewLifecycleOwner, Observer(chatView::submitList))
             viewModel.newMessage.observe(viewLifecycleOwner) { chatView.notifyMessageAdded() }
             viewModel.recentMessages.observe(viewLifecycleOwner) { chatView.addRecentMessages(it) }
@@ -91,7 +92,7 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
             viewModel.channelBadges.observe(viewLifecycleOwner, Observer(chatView::addChannelBadges))
             viewModel.otherEmotes.observe(viewLifecycleOwner, Observer(chatView::addEmotes))
             viewModel.cheerEmotes.observe(viewLifecycleOwner, Observer(chatView::addCheerEmotes))
-            viewModel.emotesLoaded.observe(viewLifecycleOwner) { chatView.notifyEmotesLoaded() }
+            viewModel.reloadMessages.observe(viewLifecycleOwner) { chatView.notifyEmotesLoaded() }
             viewModel.roomState.observe(viewLifecycleOwner) { chatView.notifyRoomState(it) }
             viewModel.command.observe(viewLifecycleOwner) { chatView.notifyCommand(it) }
             viewModel.reward.observe(viewLifecycleOwner) { chatView.notifyReward(it) }
@@ -113,6 +114,20 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
 
     fun reconnect() {
         (viewModel.chat as? ChatViewModel.LiveChatController)?.start()
+        val channelLogin = requireArguments().getString(KEY_CHANNEL_LOGIN)
+        val enableRecentMsg = requireContext().prefs().getBoolean(C.CHAT_RECENT, true)
+        val recentMsgLimit = requireContext().prefs().getInt(C.CHAT_RECENT_LIMIT, 100)
+        if (channelLogin != null && enableRecentMsg) {
+            viewModel.loadRecentMessages(channelLogin, recentMsgLimit.toString())
+        }
+    }
+
+    fun reloadEmotes() {
+        val channelId = requireArguments().getString(KEY_CHANNEL_ID)
+        val helixClientId = requireContext().prefs().getString(C.HELIX_CLIENT_ID, "")
+        val helixToken = User.get(requireContext()).helixToken
+        val gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, "")
+        viewModel.reloadEmotes(helixClientId, helixToken, gqlClientId, channelId)
     }
 
     private fun onRaidUpdate(raid: Raid) {

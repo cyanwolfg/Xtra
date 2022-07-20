@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.github.andreyasadchy.xtra.R
+import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.helix.channel.ChannelSearch
 import com.github.andreyasadchy.xtra.ui.common.BasePagedListAdapter
 import com.github.andreyasadchy.xtra.ui.common.PagedListFragment
@@ -36,7 +37,7 @@ class ChannelSearchFragment : PagedListFragment<ChannelSearch, ChannelSearchView
             viewModel.setQuery(
                 query = query,
                 helixClientId = requireContext().prefs().getString(C.HELIX_CLIENT_ID, ""),
-                helixToken = requireContext().prefs().getString(C.TOKEN, ""),
+                helixToken = User.get(requireContext()).helixToken,
                 gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, ""),
                 apiPref = TwitchApiHelper.listFromPrefs(requireContext().prefs().getString(C.API_PREF_SEARCH_CHANNEL, ""), TwitchApiHelper.searchChannelsApiDefaults)
             )

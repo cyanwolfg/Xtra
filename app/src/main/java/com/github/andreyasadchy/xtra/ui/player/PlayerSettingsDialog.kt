@@ -9,8 +9,8 @@ import android.widget.ImageButton
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.github.andreyasadchy.xtra.R
-import com.github.andreyasadchy.xtra.model.NotLoggedIn
 import com.github.andreyasadchy.xtra.model.User
+import com.github.andreyasadchy.xtra.ui.chat.ChatFragment
 import com.github.andreyasadchy.xtra.ui.common.ExpandingBottomSheetDialogFragment
 import com.github.andreyasadchy.xtra.ui.common.RadioButtonDialogFragment
 import com.github.andreyasadchy.xtra.ui.download.HasDownloadDialog
@@ -95,7 +95,8 @@ class PlayerSettingsDialog : ExpandingBottomSheetDialogFragment(), RadioButtonDi
                 }
             }
             if (!requireContext().prefs().getBoolean(C.CHAT_DISABLE, false)) {
-                if (User.get(requireParentFragment().requireActivity()) !is NotLoggedIn && requireContext().prefs().getBoolean(C.PLAYER_MENU_CHAT_BAR, true)) {
+                val isLoggedIn = !User.get(requireContext()).login.isNullOrBlank() && (!User.get(requireContext()).gqlToken.isNullOrBlank() || !User.get(requireContext()).helixToken.isNullOrBlank())
+                if (isLoggedIn && requireContext().prefs().getBoolean(C.PLAYER_MENU_CHAT_BAR, true)) {
                     menuChatBar.visible()
                     if (requireContext().prefs().getBoolean(C.KEY_CHAT_BAR_VISIBLE, true)) {
                         menuChatBar.text = requireContext().getString(R.string.hide_chat_bar)
@@ -123,7 +124,7 @@ class PlayerSettingsDialog : ExpandingBottomSheetDialogFragment(), RadioButtonDi
                         }
                     }
                 }
-                if (requireContext().prefs().getBoolean(C.PLAYER_MENU_CHAT_DISCONNECT, false)) {
+                if (requireContext().prefs().getBoolean(C.PLAYER_MENU_CHAT_DISCONNECT, true)) {
                     menuChatDisconnect.visible()
                     if ((parentFragment as? StreamPlayerFragment)?.chatFragment?.isActive() == false) {
                         menuChatDisconnect.text = requireContext().getString(R.string.connect_chat)
@@ -180,6 +181,14 @@ class PlayerSettingsDialog : ExpandingBottomSheetDialogFragment(), RadioButtonDi
             menuVolume.visible()
             menuVolume.setOnClickListener {
                 (parentFragment as? BasePlayerFragment)?.showVolumeDialog()
+                dismiss()
+            }
+        }
+        if ((parentFragment is StreamPlayerFragment || parentFragment is VideoPlayerFragment) && !requireContext().prefs().getBoolean(C.CHAT_DISABLE, false) && requireContext().prefs().getBoolean(C.PLAYER_MENU_RELOAD_EMOTES, true)) {
+            menuReloadEmotes.visible()
+            menuReloadEmotes.setOnClickListener {
+                (parentFragment as? StreamPlayerFragment)?.chatFragment?.reloadEmotes() ?:
+                ((parentFragment as? VideoPlayerFragment)?.childFragmentManager?.findFragmentById(R.id.chatFragmentContainer) as? ChatFragment)?.reloadEmotes()
                 dismiss()
             }
         }

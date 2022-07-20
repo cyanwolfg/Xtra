@@ -74,28 +74,30 @@ class SearchGamesDataSource private constructor(
             query = query,
             first = Optional.Present(params.requestedLoadSize),
             after = Optional.Present(offset)
-        )).execute().data?.searchFor?.games
-        val get = get1?.items
+        )).execute().data?.searchCategories
+        val get = get1?.edges
         val list = mutableListOf<Game>()
         if (get != null) {
-            for (i in get) {
-                val tags = mutableListOf<Tag>()
-                i.tags?.forEach { tag ->
-                    tags.add(Tag(
-                        id = tag.id,
-                        name = tag.localizedName
+            for (edge in get) {
+                edge.node?.let { i ->
+                    val tags = mutableListOf<Tag>()
+                    i.tags?.forEach { tag ->
+                        tags.add(Tag(
+                            id = tag.id,
+                            name = tag.localizedName
+                        ))
+                    }
+                    list.add(Game(
+                        id = i.id,
+                        name = i.displayName,
+                        box_art_url = i.boxArtURL,
+                        viewersCount = i.viewersCount ?: 0, // returns null if 0
+                        broadcastersCount = i.broadcastersCount ?: 0, // returns null if 0
+                        tags = tags
                     ))
                 }
-                list.add(Game(
-                    id = i.id,
-                    name = i.displayName,
-                    box_art_url = i.boxArtURL,
-                    viewersCount = i.viewersCount ?: 0, // returns null if 0
-                    broadcastersCount = i.broadcastersCount ?: 0, // returns null if 0
-                    tags = tags
-                ))
             }
-            offset = get1.cursor.toString()
+            offset = get1.edges.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list
@@ -135,28 +137,30 @@ class SearchGamesDataSource private constructor(
             query = query,
             first = Optional.Present(params.loadSize),
             after = Optional.Present(offset)
-        )).execute().data?.searchFor?.games
-        val get = get1?.items
+        )).execute().data?.searchCategories
+        val get = get1?.edges
         val list = mutableListOf<Game>()
         if (get != null && nextPage && offset != null && offset != "") {
-            for (i in get) {
-                val tags = mutableListOf<Tag>()
-                i.tags?.forEach { tag ->
-                    tags.add(Tag(
-                        id = tag.id,
-                        name = tag.localizedName
+            for (edge in get) {
+                edge.node?.let { i ->
+                    val tags = mutableListOf<Tag>()
+                    i.tags?.forEach { tag ->
+                        tags.add(Tag(
+                            id = tag.id,
+                            name = tag.localizedName
+                        ))
+                    }
+                    list.add(Game(
+                        id = i.id,
+                        name = i.displayName,
+                        box_art_url = i.boxArtURL,
+                        viewersCount = i.viewersCount ?: 0, // returns null if 0
+                        broadcastersCount = i.broadcastersCount ?: 0, // returns null if 0
+                        tags = tags
                     ))
                 }
-                list.add(Game(
-                    id = i.id,
-                    name = i.displayName,
-                    box_art_url = i.boxArtURL,
-                    viewersCount = i.viewersCount ?: 0, // returns null if 0
-                    broadcastersCount = i.broadcastersCount ?: 0, // returns null if 0
-                    tags = tags
-                ))
             }
-            offset = get1.cursor.toString()
+            offset = get1.edges.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list

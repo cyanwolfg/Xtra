@@ -32,7 +32,7 @@ class FollowedVideosFragment : BaseVideosFragment<FollowedVideosViewModel>(), Vi
             viewModel.saveBookmark(
                 context = requireContext(),
                 helixClientId = requireContext().prefs().getString(C.HELIX_CLIENT_ID, ""),
-                helixToken = requireContext().prefs().getString(C.TOKEN, ""),
+                helixToken = User.get(requireContext()).helixToken,
                 video = it)
         })
     }

@@ -1,7 +1,10 @@
 type Query {
   games(first: Int, after: Cursor, options: GameOptions): GameConnection
   game(id: ID, name: String): Game
+  searchCategories(query: String!, first: Int, after: Cursor): SearchCategoriesConnection
   searchFor(userQuery: String!, platform: String!, target: SearchForTarget): SearchFor
+  searchStreams(userQuery: String!, first: Int, after: Cursor): SearchStreamConnection
+  searchUsers(userQuery: String!, first: Int, after: Cursor): SearchUserConnection
   streams(first: Int, after: Cursor, options: StreamOptions): StreamConnection
   user(id: ID, login: String, lookupType: UserLookupType): User
   users(ids: [ID!], logins: [String!]): [User]
@@ -59,11 +62,26 @@ type ClipEdge {
   node: Clip
 }
 
+type Emote {
+  id: ID
+  owner: User
+  setID: ID
+}
+
+type EmoteSet {
+  emotes: [Emote]
+}
+
+type Follow {
+  followedAt: Time
+}
+
 type FollowConnection {
   edges: [FollowEdge]
   pageInfo: PageInfo
   totalCount: Int
 }
+
 type FollowedGameConnection {
   nodes: [Game]
 }
@@ -115,6 +133,16 @@ type PageInfo {
   hasPreviousPage: Boolean
 }
 
+type SearchCategoriesConnection {
+  edges: [SearchCategoriesEdge!]
+  pageInfo: PageInfo
+}
+
+type SearchCategoriesEdge {
+  cursor: Cursor
+  node: Game
+}
+
 type SearchFor {
   channels: SearchForResultUsers
   games: SearchForResultGames
@@ -137,6 +165,26 @@ type SearchForResultVideos {
   cursor: String
   items: [Video!]
   pageInfo: PageInfo
+}
+
+type SearchStreamConnection {
+  edges: [SearchStreamEdge!]
+  pageInfo: PageInfo
+}
+
+type SearchStreamEdge {
+  cursor: Cursor
+  node: Stream
+}
+
+type SearchUserConnection {
+  edges: [SearchUserEdge!]
+  pageInfo: PageInfo
+}
+
+type SearchUserEdge {
+  cursor: Cursor
+  node: User
 }
 
 type Stream {
@@ -175,6 +223,8 @@ type User {
   createdAt: Time
   description: String
   displayName: String
+  emoteSets: [EmoteSet!]
+  follow(targetID: ID, targetLogin: String): Follow
   followedGames(first: Int, type: FollowedGamesType): FollowedGameConnection
   followedLiveUsers(first: Int, after: Cursor, sort: StreamSort): FollowedLiveUserConnection
   followedVideos(first: Int, after: Cursor, languages: [String!], types: [BroadcastType!], sort: VideoSort): VideoConnection

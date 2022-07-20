@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.andreyasadchy.xtra.R
+import com.github.andreyasadchy.xtra.model.LoggedIn
 import com.github.andreyasadchy.xtra.model.NotValidated
 import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.helix.clip.Clip
@@ -18,6 +19,7 @@ import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.ui.login.LoginActivity
 import com.github.andreyasadchy.xtra.util.Event
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
+import com.github.andreyasadchy.xtra.util.nullIfEmpty
 import com.github.andreyasadchy.xtra.util.toast
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -77,27 +79,21 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun loadVideo(videoId: String? = null, helixClientId: String? = null, helixToken: String? = null, gqlClientId: String? = null) {
+    fun loadVideo(videoId: String, helixClientId: String? = null, helixToken: String? = null, gqlClientId: String? = null) {
         _video.value = null
         viewModelScope.launch {
             try {
-                val video = videoId?.let { repository.loadVideo(it, helixClientId, helixToken, gqlClientId) }
-                _video.postValue(video)
-            } catch (e: Exception) {
-
-            }
+                repository.loadVideo(videoId, helixClientId, helixToken, gqlClientId)?.let { _video.postValue(it) }
+            } catch (e: Exception) {}
         }
     }
 
-    fun loadClip(clipId: String? = null, helixClientId: String? = null, helixToken: String? = null, gqlClientId: String? = null) {
+    fun loadClip(clipId: String, helixClientId: String? = null, helixToken: String? = null, gqlClientId: String? = null) {
         _clip.value = null
         viewModelScope.launch {
             try {
-                val clip = clipId?.let { repository.loadClip(it, helixClientId, helixToken, gqlClientId) }
-                _clip.postValue(clip)
-            } catch (e: Exception) {
-
-            }
+                repository.loadClip(clipId, helixClientId, helixToken, gqlClientId)?.let { _clip.postValue(it) }
+            } catch (e: Exception) {}
         }
     }
 
@@ -105,11 +101,8 @@ class MainViewModel @Inject constructor(
         _user.value = null
         viewModelScope.launch {
             try {
-                val user = login?.let { repository.loadUsersByLogin(mutableListOf(login), helixClientId, helixToken, gqlClientId) }?.firstOrNull()
-                _user.postValue(user)
-            } catch (e: Exception) {
-
-            }
+                repository.loadCheckUser(channelLogin = login, helixClientId = helixClientId, helixToken = helixToken, gqlClientId = gqlClientId)?.let { _user.postValue(it) }
+            } catch (e: Exception) {}
         }
     }
 
@@ -121,7 +114,11 @@ class MainViewModel @Inject constructor(
                     if (!user.helixToken.isNullOrBlank()) {
                         val response = authRepository.validate(TwitchApiHelper.addTokenPrefixHelix(user.helixToken))
                         if (!response?.clientId.isNullOrBlank() && response?.clientId == helixClientId) {
-                            User.validated()
+                            if ((!response?.userId.isNullOrBlank() && response?.userId != user.id) || (!response?.login.isNullOrBlank() && response?.login != user.login)) {
+                                User.set(activity, LoggedIn(response?.userId?.nullIfEmpty() ?: user.id, response?.login?.nullIfEmpty() ?: user.login, user.helixToken, user.gqlToken))
+                            } else {
+                                User.validated()
+                            }
                         } else {
                             throw IllegalStateException("401")
                         }
@@ -129,7 +126,11 @@ class MainViewModel @Inject constructor(
                     if (!user.gqlToken.isNullOrBlank()) {
                         val response = authRepository.validate(TwitchApiHelper.addTokenPrefixGQL(user.gqlToken))
                         if (!response?.clientId.isNullOrBlank() && response?.clientId == gqlClientId) {
-                            User.validated()
+                            if ((!response?.userId.isNullOrBlank() && response?.userId != user.id) || (!response?.login.isNullOrBlank() && response?.login != user.login)) {
+                                User.set(activity, LoggedIn(response?.userId?.nullIfEmpty() ?: user.id, response?.login?.nullIfEmpty() ?: user.login, user.helixToken, user.gqlToken))
+                            } else {
+                                User.validated()
+                            }
                         } else {
                             throw IllegalStateException("401")
                         }

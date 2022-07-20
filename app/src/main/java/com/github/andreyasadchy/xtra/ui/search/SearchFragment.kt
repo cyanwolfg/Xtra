@@ -31,7 +31,7 @@ class SearchFragment : MediaPagerFragment() {
                 }
             }
         }
-        setAdapter(adapter = adapter, currentItem = 1)
+        setAdapter(adapter = adapter, currentItem = 2)
         toolbar.apply {
             navigationIcon = Utils.getNavigationIcon(activity)
             setNavigationOnClickListener { activity.popFragment() }

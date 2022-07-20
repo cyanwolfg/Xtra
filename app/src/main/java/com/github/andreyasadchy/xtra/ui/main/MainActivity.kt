@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, 
             PreferenceManager.setDefaultValues(this@MainActivity, R.xml.player_menu_preferences, true)
             PreferenceManager.setDefaultValues(this@MainActivity, R.xml.buffer_preferences, true)
             PreferenceManager.setDefaultValues(this@MainActivity, R.xml.token_preferences, true)
-            PreferenceManager.setDefaultValues(this@MainActivity, R.xml.api_preferences, true)
+            PreferenceManager.setDefaultValues(this@MainActivity, R.xml.api_token_preferences, true)
             prefs.edit {
                 putBoolean(C.FIRST_LAUNCH2, false)
                 putInt(C.LANDSCAPE_CHAT_WIDTH, DisplayUtils.calculateLandscapeWidthByPercent(this@MainActivity, 30))
@@ -150,7 +150,9 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, 
         viewModel.isNetworkAvailable.observe(this) {
             it.getContentIfNotHandled()?.let { online ->
                 if (online) {
-                    viewModel.validate(prefs.getString(C.HELIX_CLIENT_ID, ""), prefs.getString(C.GQL_CLIENT_ID, ""), this)
+                    if (prefs.getBoolean(C.VALIDATE_TOKENS, true)) {
+                        viewModel.validate(prefs.getString(C.HELIX_CLIENT_ID, ""), prefs.getString(C.GQL_CLIENT_ID, ""), this)
+                    }
                 }
                 if (flag) {
                     shortToast(if (online) R.string.connection_restored else R.string.no_connection)
@@ -322,42 +324,50 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, 
             val url = intent.data.toString()
             when {
                 url.contains("twitch.tv/videos/") -> {
-                    val id = url.substringAfter("twitch.tv/videos/").let { it.substringBefore("?", it.substringBefore("/")) }
-                    val offset = url.substringAfter("?t=").nullIfEmpty()?.let { (TwitchApiHelper.getDuration(it)?.toDouble() ?: 0.0) * 1000.0 }
-                    viewModel.loadVideo(id, prefs.getString(C.HELIX_CLIENT_ID, ""), prefs.getString(C.TOKEN, ""), prefs.getString(C.GQL_CLIENT_ID, ""))
-                    viewModel.video.observe(this) { video ->
-                        if (video != null && video.id.isNotBlank()) {
-                            startVideo(video, offset)
+                    val id = url.substringAfter("twitch.tv/videos/").takeIf { it.isNotBlank() }?.let { it.substringBefore("?", it.substringBefore("/")) }
+                    val offset = url.substringAfter("?t=").takeIf { it.isNotBlank() }?.let { (TwitchApiHelper.getDuration(it)?.toDouble() ?: 0.0) * 1000.0 }
+                    if (!id.isNullOrBlank()) {
+                        viewModel.loadVideo(id, prefs.getString(C.HELIX_CLIENT_ID, ""), User.get(this).helixToken, prefs.getString(C.GQL_CLIENT_ID, ""))
+                        viewModel.video.observe(this) { video ->
+                            if (video != null && video.id.isNotBlank()) {
+                                startVideo(video, offset)
+                            }
                         }
                     }
                 }
                 url.contains("/clip/") -> {
-                    val id = url.substringAfter("/clip/").let { it.substringBefore("?", it.substringBefore("/")) }
-                    viewModel.loadClip(id, prefs.getString(C.HELIX_CLIENT_ID, ""), prefs.getString(C.TOKEN, ""), prefs.getString(C.GQL_CLIENT_ID, ""))
-                    viewModel.clip.observe(this) { clip ->
-                        if (clip != null && clip.id.isNotBlank()) {
-                            startClip(clip)
+                    val id = url.substringAfter("/clip/").takeIf { it.isNotBlank() }?.let { it.substringBefore("?", it.substringBefore("/")) }
+                    if (!id.isNullOrBlank()) {
+                        viewModel.loadClip(id, prefs.getString(C.HELIX_CLIENT_ID, ""), User.get(this).helixToken, prefs.getString(C.GQL_CLIENT_ID, ""))
+                        viewModel.clip.observe(this) { clip ->
+                            if (clip != null && clip.id.isNotBlank()) {
+                                startClip(clip)
+                            }
                         }
                     }
                 }
                 url.contains("clips.twitch.tv/") -> {
-                    val id = url.substringAfter("clips.twitch.tv/").let { it.substringBefore("?", it.substringBefore("/")) }
-                    viewModel.loadClip(id, prefs.getString(C.HELIX_CLIENT_ID, ""), prefs.getString(C.TOKEN, ""), prefs.getString(C.GQL_CLIENT_ID, ""))
-                    viewModel.clip.observe(this) { clip ->
-                        if (clip != null && clip.id.isNotBlank()) {
-                            startClip(clip)
+                    val id = url.substringAfter("clips.twitch.tv/").takeIf { it.isNotBlank() }?.let { it.substringBefore("?", it.substringBefore("/")) }
+                    if (!id.isNullOrBlank()) {
+                        viewModel.loadClip(id, prefs.getString(C.HELIX_CLIENT_ID, ""), User.get(this).helixToken, prefs.getString(C.GQL_CLIENT_ID, ""))
+                        viewModel.clip.observe(this) { clip ->
+                            if (clip != null && clip.id.isNotBlank()) {
+                                startClip(clip)
+                            }
                         }
                     }
                 }
                 url.contains("twitch.tv/directory/game/") -> {
-                    playerFragment?.minimize()
-                    val name = url.substringAfter("twitch.tv/directory/game/").let { it.substringBefore("?", it.substringBefore("/")) }
-                    openGame(id = null, name = Uri.decode(name))
+                    val name = url.substringAfter("twitch.tv/directory/game/").takeIf { it.isNotBlank() }?.let { it.substringBefore("?", it.substringBefore("/")) }
+                    if (!name.isNullOrBlank()) {
+                        playerFragment?.minimize()
+                        openGame(id = null, name = Uri.decode(name))
+                    }
                 }
                 else -> {
-                    val login = url.substringAfter("twitch.tv/").let { it.substringBefore("?", it.substringBefore("/")) }
-                    if (login.isNotBlank()) {
-                        viewModel.loadUser(login, prefs.getString(C.HELIX_CLIENT_ID, ""), prefs.getString(C.TOKEN, ""), prefs.getString(C.GQL_CLIENT_ID, ""))
+                    val login = url.substringAfter("twitch.tv/").takeIf { it.isNotBlank() }?.let { it.substringBefore("?", it.substringBefore("/")) }
+                    if (!login.isNullOrBlank()) {
+                        viewModel.loadUser(login, prefs.getString(C.HELIX_CLIENT_ID, ""), User.get(this).helixToken, prefs.getString(C.GQL_CLIENT_ID, ""))
                         viewModel.user.observe(this) { user ->
                             if (user != null && (!user.id.isNullOrBlank() || !user.login.isNullOrBlank())) {
                                 playerFragment?.minimize()

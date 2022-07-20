@@ -1,0 +1,13 @@
+query UserEmotes($id: ID) {
+    user(id: $id, lookupType: ALL) {
+        emoteSets {
+            emotes {
+                id
+                owner {
+                    id
+                }
+                setID
+            }
+        }
+    }
+}

@@ -1,4 +1,4 @@
-query UserLastBroadcast($id: [ID!]) {
+query UsersLastBroadcast($id: [ID!]) {
     users(ids: $id) {
         id
         lastBroadcast {

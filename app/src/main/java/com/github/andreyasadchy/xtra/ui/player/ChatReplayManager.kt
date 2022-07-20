@@ -10,7 +10,7 @@ import kotlin.concurrent.fixedRateTimer
 import kotlin.math.max
 
 class ChatReplayManager @Inject constructor(
-        private val clientId: String,
+        private val clientId: String?,
         private val repository: TwitchService,
         private val videoId: String,
         private val startTime: Double,

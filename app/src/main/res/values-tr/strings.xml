@@ -565,4 +565,13 @@ Bir kullanıcı üzerindeki zaman aşımını kaldırır.</string>
     <string name="auto_switch_raids">Switch stream on raid automatically</string>
     <string name="host_text">Hosting %s</string>
     <string name="watch_stream">Watch stream</string>
+    <string name="search_streams">Search streams</string>
+    <string name="reload_emotes">Reload emotes</string>
+    <string name="api_current_login">Current login</string>
+    <string name="api_user_id">Account id</string>
+    <string name="api_user_login">Account login</string>
+    <string name="api_helix_token">Helix token</string>
+    <string name="api_gql_token">GQL token</string>
+    <string name="api_validate_tokens">Validate tokens on startup</string>
+    <string name="tokens">Tokens</string>
 </resources>

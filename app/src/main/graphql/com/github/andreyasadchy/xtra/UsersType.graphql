@@ -1,4 +1,4 @@
-query UserType($id: [ID!]) {
+query UsersType($id: [ID!]) {
     users(ids: $id) {
         id
         roles {

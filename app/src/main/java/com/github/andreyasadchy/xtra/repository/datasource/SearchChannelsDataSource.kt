@@ -61,25 +61,8 @@ class SearchChannelsDataSource private constructor(
     private suspend fun helixInitial(params: LoadInitialParams): List<ChannelSearch> {
         api = C.HELIX
         val get = helixApi.getChannels(helixClientId, helixToken, query, params.requestedLoadSize, offset)
-        val list = mutableListOf<ChannelSearch>()
-        get.data?.let { list.addAll(it) }
-        val ids = mutableListOf<String>()
-        for (i in list) {
-            i.id?.let { ids.add(it) }
-        }
-        if (ids.isNotEmpty()) {
-            val users = helixApi.getUsersById(helixClientId, helixToken, ids).data
-            if (users != null) {
-                for (i in users) {
-                    val items = list.filter { it.id == i.id }
-                    for (item in items) {
-                        item.profileImageURL = i.profile_image_url
-                    }
-                }
-            }
-        }
         offset = get.pagination?.cursor
-        return list
+        return get.data ?: mutableListOf()
     }
 
     private suspend fun gqlQueryInitial(params: LoadInitialParams): List<ChannelSearch> {
@@ -88,21 +71,23 @@ class SearchChannelsDataSource private constructor(
             query = query,
             first = Optional.Present(params.requestedLoadSize),
             after = Optional.Present(offset)
-        )).execute().data?.searchFor?.channels
-        val get = get1?.items
+        )).execute().data?.searchUsers
+        val get = get1?.edges
         val list = mutableListOf<ChannelSearch>()
         if (get != null) {
-            for (i in get) {
-                list.add(ChannelSearch(
-                    id = i.id,
-                    broadcaster_login = i.login,
-                    display_name = i.displayName,
-                    profileImageURL = i.profileImageURL,
-                    followers_count = i.followers?.totalCount,
-                    type = i.stream?.type
-                ))
+            for (edge in get) {
+                edge.node?.let { i ->
+                    list.add(ChannelSearch(
+                        id = i.id,
+                        broadcaster_login = i.login,
+                        display_name = i.displayName,
+                        thumbnail_url = i.profileImageURL,
+                        followers_count = i.followers?.totalCount,
+                        type = i.stream?.type
+                    ))
+                }
             }
-            offset = get1.cursor.toString()
+            offset = get1.edges.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list
@@ -128,27 +113,10 @@ class SearchChannelsDataSource private constructor(
 
     private suspend fun helixRange(params: LoadRangeParams): List<ChannelSearch> {
         val get = helixApi.getChannels(helixClientId, helixToken, query, params.loadSize, offset)
-        val list = mutableListOf<ChannelSearch>()
-        if (offset != null && offset != "") {
-            get.data?.let { list.addAll(it) }
-            val ids = mutableListOf<String>()
-            for (i in list) {
-                i.id?.let { ids.add(it) }
-            }
-            if (ids.isNotEmpty()) {
-                val users = helixApi.getUsersById(helixClientId, helixToken, ids).data
-                if (users != null) {
-                    for (i in users) {
-                        val items = list.filter { it.id == i.id }
-                        for (item in items) {
-                            item.profileImageURL = i.profile_image_url
-                        }
-                    }
-                }
-            }
+        return if (offset != null && offset != "") {
             offset = get.pagination?.cursor
-        }
-        return list
+            get.data ?: mutableListOf()
+        } else mutableListOf()
     }
 
     private suspend fun gqlQueryRange(params: LoadRangeParams): List<ChannelSearch> {
@@ -157,21 +125,23 @@ class SearchChannelsDataSource private constructor(
             query = query,
             first = Optional.Present(params.loadSize),
             after = Optional.Present(offset)
-        )).execute().data?.searchFor?.channels
-        val get = get1?.items
+        )).execute().data?.searchUsers
+        val get = get1?.edges
         val list = mutableListOf<ChannelSearch>()
         if (get != null && nextPage && offset != null && offset != "") {
-            for (i in get) {
-                list.add(ChannelSearch(
-                    id = i.id,
-                    broadcaster_login = i.login,
-                    display_name = i.displayName,
-                    profileImageURL = i.profileImageURL,
-                    followers_count = i.followers?.totalCount,
-                    type = i.stream?.type
-                ))
+            for (edge in get) {
+                edge.node?.let { i ->
+                    list.add(ChannelSearch(
+                        id = i.id,
+                        broadcaster_login = i.login,
+                        display_name = i.displayName,
+                        thumbnail_url = i.profileImageURL,
+                        followers_count = i.followers?.totalCount,
+                        type = i.stream?.type
+                    ))
+                }
             }
-            offset = get1.cursor.toString()
+            offset = get1.edges.lastOrNull()?.cursor.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list

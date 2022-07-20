@@ -100,7 +100,7 @@ class LoginActivity : AppCompatActivity(), Injectable {
                                 .setPositiveButton(R.string.log_in) { _, _ ->
                                     val text = editText.text
                                     if (text.isNotEmpty()) {
-                                        if (!loginIfValidUrl(text.toString(), gqlAuthUrl, 2)) {
+                                        if (!loginIfValidUrl(text.toString(), gqlAuthUrl, helixClientId, gqlClientId, 2)) {
                                             shortToast(R.string.invalid_url)
                                         }
                                     }
@@ -135,7 +135,7 @@ class LoginActivity : AppCompatActivity(), Injectable {
 
                 @Deprecated("Deprecated in Java")
                 override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                    loginIfValidUrl(url, gqlAuthUrl, apiSetting)
+                    loginIfValidUrl(url, gqlAuthUrl, helixClientId, gqlClientId, apiSetting)
                     return false
                 }
 
@@ -151,7 +151,7 @@ class LoginActivity : AppCompatActivity(), Injectable {
                     loadDataWithBaseURL(null, html, "text/html", "UTF-8", null)
                 }
             }
-            loadUrl(helixAuthUrl)
+            loadUrl(if (apiSetting == 1) gqlAuthUrl else helixAuthUrl)
         }
     }
 
@@ -165,7 +165,7 @@ class LoginActivity : AppCompatActivity(), Injectable {
         return super.onKeyDown(keyCode, event)
     }*/
 
-    private fun loginIfValidUrl(url: String, gqlAuthUrl: String, apiSetting: Int): Boolean {
+    private fun loginIfValidUrl(url: String, gqlAuthUrl: String, helixClientId: String?, gqlClientId: String?, apiSetting: Int): Boolean {
         val matcher = tokenPattern.matcher(url)
         return if (matcher.find() && tokens < 2) {
             webViewContainer.gone()
@@ -175,9 +175,9 @@ class LoginActivity : AppCompatActivity(), Injectable {
                 lifecycleScope.launch {
                     try {
                         val response = repository.validate(TwitchApiHelper.addTokenPrefixHelix(token))
-                        if (response != null) {
-                            userId = response.userId
-                            userLogin = response.login
+                        if (!response?.clientId.isNullOrBlank() && response?.clientId == helixClientId) {
+                            userId = response?.userId
+                            userLogin = response?.login
                             helixToken = token
                             if (apiSetting == 0 && !gqlToken.isNullOrBlank() || apiSetting > 0) {
                                 TwitchApiHelper.checkedValidation = true
@@ -196,9 +196,9 @@ class LoginActivity : AppCompatActivity(), Injectable {
                 lifecycleScope.launch {
                     try {
                         val response = repository.validate(TwitchApiHelper.addTokenPrefixGQL(token))
-                        if (response != null) {
-                            userId = response.userId
-                            userLogin = response.login
+                        if (!response?.clientId.isNullOrBlank() && response?.clientId == gqlClientId) {
+                            userId = response?.userId
+                            userLogin = response?.login
                             gqlToken = token
                             if (apiSetting == 0 && !helixToken.isNullOrBlank() || apiSetting > 0) {
                                 TwitchApiHelper.checkedValidation = true

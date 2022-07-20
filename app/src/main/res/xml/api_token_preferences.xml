@@ -1,0 +1,72 @@
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/loginApiEntries"
+        android:entryValues="@array/miscValues"
+        android:key="api_login"
+        android:summary="%s"
+        android:title="@string/api_login"
+        app:iconSpaceReserved="false"/>
+
+    <EditTextPreference
+        android:defaultValue="ilfexgv3nnljz3isbm257gzwrzr7bi"
+        android:key="helix_client_id"
+        android:maxLines="1"
+        android:title="@string/api_helix"
+        app:useSimpleSummaryProvider="true"
+        app:iconSpaceReserved="false" />
+
+    <EditTextPreference
+        android:defaultValue="https://localhost"
+        android:key="helix_redirect"
+        android:maxLines="1"
+        android:title="@string/api_helix_redirect"
+        app:useSimpleSummaryProvider="true"
+        app:iconSpaceReserved="false" />
+
+    <EditTextPreference
+        android:defaultValue="kimne78kx3ncx6brgo4mv6wki5h1ko"
+        android:key="gql_client_id"
+        android:maxLines="1"
+        android:title="@string/api_gql"
+        app:useSimpleSummaryProvider="true"
+        app:iconSpaceReserved="false" />
+
+    <EditTextPreference
+        android:defaultValue="https://www.twitch.tv/"
+        android:key="gql_redirect"
+        android:maxLines="1"
+        android:title="@string/api_gql_redirect"
+        app:useSimpleSummaryProvider="true"
+        app:iconSpaceReserved="false" />
+
+    <PreferenceCategory android:title="@string/api_current_login" app:iconSpaceReserved="false"/>
+    <EditTextPreference
+        android:key="user_id"
+        android:title="@string/api_user_id"
+        app:iconSpaceReserved="false" />
+
+    <EditTextPreference
+        android:key="username"
+        android:title="@string/api_user_login"
+        app:iconSpaceReserved="false" />
+
+    <EditTextPreference
+        android:key="token"
+        android:title="@string/api_helix_token"
+        app:iconSpaceReserved="false" />
+
+    <EditTextPreference
+        android:key="gql_token"
+        android:title="@string/api_gql_token"
+        app:iconSpaceReserved="false" />
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="validate_tokens"
+        android:title="@string/api_validate_tokens"
+        app:iconSpaceReserved="false"/>
+
+</androidx.preference.PreferenceScreen>

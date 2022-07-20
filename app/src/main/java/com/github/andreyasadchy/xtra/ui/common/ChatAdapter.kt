@@ -70,9 +70,10 @@ class ChatAdapter(
     private val emotes = HashMap<String, Emote>()
     private var cheerEmotes: List<CheerEmote>? = null
     private var loggedInUser: String? = null
+    private var channelId: String? = null
     private val scaledEmoteSize = (emoteSize * 0.78f).toInt()
 
-    private var messageClickListener: ((CharSequence, CharSequence, String?, String?, Boolean) -> Unit)? = null
+    private var messageClickListener: ((CharSequence, CharSequence, String?, String?, Boolean?, String?) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.chat_list_item, parent, false))
@@ -81,6 +82,7 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val chatMessage = messages?.get(position) ?: return
         val liveMessage = chatMessage as? LiveChatMessage
+        val videoMessage = chatMessage as? VideoChatMessage
         val pointReward = chatMessage as? PubSubPointReward ?: liveMessage?.pointReward
         val builder = SpannableStringBuilder()
         val images = ArrayList<Image>()
@@ -91,7 +93,7 @@ class ChatAdapter(
             builder.append("$systemMsg\n")
             imageIndex += systemMsg.length + 1
         } else {
-            val msgId = liveMessage?.msgId?.let { TwitchApiHelper.getMessageIdString(it) ?: liveMessage.msgId }
+            val msgId = (liveMessage?.msgId ?: videoMessage?.msgId)?.let { TwitchApiHelper.getMessageIdString(it) ?: it }
             if (msgId != null) {
                 builder.append("$msgId\n")
                 imageIndex += msgId.length + 1
@@ -288,42 +290,42 @@ class ChatAdapter(
             when {
                 liveMessage?.isFirst == true && (firstMsgVisibility?.toInt() ?: 0) < 2 -> holder.textView.setBackgroundResource(R.color.chatMessageFirst)
                 liveMessage?.rewardId != null && (firstMsgVisibility?.toInt() ?: 0) < 2 -> holder.textView.setBackgroundResource(R.color.chatMessageReward)
-                liveMessage?.systemMsg != null || liveMessage?.msgId != null -> holder.textView.setBackgroundResource(R.color.chatMessageNotice)
+                liveMessage?.systemMsg != null || liveMessage?.msgId != null || videoMessage?.msgId != null -> holder.textView.setBackgroundResource(R.color.chatMessageNotice)
                 wasMentioned && userId != null -> holder.textView.setBackgroundResource(R.color.chatMessageMention)
                 else -> holder.textView.background = null
             }
         } catch (e: Exception) {
 //            Crashlytics.logException(e)
         }
-        holder.bind(originalMessage, builder, userId, fullMsg, liveMessage?.isHostMsg == true)
-        loadImages(holder, images, originalMessage, builder, userId, fullMsg, liveMessage?.isHostMsg == true)
+        holder.bind(originalMessage, builder, userId, channelId, liveMessage?.isHostMsg, fullMsg)
+        loadImages(holder, images, originalMessage, builder, userId, channelId, liveMessage?.isHostMsg, fullMsg)
     }
 
     override fun getItemCount(): Int = messages?.size ?: 0
 
-    private fun loadImages(holder: ViewHolder, images: List<Image>, originalMessage: CharSequence, builder: SpannableStringBuilder, userId: String?, fullMsg: String?, host: Boolean) {
+    private fun loadImages(holder: ViewHolder, images: List<Image>, originalMessage: CharSequence, builder: SpannableStringBuilder, userId: String?, channelId: String?, host: Boolean?, fullMsg: String?) {
         images.forEach {
             when (imageLibrary) {
-                "0" -> loadCoil(holder, it, originalMessage, builder, userId, fullMsg, host)
+                "0" -> loadCoil(holder, it, originalMessage, builder, userId, channelId, host, fullMsg)
                 "1" -> {
                     if (it.type == "image/webp") {
                         if (animateGifs) {
-                            loadWebp(holder, it, originalMessage, builder, userId, fullMsg, host)
+                            loadWebp(holder, it, originalMessage, builder, userId, channelId, host, fullMsg)
                         } else {
-                            loadDrawable(holder, it, originalMessage, builder, userId, fullMsg, host)
+                            loadDrawable(holder, it, originalMessage, builder, userId, channelId, host, fullMsg)
                         }
                     } else {
-                        loadCoil(holder, it, originalMessage, builder, userId, fullMsg, host)
+                        loadCoil(holder, it, originalMessage, builder, userId, channelId, host, fullMsg)
                     }
                 }
                 else -> {
                     if (it.type == "image/webp" && animateGifs) {
-                        loadWebp(holder, it, originalMessage, builder, userId, fullMsg, host)
+                        loadWebp(holder, it, originalMessage, builder, userId, channelId, host, fullMsg)
                     } else {
                         if (it.type == "image/gif" && animateGifs) {
-                            loadGif(holder, it, originalMessage, builder, userId, fullMsg, host)
+                            loadGif(holder, it, originalMessage, builder, userId, channelId, host, fullMsg)
                         } else {
-                            loadDrawable(holder, it, originalMessage, builder, userId, fullMsg, host)
+                            loadDrawable(holder, it, originalMessage, builder, userId, channelId, host, fullMsg)
                         }
                     }
                 }
@@ -331,7 +333,7 @@ class ChatAdapter(
         }
     }
 
-    private fun loadCoil(holder: ViewHolder, image: Image, originalMessage: CharSequence, builder: SpannableStringBuilder, userId: String?, fullMsg: String?, host: Boolean) {
+    private fun loadCoil(holder: ViewHolder, image: Image, originalMessage: CharSequence, builder: SpannableStringBuilder, userId: String?, channelId: String?, host: Boolean?, fullMsg: String?) {
         val request = ImageRequest.Builder(fragment.requireContext())
             .data(image.url)
             .target(
@@ -358,14 +360,14 @@ class ChatAdapter(
                         }
                     } catch (e: IndexOutOfBoundsException) {
                     }
-                    holder.bind(originalMessage, builder, userId, fullMsg, host)
+                    holder.bind(originalMessage, builder, userId, channelId, host, fullMsg)
                 },
             )
             .build()
         fragment.requireContext().imageLoader.enqueue(request)
     }
 
-    private fun loadWebp(holder: ViewHolder, image: Image, originalMessage: CharSequence, builder: SpannableStringBuilder, userId: String?, fullMsg: String?, host: Boolean) {
+    private fun loadWebp(holder: ViewHolder, image: Image, originalMessage: CharSequence, builder: SpannableStringBuilder, userId: String?, channelId: String?, host: Boolean?, fullMsg: String?) {
         GlideApp.with(fragment)
             .asWebp()
             .load(image.url)
@@ -399,19 +401,19 @@ class ChatAdapter(
                         builder.setSpan(ImageSpan(resource), image.start, image.end, SPAN_EXCLUSIVE_EXCLUSIVE)
                     } catch (e: IndexOutOfBoundsException) {
                     }
-                    holder.bind(originalMessage, builder, userId, fullMsg, host)
+                    holder.bind(originalMessage, builder, userId, channelId, host, fullMsg)
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }
 
                 override fun onLoadFailed(errorDrawable: Drawable?) {
-                    loadDrawable(holder, image, originalMessage, builder, userId, fullMsg, host)
+                    loadDrawable(holder, image, originalMessage, builder, userId, channelId, host, fullMsg)
                 }
             })
     }
 
-    private fun loadGif(holder: ViewHolder, image: Image, originalMessage: CharSequence, builder: SpannableStringBuilder, userId: String?, fullMsg: String?, host: Boolean) {
+    private fun loadGif(holder: ViewHolder, image: Image, originalMessage: CharSequence, builder: SpannableStringBuilder, userId: String?, channelId: String?, host: Boolean?, fullMsg: String?) {
         GlideApp.with(fragment)
             .asGif()
             .load(image.url)
@@ -445,19 +447,19 @@ class ChatAdapter(
                         builder.setSpan(ImageSpan(resource), image.start, image.end, SPAN_EXCLUSIVE_EXCLUSIVE)
                     } catch (e: IndexOutOfBoundsException) {
                     }
-                    holder.bind(originalMessage, builder, userId, fullMsg, host)
+                    holder.bind(originalMessage, builder, userId, channelId, host, fullMsg)
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }
 
                 override fun onLoadFailed(errorDrawable: Drawable?) {
-                    loadDrawable(holder, image, originalMessage, builder, userId, fullMsg, host)
+                    loadDrawable(holder, image, originalMessage, builder, userId, channelId, host, fullMsg)
                 }
             })
     }
 
-    private fun loadDrawable(holder: ViewHolder, image: Image, originalMessage: CharSequence, builder: SpannableStringBuilder, userId: String?, fullMsg: String?, host: Boolean) {
+    private fun loadDrawable(holder: ViewHolder, image: Image, originalMessage: CharSequence, builder: SpannableStringBuilder, userId: String?, channelId: String?, host: Boolean?, fullMsg: String?) {
         GlideApp.with(fragment)
             .load(image.url)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
@@ -482,7 +484,7 @@ class ChatAdapter(
                         builder.setSpan(ImageSpan(resource), image.start, image.end, SPAN_EXCLUSIVE_EXCLUSIVE)
                     } catch (e: IndexOutOfBoundsException) {
                     }
-                    holder.bind(originalMessage, builder, userId, fullMsg, host)
+                    holder.bind(originalMessage, builder, userId, channelId, host, fullMsg)
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
@@ -507,10 +509,14 @@ class ChatAdapter(
     }
 
     fun setUsername(username: String) {
-        this.loggedInUser = username
+        loggedInUser = username
     }
 
-    fun setOnClickListener(listener: (CharSequence, CharSequence, String?, String?, Boolean) -> Unit) {
+    fun setChannelId(channelId: String?) {
+        this.channelId = channelId
+    }
+
+    fun setOnClickListener(listener: (CharSequence, CharSequence, String?, String?, Boolean?, String?) -> Unit) {
         messageClickListener = listener
     }
 
@@ -582,11 +588,11 @@ class ChatAdapter(
 
         val textView = itemView as TextView
 
-        fun bind(originalMessage: CharSequence, formattedMessage: SpannableStringBuilder, userId: String?, fullMsg: String?, host: Boolean = false) {
+        fun bind(originalMessage: CharSequence, formattedMessage: SpannableStringBuilder, userId: String?, channelId: String?, host: Boolean?, fullMsg: String?) {
             textView.apply {
                 text = formattedMessage
                 movementMethod = LinkMovementMethod.getInstance()
-                setOnClickListener { messageClickListener?.invoke(originalMessage, formattedMessage, userId, fullMsg, host) }
+                setOnClickListener { messageClickListener?.invoke(originalMessage, formattedMessage, userId, channelId, host, fullMsg) }
             }
         }
     }

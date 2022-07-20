@@ -69,7 +69,7 @@ class GamesFragment : PagedListFragment<Game, GamesViewModel, BasePagedListAdapt
                             } else {
                                 AlertDialog.Builder(activity).apply {
                                     setTitle(getString(R.string.logout_title))
-                                    user.login?.let { user -> setMessage(getString(R.string.logout_msg, user)) }
+                                    user.login?.nullIfEmpty()?.let { user -> setMessage(getString(R.string.logout_msg, user)) }
                                     setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
                                     setPositiveButton(getString(R.string.yes)) { _, _ -> activity.startActivityForResult(Intent(activity, LoginActivity::class.java), 2) }
                                 }.show()
@@ -109,7 +109,7 @@ class GamesFragment : PagedListFragment<Game, GamesViewModel, BasePagedListAdapt
         }
         viewModel.loadGames(
             helixClientId = requireContext().prefs().getString(C.HELIX_CLIENT_ID, ""),
-            helixToken = requireContext().prefs().getString(C.TOKEN, ""),
+            helixToken = User.get(requireContext()).helixToken,
             gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, ""),
             tags = arguments?.getStringArray(C.TAGS)?.toList(),
             apiPref = TwitchApiHelper.listFromPrefs(requireContext().prefs().getString(C.API_PREF_GAMES, ""), TwitchApiHelper.gamesApiDefaults)

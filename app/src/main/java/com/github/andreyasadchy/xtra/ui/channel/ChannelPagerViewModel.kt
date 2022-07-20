@@ -56,42 +56,37 @@ class ChannelPagerViewModel @Inject constructor(
         }
     }
 
-    fun loadStream(channelId: String?, channelLogin: String?, channelName: String?, profileImageURL: String?, helixClientId: String? = null, helixToken: String? = null, gqlClientId: String? = null) {
-        if (_userId.value != channelId && channelId != null) {
-            _userId.value = channelId
-            _userLogin.value = channelLogin
-            _userName.value = channelName
-            _profileImageURL.value = profileImageURL
+    fun init(channelId: String?, channelLogin: String?, channelName: String?, profileImageURL: String?) {
+        _userId.value = channelId
+        _userLogin.value = channelLogin
+        _userName.value = channelName
+        _profileImageURL.value = profileImageURL
+    }
+
+    fun loadStream(helixClientId: String?, helixToken: String?, gqlClientId: String?) {
+        viewModelScope.launch {
+            try {
+                repository.loadUserChannelPage(userId, userLogin, helixClientId, helixToken, gqlClientId)?.let { _stream.postValue(it) }
+            } catch (e: Exception) {}
+        }
+    }
+
+    fun loadUser(helixClientId: String?, helixToken: String?) {
+        if (!helixToken.isNullOrBlank()) {
             viewModelScope.launch {
                 try {
-                    val stream = repository.loadStreamWithUser(channelId, helixClientId, helixToken, gqlClientId)
-                    _stream.postValue(stream)
-                } catch (e: Exception) {
-
-                }
+                    repository.loadUser(userId, userLogin, helixClientId, helixToken)?.let { _user.postValue(it) }
+                } catch (e: Exception) {}
             }
         }
     }
 
-    fun loadUser(channelId: String?, helixClientId: String? = null, helixToken: String? = null, gqlClientId: String? = null) {
-        if (channelId != null) {
-            viewModelScope.launch {
-                try {
-                    val user = repository.loadUsersById(mutableListOf(channelId), helixClientId, helixToken, gqlClientId)?.firstOrNull()
-                    _user.postValue(user)
-                } catch (e: Exception) {
-
-                }
-            }
-        }
-    }
-
-    fun retry(helixClientId: String? = null, helixToken: String? = null, gqlClientId: String? = null) {
+    fun retry(helixClientId: String?, helixToken: String?, gqlClientId: String?) {
         if (_stream.value == null) {
-            loadStream(_userId.value, _userLogin.value, _userName.value, _profileImageURL.value, helixClientId, helixToken, gqlClientId)
+            loadStream(helixClientId, helixToken, gqlClientId)
         } else {
-            if (_stream.value!!.channelUser == null) {
-                loadUser(_userId.value, helixClientId, helixToken, gqlClientId)
+            if (_stream.value?.channelUser == null && _user.value == null) {
+                loadUser(helixClientId, helixToken)
             }
         }
     }

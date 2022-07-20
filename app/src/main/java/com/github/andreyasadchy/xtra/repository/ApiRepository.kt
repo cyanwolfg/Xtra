@@ -9,6 +9,7 @@ import com.github.andreyasadchy.xtra.api.HelixApi
 import com.github.andreyasadchy.xtra.api.MiscApi
 import com.github.andreyasadchy.xtra.di.XtraModule
 import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory.apolloClient
+import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientWithTokenFactory.apolloClientWithToken
 import com.github.andreyasadchy.xtra.model.chat.CheerEmote
 import com.github.andreyasadchy.xtra.model.chat.TwitchEmote
 import com.github.andreyasadchy.xtra.model.chat.VideoMessagesResponse
@@ -174,6 +175,22 @@ class ApiRepository @Inject constructor(
         return Listing.create(factory, config)
     }
 
+    override fun loadSearchStreams(query: String, helixClientId: String?, helixToken: String?, gqlClientId: String?, apiPref: ArrayList<Pair<Long?, String?>?>?, thumbnailsEnabled: Boolean?, coroutineScope: CoroutineScope): Listing<Stream> {
+        val factory = SearchStreamsDataSource.Factory(query, helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, helix, gqlClientId, apiPref, coroutineScope)
+        val builder = PagedList.Config.Builder().setEnablePlaceholders(false)
+        if (thumbnailsEnabled == true) {
+            builder.setPageSize(10)
+                .setInitialLoadSizeHint(15)
+                .setPrefetchDistance(3)
+        } else {
+            builder.setPageSize(30)
+                .setInitialLoadSizeHint(30)
+                .setPrefetchDistance(10)
+        }
+        val config = builder.build()
+        return Listing.create(factory, config)
+    }
+
     override fun loadFollowedStreams(userId: String?, helixClientId: String?, helixToken: String?, gqlClientId: String?, gqlToken: String?, apiPref: ArrayList<Pair<Long?, String?>?>, thumbnailsEnabled: Boolean, coroutineScope: CoroutineScope): Listing<Stream> {
         val factory = FollowedStreamsDataSource.Factory(localFollowsChannel, userId, helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, helix, gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, gql, apiPref, coroutineScope)
         val builder = PagedList.Config.Builder().setEnablePlaceholders(false)
@@ -233,7 +250,7 @@ class ApiRepository @Inject constructor(
 
     override suspend fun loadStream(channelId: String, channelLogin: String?, helixClientId: String?, helixToken: String?, gqlClientId: String?): Stream? = withContext(Dispatchers.IO) {
         try {
-            val get = apolloClient(XtraModule(), gqlClientId).query(UserStreamsQuery(Optional.Present(mutableListOf(channelId)))).execute().data?.users?.firstOrNull()
+            val get = apolloClient(XtraModule(), gqlClientId).query(UsersStreamQuery(Optional.Present(mutableListOf(channelId)))).execute().data?.users?.firstOrNull()
             if (get != null) {
                 Stream(id = get.stream?.id, user_id = channelId, user_login = get.login, user_name = get.displayName, game_id = get.stream?.game?.id,
                     game_name = get.stream?.game?.displayName, type = get.stream?.type, title = get.stream?.broadcaster?.broadcastSettings?.title,
@@ -246,38 +263,6 @@ class ApiRepository @Inject constructor(
             } catch (e: Exception) {
                 null
             }
-        }
-    }
-
-    override suspend fun loadStreamWithUser(channelId: String, helixClientId: String?, helixToken: String?, gqlClientId: String?): Stream? = withContext(Dispatchers.IO) {
-        try {
-            val userIds = mutableListOf<String>()
-            userIds.add(channelId)
-            val get = apolloClient(XtraModule(), gqlClientId).query(UserWithStreamQuery(Optional.Present(userIds))).execute().data
-            if (get != null) {
-                val user = User(id = channelId, login = get.users?.first()?.login, display_name = get.users?.first()?.displayName, profile_image_url = get.users?.first()?.profileImageURL,
-                    bannerImageURL = get.users?.first()?.bannerImageURL, view_count = get.users?.first()?.profileViewCount, created_at = get.users?.first()?.createdAt?.toString(),
-                    followers_count = get.users?.first()?.followers?.totalCount,
-                    broadcaster_type = when {
-                        get.users?.first()?.roles?.isPartner == true -> "partner"
-                        get.users?.first()?.roles?.isAffiliate == true -> "affiliate"
-                        else -> null
-                    },
-                    type = when {
-                        get.users?.first()?.roles?.isStaff == true -> "staff"
-                        get.users?.first()?.roles?.isSiteAdmin == true -> "admin"
-                        get.users?.first()?.roles?.isGlobalMod == true -> "global_mod"
-                        else -> null
-                    }
-                )
-                Stream(id = get.users?.first()?.stream?.id, user_id = channelId, user_login = get.users?.first()?.login, user_name = get.users?.first()?.displayName,
-                    game_id = get.users?.first()?.stream?.game?.id, game_name = get.users?.first()?.stream?.game?.displayName, type = get.users?.first()?.stream?.type,
-                    title = get.users?.first()?.stream?.title, viewer_count = get.users?.first()?.stream?.viewersCount, started_at = get.users?.first()?.stream?.createdAt.toString(),
-                    thumbnail_url = get.users?.first()?.stream?.previewImageURL, profileImageURL = get.users?.first()?.profileImageURL, channelUser = user,
-                    lastBroadcast = get.users?.first()?.lastBroadcast?.startedAt?.toString())
-            } else null
-        } catch (e: Exception) {
-            helix.getStreams(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, mutableListOf(channelId)).data?.firstOrNull()
         }
     }
 
@@ -312,88 +297,107 @@ class ApiRepository @Inject constructor(
         }
     }
 
-    override suspend fun loadUsersById(ids: List<String>, helixClientId: String?, helixToken: String?, gqlClientId: String?): List<User>? = withContext(Dispatchers.IO) {
+    override suspend fun loadUserChannelPage(channelId: String?, channelLogin: String?, helixClientId: String?, helixToken: String?, gqlClientId: String?): Stream? = withContext(Dispatchers.IO) {
         try {
-            val get = apolloClient(XtraModule(), gqlClientId).query(UsersQuery(ids = Optional.Present(ids))).execute().data?.users
-            if (get != null) {
-                val list = mutableListOf<User>()
-                for (i in get) {
-                    list.add(
-                        User(id = i?.id, login = i?.login, display_name = i?.displayName, profile_image_url = i?.profileImageURL,
-                            bannerImageURL = i?.bannerImageURL, view_count = i?.profileViewCount, created_at = i?.createdAt?.toString(),
-                            followers_count = i?.followers?.totalCount,
-                            broadcaster_type = when {
-                                i?.roles?.isPartner == true -> "partner"
-                                i?.roles?.isAffiliate == true -> "affiliate"
-                                else -> null
-                            },
-                            type = when {
-                                i?.roles?.isStaff == true -> "staff"
-                                i?.roles?.isSiteAdmin == true -> "admin"
-                                i?.roles?.isGlobalMod == true -> "global_mod"
-                                else -> null
-                            }))
-                }
-                list
-            } else null
+            apolloClient(XtraModule(), gqlClientId).query(UserChannelPageQuery(Optional.Present(channelId), Optional.Present(channelLogin))).execute().data?.user?.let { i ->
+                Stream(
+                    id = i.stream?.id,
+                    user_id = i.id,
+                    user_login = i.login,
+                    user_name = i.displayName,
+                    game_id = i.stream?.game?.id,
+                    game_name = i.stream?.game?.displayName,
+                    type = i.stream?.type,
+                    title = i.stream?.title,
+                    viewer_count = i.stream?.viewersCount,
+                    started_at = i.stream?.createdAt.toString(),
+                    profileImageURL = i.profileImageURL,
+                    channelUser = User(
+                        bannerImageURL = i.bannerImageURL,
+                        view_count = i.profileViewCount,
+                        created_at = i.createdAt?.toString(),
+                        followers_count = i.followers?.totalCount,
+                        broadcaster_type = when {
+                            i.roles?.isPartner == true -> "partner"
+                            i.roles?.isAffiliate == true -> "affiliate"
+                            else -> null
+                        },
+                        type = when {
+                            i.roles?.isStaff == true -> "staff"
+                            i.roles?.isSiteAdmin == true -> "admin"
+                            i.roles?.isGlobalMod == true -> "global_mod"
+                            else -> null
+                        }
+                    ),
+                    lastBroadcast = i.lastBroadcast?.startedAt?.toString()
+                )
+            }
         } catch (e: Exception) {
-            helix.getUsersById(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, ids).data
+            helix.getStreams(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, channelId?.let { listOf(channelId) }, channelLogin?.let { listOf(channelLogin) }).data?.firstOrNull()
         }
     }
 
-    override suspend fun loadUsersByLogin(logins: List<String>, helixClientId: String?, helixToken: String?, gqlClientId: String?): List<User>? = withContext(Dispatchers.IO) {
+    override suspend fun loadUser(channelId: String?, channelLogin: String?, helixClientId: String?, helixToken: String?): User? = withContext(Dispatchers.IO) {
+        helix.getUsers(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, channelId?.let { listOf(channelId) }, channelLogin?.let { listOf(channelLogin) }).data?.firstOrNull()
+    }
+
+    override suspend fun loadCheckUser(channelId: String?, channelLogin: String?, helixClientId: String?, helixToken: String?, gqlClientId: String?): User? = withContext(Dispatchers.IO) {
         try {
-            val get = apolloClient(XtraModule(), gqlClientId).query(UsersQuery(logins = Optional.Present(logins))).execute().data?.users
-            if (get != null) {
-                val list = mutableListOf<User>()
-                for (i in get) {
-                    list.add(
-                        User(id = i?.id, login = i?.login, display_name = i?.displayName, profile_image_url = i?.profileImageURL,
-                            bannerImageURL = i?.bannerImageURL, view_count = i?.profileViewCount, created_at = i?.createdAt?.toString(),
-                            followers_count = i?.followers?.totalCount,
-                            broadcaster_type = when {
-                                i?.roles?.isPartner == true -> "partner"
-                                i?.roles?.isAffiliate == true -> "affiliate"
-                                else -> null
-                            },
-                            type = when {
-                                i?.roles?.isStaff == true -> "staff"
-                                i?.roles?.isSiteAdmin == true -> "admin"
-                                i?.roles?.isGlobalMod == true -> "global_mod"
-                                else -> null
-                            }))
-                }
-                list
-            } else null
+            apolloClient(XtraModule(), gqlClientId).query(UserQuery(Optional.Present(channelId), Optional.Present(channelLogin))).execute().data?.user?.let { i ->
+                User(
+                    id = i.id,
+                    login = i.login,
+                    display_name = i.displayName,
+                    profile_image_url = i.profileImageURL
+                )
+            }
         } catch (e: Exception) {
-            helix.getUsersByLogin(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, logins).data
+            helix.getUsers(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, channelId?.let { listOf(channelId) }, channelLogin?.let { listOf(channelLogin) }).data?.firstOrNull()
+        }
+    }
+
+    override suspend fun loadUserMessageClicked(channelId: String?, channelLogin: String?, targetId: String?, helixClientId: String?, helixToken: String?, gqlClientId: String?): User? = withContext(Dispatchers.IO) {
+        try {
+            apolloClient(XtraModule(), gqlClientId).query(UserMessageClickedQuery(Optional.Present(channelId), Optional.Present(channelLogin), Optional.Present(targetId))).execute().data?.user?.let { i ->
+                User(
+                    id = i.id,
+                    login = i.login,
+                    display_name = i.displayName,
+                    profile_image_url = i.profileImageURL,
+                    bannerImageURL = i.bannerImageURL,
+                    created_at = i.createdAt?.toString(),
+                    followedAt = i.follow?.followedAt?.toString()
+                )
+            }
+        } catch (e: Exception) {
+            helix.getUsers(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, channelId?.let { mutableListOf(channelId) }, channelLogin?.let { mutableListOf(channelLogin) }).data?.firstOrNull()
         }
     }
 
     override suspend fun loadUserTypes(ids: List<String>, helixClientId: String?, helixToken: String?, gqlClientId: String?): List<User>? = withContext(Dispatchers.IO) {
         try {
-            val get = apolloClient(XtraModule(), gqlClientId).query(UserTypeQuery(Optional.Present(ids))).execute().data?.users
-            if (get != null) {
+            apolloClient(XtraModule(), gqlClientId).query(UsersTypeQuery(Optional.Present(ids))).execute().data?.users?.let { get ->
                 val list = mutableListOf<User>()
                 for (i in get) {
-                    list.add(
-                        User(id = i?.id,
-                            broadcaster_type = when {
-                                i?.roles?.isPartner == true -> "partner"
-                                i?.roles?.isAffiliate == true -> "affiliate"
-                                else -> null
-                            },
-                            type = when {
-                                i?.roles?.isStaff == true -> "staff"
-                                i?.roles?.isSiteAdmin == true -> "admin"
-                                i?.roles?.isGlobalMod == true -> "global_mod"
-                                else -> null
-                            }))
+                    list.add(User(
+                        id = i?.id,
+                        broadcaster_type = when {
+                            i?.roles?.isPartner == true -> "partner"
+                            i?.roles?.isAffiliate == true -> "affiliate"
+                            else -> null
+                        },
+                        type = when {
+                            i?.roles?.isStaff == true -> "staff"
+                            i?.roles?.isSiteAdmin == true -> "admin"
+                            i?.roles?.isGlobalMod == true -> "global_mod"
+                            else -> null
+                        }
+                    ))
                 }
                 list
-            } else null
+            }
         } catch (e: Exception) {
-            helix.getUsersById(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, ids).data
+            helix.getUsers(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, ids).data
         }
     }
 
@@ -413,6 +417,30 @@ class ApiRepository @Inject constructor(
             emotes.ifEmpty { null }
         } catch (e: Exception) {
             helix.getCheerEmotes(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, userId).emotes
+        }
+    }
+
+    override suspend fun loadUserEmotes(gqlClientId: String?, gqlToken: String?, userId: String, channelId: String?): List<TwitchEmote>? = withContext(Dispatchers.IO) {
+        try {
+            val emotes = mutableListOf<TwitchEmote>()
+            apolloClientWithToken(XtraModule(), gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }).query(UserEmotesQuery(Optional.Present(userId))).execute().data?.user?.emoteSets?.forEach { set ->
+                set.emotes?.forEach { emote ->
+                    if (emote?.id != null) {
+                        emotes.add(TwitchEmote(
+                            name = emote.id,
+                            setId = emote.setID,
+                            ownerId = emote.owner?.id
+                        ))
+                    }
+                }
+            }
+            emotes
+        } catch (e: Exception) {
+            try {
+                gql.loadUserEmotes(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, channelId).data
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 
@@ -450,7 +478,7 @@ class ApiRepository @Inject constructor(
 
     override suspend fun loadHosting(clientId: String?, channelId: String?, channelLogin: String?): Stream? = withContext(Dispatchers.IO) {
         try {
-            apolloClient(XtraModule(), clientId).query(HostingQuery(Optional.Present(channelId), Optional.Present(channelLogin))).execute().data?.user?.hosting?.let { get ->
+            apolloClient(XtraModule(), clientId).query(UserHostingQuery(Optional.Present(channelId), Optional.Present(channelLogin))).execute().data?.user?.hosting?.let { get ->
                 Stream(
                     user_id = get.id,
                     user_login = get.login,
@@ -460,7 +488,7 @@ class ApiRepository @Inject constructor(
             }
         } catch (e: Exception) {
             if (!channelLogin.isNullOrBlank()) {
-                gql.loadHosting(clientId, channelLogin).data
+                gql.loadChannelHosting(clientId, channelLogin).data
             } else {
                 null
             }

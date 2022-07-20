@@ -22,7 +22,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.di.Injectable
-import com.github.andreyasadchy.xtra.model.NotLoggedIn
 import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.ui.common.AlertDialogFragment
 import com.github.andreyasadchy.xtra.ui.common.BaseNetworkFragment
@@ -182,7 +181,7 @@ abstract class BasePlayerFragment : BaseNetworkFragment(), Injectable, Lifecycle
             if (!prefs.getBoolean(C.PLAYER_PAUSE, false)) {
                 view.findViewById<ImageButton>(R.id.exo_pause).layoutParams.height = 0
             }
-            if (User.get(activity) !is NotLoggedIn) {
+            if (!User.get(activity).login.isNullOrBlank() && (!User.get(activity).gqlToken.isNullOrBlank() || !User.get(activity).helixToken.isNullOrBlank())) {
                 if (prefs.getBoolean(C.PLAYER_CHATBARTOGGLE, false) && !disableChat) {
                     view.findViewById<ImageButton>(R.id.playerChatBarToggle).apply {
                         visible()

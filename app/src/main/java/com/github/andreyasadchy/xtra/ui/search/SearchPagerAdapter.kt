@@ -7,6 +7,7 @@ import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.ui.common.pagers.ItemAwareFragmentPagerAdapter
 import com.github.andreyasadchy.xtra.ui.search.channels.ChannelSearchFragment
 import com.github.andreyasadchy.xtra.ui.search.games.GameSearchFragment
+import com.github.andreyasadchy.xtra.ui.search.streams.StreamSearchFragment
 import com.github.andreyasadchy.xtra.ui.search.videos.VideoSearchFragment
 
 class SearchPagerAdapter(
@@ -16,7 +17,8 @@ class SearchPagerAdapter(
     override fun getPageTitle(position: Int): CharSequence? {
         val id = when (position) {
             0 -> R.string.videos
-            1 -> R.string.channels
+            1 -> R.string.streams
+            2 -> R.string.channels
             else -> R.string.games
         }
         return context.getString(id)
@@ -25,10 +27,11 @@ class SearchPagerAdapter(
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> VideoSearchFragment()
-            1 -> ChannelSearchFragment()
+            1 -> StreamSearchFragment()
+            2 -> ChannelSearchFragment()
             else -> GameSearchFragment()
         }
     }
 
-    override fun getCount(): Int = 3
+    override fun getCount(): Int = 4
 }

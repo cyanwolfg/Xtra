@@ -16,11 +16,11 @@ sealed class User(val id: String?,
 
         fun get(context: Context): User {
             return user ?: with(context.prefs()) {
-                val id = getString(C.USER_ID, null)
-                if (id != null) {
+                val helixToken = getString(C.TOKEN, null)
+                val gqlToken = getString(C.GQL_TOKEN, null)
+                if (!helixToken.isNullOrBlank() || !gqlToken.isNullOrBlank()) {
+                    val id = getString(C.USER_ID, null)
                     val name = getString(C.USERNAME, null)
-                    val helixToken = getString(C.TOKEN, null)
-                    val gqlToken = getString(C.GQL_TOKEN, null)
                     if (TwitchApiHelper.checkedValidation) {
                         LoggedIn(id, name, helixToken, gqlToken)
                     } else {

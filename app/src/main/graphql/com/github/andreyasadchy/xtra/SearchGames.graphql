@@ -1,8 +1,8 @@
-query SearchGames($query: String!, $first: Int, $after: String) {
-    searchFor(userQuery: $query, platform: "", target: { cursor: $after, index: GAME, limit: $first }) {
-        games {
+query SearchGames($query: String!, $first: Int, $after: Cursor) {
+    searchCategories(query: $query, first: $first, after: $after) {
+        edges {
             cursor
-            items {
+            node {
                 boxArtURL
                 broadcastersCount
                 displayName
@@ -13,9 +13,9 @@ query SearchGames($query: String!, $first: Int, $after: String) {
                 }
                 viewersCount
             }
-            pageInfo {
-                hasNextPage
-            }
+        }
+        pageInfo {
+            hasNextPage
         }
     }
 }

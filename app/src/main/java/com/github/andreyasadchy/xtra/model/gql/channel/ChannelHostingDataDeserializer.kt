@@ -7,10 +7,10 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
 import java.lang.reflect.Type
 
-class HostingDataDeserializer : JsonDeserializer<HostingDataResponse> {
+class ChannelHostingDataDeserializer : JsonDeserializer<ChannelHostingDataResponse> {
 
     @Throws(JsonParseException::class)
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): HostingDataResponse {
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ChannelHostingDataResponse {
         val data = json.takeIf { it.isJsonObject }?.asJsonObject?.get("data")?.takeIf { it.isJsonObject }?.asJsonObject?.get("user")?.takeIf { it.isJsonObject }?.asJsonObject?.get("hosting")?.takeIf { it.isJsonObject }?.asJsonObject?.let { obj ->
             Stream(
                 user_id = obj.get("id")?.takeIf { !it.isJsonNull }?.asString,
@@ -18,6 +18,6 @@ class HostingDataDeserializer : JsonDeserializer<HostingDataResponse> {
                 user_name = obj.get("displayName")?.takeIf { !it.isJsonNull }?.asString
             )
         }
-        return HostingDataResponse(data)
+        return ChannelHostingDataResponse(data)
     }
 }

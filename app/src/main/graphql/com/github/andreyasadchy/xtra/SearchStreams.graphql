@@ -1,0 +1,34 @@
+query SearchStreams($query: String!, $first: Int, $after: Cursor) {
+    searchStreams(userQuery: $query, first: $first, after: $after) {
+        edges {
+            cursor
+            node {
+                broadcaster {
+                    broadcastSettings {
+                        title
+                    }
+                    displayName
+                    id
+                    login
+                    profileImageURL(width: 300)
+                }
+                createdAt
+                game {
+                    id
+                    displayName
+                }
+                id
+                previewImageURL
+                tags {
+                    id
+                    localizedName
+                }
+                type
+                viewersCount
+            }
+        }
+        pageInfo {
+            hasNextPage
+        }
+    }
+}

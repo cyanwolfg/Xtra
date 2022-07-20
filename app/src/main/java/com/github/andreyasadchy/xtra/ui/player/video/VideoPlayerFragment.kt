@@ -131,7 +131,7 @@ class VideoPlayerFragment : BasePlayerFragment(), HasDownloadDialog, ChatReplayP
     }
 
     fun saveBookmark() {
-        viewModel.saveBookmark(requireContext(), prefs.getString(C.HELIX_CLIENT_ID, ""), prefs.getString(C.TOKEN, ""), prefs.getString(C.GQL_CLIENT_ID, ""))
+        viewModel.saveBookmark(requireContext(), prefs.getString(C.HELIX_CLIENT_ID, ""), User.get(requireContext()).helixToken, prefs.getString(C.GQL_CLIENT_ID, ""))
     }
 
     override fun onChange(requestCode: Int, index: Int, text: CharSequence, tag: Int?) {

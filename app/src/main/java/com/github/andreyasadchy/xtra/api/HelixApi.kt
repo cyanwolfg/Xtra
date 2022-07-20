@@ -24,7 +24,7 @@ interface HelixApi {
     suspend fun getTopGames(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("first") limit: Int, @Query("after") offset: String?): GamesResponse
 
     @GET("streams/")
-    suspend fun getStreams(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("user_id") ids: List<String>): StreamsResponse
+    suspend fun getStreams(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("user_id") ids: List<String>? = null, @Query("user_login") logins: List<String>? = null): StreamsResponse
 
     @GET("streams/")
     suspend fun getTopStreams(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("game_id") gameId: String?, @Query("language") languages: List<String>?, @Query("first") limit: Int, @Query("after") offset: String?): StreamsResponse
@@ -45,16 +45,13 @@ interface HelixApi {
     suspend fun getChannelVideos(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("user_id") channelId: String?, @Query("period") period: com.github.andreyasadchy.xtra.model.helix.video.Period?, @Query("type") broadcastType: BroadcastType?, @Query("sort") sort: Sort?, @Query("first") limit: Int, @Query("after") offset: String?): VideosResponse
 
     @GET("users")
-    suspend fun getUsersById(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("id") ids: List<String>): UsersResponse
-
-    @GET("users")
-    suspend fun getUsersByLogin(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("login") logins: List<String>): UsersResponse
+    suspend fun getUsers(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("id") ids: List<String>? = null, @Query("login") logins: List<String>? = null): UsersResponse
 
     @GET("search/categories")
     suspend fun getGames(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("query") query: String, @Query("first") limit: Int, @Query("after") offset: String?): GamesResponse
 
     @GET("search/channels")
-    suspend fun getChannels(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("query") query: String, @Query("first") limit: Int, @Query("after") offset: String?): ChannelSearchResponse
+    suspend fun getChannels(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("query") query: String, @Query("first") limit: Int, @Query("after") offset: String?, @Query("live_only") live: Boolean? = null): ChannelSearchResponse
 
     @GET("users/follows")
     suspend fun getUserFollows(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Query("to_id") userId: String?, @Query("from_id") channelId: String?): FollowResponse

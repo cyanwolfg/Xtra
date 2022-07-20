@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.github.andreyasadchy.xtra.FollowedUsersQuery
-import com.github.andreyasadchy.xtra.UserLastBroadcastQuery
+import com.github.andreyasadchy.xtra.UsersLastBroadcastQuery
 import com.github.andreyasadchy.xtra.XtraApp
 import com.github.andreyasadchy.xtra.api.HelixApi
 import com.github.andreyasadchy.xtra.di.XtraModule
@@ -105,7 +105,7 @@ class FollowedChannelsDataSource(
             }
             if (allIds.isNotEmpty()) {
                 for (ids in allIds.chunked(100)) {
-                    val get = apolloClient(XtraModule(), gqlClientId).query(UserLastBroadcastQuery(Optional.Present(ids))).execute().data?.users
+                    val get = apolloClient(XtraModule(), gqlClientId).query(UsersLastBroadcastQuery(Optional.Present(ids))).execute().data?.users
                     if (get != null) {
                         for (user in get) {
                             val item = list.find { it.to_id == user?.id }
@@ -211,7 +211,7 @@ class FollowedChannelsDataSource(
             }
             if (allIds.isNotEmpty()) {
                 for (ids in allIds.chunked(100)) {
-                    val get = apolloClient(XtraModule(), gqlClientId).query(UserLastBroadcastQuery(Optional.Present(ids))).execute().data?.users
+                    val get = apolloClient(XtraModule(), gqlClientId).query(UsersLastBroadcastQuery(Optional.Present(ids))).execute().data?.users
                     if (get != null) {
                         for (user in get) {
                             val item = list.find { it.to_id == user?.id }

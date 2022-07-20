@@ -42,8 +42,9 @@ class FollowLiveData(
                         localFollowsGame != null && !user.gqlToken.isNullOrBlank() && !userName.isNullOrBlank() -> {
                             repository.loadGameFollowing(gqlClientId, user.gqlToken, userName)
                         }
-                        localFollowsChannel != null && ((!user.helixToken.isNullOrBlank() && !userId.isNullOrBlank() && !user.id.isNullOrBlank()) ||
-                                (!user.gqlToken.isNullOrBlank() && !userLogin.isNullOrBlank())) && user.id != userId -> {
+                        localFollowsChannel != null && (
+                                (!helixClientId.isNullOrBlank() && !user.helixToken.isNullOrBlank() && !user.id.isNullOrBlank() && !userId.isNullOrBlank() && user.id != userId) ||
+                                (!user.gqlToken.isNullOrBlank() && !user.login.isNullOrBlank() && !userLogin.isNullOrBlank() && user.login != userLogin)) -> {
                             repository.loadUserFollowing(helixClientId, user.helixToken, userId, user.id, gqlClientId, user.gqlToken, userLogin)
                         }
                         else -> false

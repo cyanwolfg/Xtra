@@ -15,6 +15,7 @@ import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.ui.login.LoginActivity
 import com.github.andreyasadchy.xtra.ui.main.MainActivity
 import com.github.andreyasadchy.xtra.ui.settings.SettingsActivity
+import com.github.andreyasadchy.xtra.util.nullIfEmpty
 import kotlinx.android.synthetic.main.fragment_media.*
 
 
@@ -53,7 +54,7 @@ abstract class MediaFragment : Fragment(), Scrollable {
                             } else {
                                 AlertDialog.Builder(activity).apply {
                                     setTitle(getString(R.string.logout_title))
-                                    user.login?.let { user -> setMessage(getString(R.string.logout_msg, user)) }
+                                    user.login?.nullIfEmpty()?.let { user -> setMessage(getString(R.string.logout_msg, user)) }
                                     setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
                                     setPositiveButton(getString(R.string.yes)) { _, _ -> activity.startActivityForResult(Intent(activity, LoginActivity::class.java), 2) }
                                 }.show()

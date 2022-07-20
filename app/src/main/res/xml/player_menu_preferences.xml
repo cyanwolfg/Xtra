@@ -74,7 +74,13 @@
         app:iconSpaceReserved="false"/>
 
     <SwitchPreferenceCompat
-        android:defaultValue="false"
+        android:defaultValue="true"
+        android:key="player_menu_reload_emotes"
+        android:title="@string/reload_emotes"
+        app:iconSpaceReserved="false"/>
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
         android:key="player_menu_chat_disconnect"
         android:title="@string/disconnect_chat"
         app:iconSpaceReserved="false"/>

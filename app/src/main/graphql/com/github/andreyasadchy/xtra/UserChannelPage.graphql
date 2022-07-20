@@ -1,5 +1,5 @@
-query UserWithStream($id: [ID!]) {
-    users(ids: $id) {
+query UserChannelPage($id: ID, $login: String) {
+    user(id: $id, login: $login, lookupType: ALL) {
         bannerImageURL
         createdAt
         displayName
@@ -9,6 +9,7 @@ query UserWithStream($id: [ID!]) {
         lastBroadcast {
             startedAt
         }
+        id
         login
         profileImageURL(width: 300)
         profileViewCount
@@ -26,7 +27,6 @@ query UserWithStream($id: [ID!]) {
                 displayName
             }
             id
-            previewImageURL
             title
             type
             viewersCount

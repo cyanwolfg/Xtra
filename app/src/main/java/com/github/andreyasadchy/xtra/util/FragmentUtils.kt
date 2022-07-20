@@ -38,7 +38,7 @@ object FragmentUtils {
         ).show(fragmentManager, "closeOnPip")
     }
 
-    fun showUnfollowDialog(context: Context, channelName: String, positiveCallback: () -> Unit) {
+    fun showUnfollowDialog(context: Context, channelName: String?, positiveCallback: () -> Unit) {
         AlertDialog.Builder(context)
             .setMessage(context.getString(R.string.unfollow, channelName))
             .setPositiveButton(R.string.yes) { _, _ -> positiveCallback.invoke() }

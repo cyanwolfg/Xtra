@@ -214,6 +214,9 @@ class ChatView : ConstraintLayout {
             "join" -> context.getString(R.string.chat_join, command.message)
             "disconnect" -> context.getString(R.string.chat_disconnect, command.message, command.duration)
             "disconnect_command" -> {
+                raidCallback?.onRaidClose()
+                hideRaid()
+                notifyRoomState(RoomState("0", "-1", "0", "0", "0"))
                 adapter.messages?.clear()
                 context.getString(R.string.disconnected)
             }
@@ -368,8 +371,12 @@ class ChatView : ConstraintLayout {
         adapter.setUsername(username)
     }
 
-    fun setChatters(chatters: Collection<Chatter>) {
-        autoCompleteList = chatters.toMutableList()
+    fun setChannelId(channelId: String?) {
+        adapter.setChannelId(channelId)
+    }
+
+    fun setChatters(chatters: Collection<Chatter>?) {
+        autoCompleteList = chatters?.toMutableList()
     }
 
     fun addChatter(chatter: Chatter) {
@@ -409,10 +416,10 @@ class ChatView : ConstraintLayout {
     }
 
     fun enableChatInteraction(enableMessaging: Boolean) {
-        adapter.setOnClickListener { original, formatted, userId, fullMsg, host ->
+        adapter.setOnClickListener { original, formatted, userId, channelId, host, fullMsg ->
             editText.hideKeyboard()
             editText.clearFocus()
-            MessageClickedDialog.newInstance(enableMessaging, original, formatted, userId, fullMsg, host).show(fragment.childFragmentManager, "closeOnPip")
+            MessageClickedDialog.newInstance(enableMessaging, original, formatted, userId, channelId, host, fullMsg).show(fragment.childFragmentManager, "closeOnPip")
         }
         if (enableMessaging) {
             editText.addTextChangedListener(onTextChanged = { text, _, _, _ ->

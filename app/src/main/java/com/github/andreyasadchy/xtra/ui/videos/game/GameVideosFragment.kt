@@ -45,7 +45,7 @@ class GameVideosFragment : BaseVideosFragment<GameVideosViewModel>(), VideosSort
             gameId = arguments?.getString(C.GAME_ID),
             gameName = arguments?.getString(C.GAME_NAME),
             helixClientId = requireContext().prefs().getString(C.HELIX_CLIENT_ID, ""),
-            helixToken = requireContext().prefs().getString(C.TOKEN, ""),
+            helixToken = User.get(requireContext()).helixToken,
             gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, ""),
             apiPref = TwitchApiHelper.listFromPrefs(requireContext().prefs().getString(C.API_PREF_GAME_VIDEOS, ""), TwitchApiHelper.gameVideosApiDefaults)
         )

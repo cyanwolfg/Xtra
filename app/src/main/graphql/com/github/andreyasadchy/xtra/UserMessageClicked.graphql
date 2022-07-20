@@ -1,0 +1,13 @@
+query UserMessageClicked($id: ID, $login: String, $targetId: ID) {
+    user(id: $id, login: $login, lookupType: ALL) {
+        bannerImageURL
+        createdAt
+        displayName
+        follow(targetID: $targetId) {
+            followedAt
+        }
+        id
+        login
+        profileImageURL(width: 300)
+    }
+}

@@ -1,8 +1,8 @@
-query SearchChannels($query: String!, $first: Int, $after: String) {
-    searchFor(userQuery: $query, platform: "", target: { cursor: $after, index: CHANNEL, limit: $first }) {
-        channels {
+query SearchChannels($query: String!, $first: Int, $after: Cursor) {
+    searchUsers(userQuery: $query, first: $first, after: $after) {
+        edges {
             cursor
-            items {
+            node {
                 displayName
                 followers {
                     totalCount
@@ -14,9 +14,9 @@ query SearchChannels($query: String!, $first: Int, $after: String) {
                     type
                 }
             }
-            pageInfo {
-                hasNextPage
-            }
+        }
+        pageInfo {
+            hasNextPage
         }
     }
 }

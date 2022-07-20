@@ -1,4 +1,4 @@
-query Hosting($id: ID, $login: String) {
+query UserHosting($id: ID, $login: String) {
     user(id: $id, login: $login) {
         hosting {
             displayName

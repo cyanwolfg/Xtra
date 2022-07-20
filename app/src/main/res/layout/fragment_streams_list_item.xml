@@ -17,9 +17,11 @@
         <ImageView
             android:id="@+id/thumbnail"
             style="@style/Thumbnail"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            tools:src="@tools:sample/backgrounds/scenic"
+            tools:visibility="visible" />
 
         <com.github.andreyasadchy.xtra.util.TextWithCanvas
             android:id="@+id/viewers"
