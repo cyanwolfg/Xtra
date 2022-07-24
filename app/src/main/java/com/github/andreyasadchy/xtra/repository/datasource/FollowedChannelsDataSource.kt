@@ -58,29 +58,29 @@ class FollowedChannelsDataSource(
             }
             val remote = try {
                 when (apiPref.elementAt(0)?.second) {
-                    C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial() else throw Exception()
-                    C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) gqlQueryInitial() else throw Exception()
-                    C.GQL -> if (!gqlToken.isNullOrBlank()) gqlInitial() else throw Exception()
+                    C.HELIX -> if (!helixToken.isNullOrBlank()) { api = C.HELIX; helixLoad() } else throw Exception()
+                    C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) { api = C.GQL_QUERY; gqlQueryLoad() } else throw Exception()
+                    C.GQL -> if (!gqlToken.isNullOrBlank()) { api = C.GQL; gqlLoad() } else throw Exception()
                     else -> throw Exception()
                 }
             } catch (e: Exception) {
                 try {
                     when (apiPref.elementAt(1)?.second) {
-                        C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial() else throw Exception()
-                        C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) gqlQueryInitial() else throw Exception()
-                        C.GQL -> if (!gqlToken.isNullOrBlank()) gqlInitial() else throw Exception()
+                        C.HELIX -> if (!helixToken.isNullOrBlank()) { api = C.HELIX; helixLoad() } else throw Exception()
+                        C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) { api = C.GQL_QUERY; gqlQueryLoad() } else throw Exception()
+                        C.GQL -> if (!gqlToken.isNullOrBlank()) { api = C.GQL; gqlLoad() } else throw Exception()
                         else -> throw Exception()
                     }
                 } catch (e: Exception) {
                     try {
                         when (apiPref.elementAt(2)?.second) {
-                            C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial() else throw Exception()
-                            C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) gqlQueryInitial() else throw Exception()
-                            C.GQL -> if (!gqlToken.isNullOrBlank()) gqlInitial() else throw Exception()
+                            C.HELIX -> if (!helixToken.isNullOrBlank()) { api = C.HELIX; helixLoad() } else throw Exception()
+                            C.GQL_QUERY -> if (!gqlToken.isNullOrBlank()) { api = C.GQL_QUERY; gqlQueryLoad() } else throw Exception()
+                            C.GQL -> if (!gqlToken.isNullOrBlank()) { api = C.GQL; gqlLoad() } else throw Exception()
                             else -> throw Exception()
                         }
                     } catch (e: Exception) {
-                        mutableListOf()
+                        listOf()
                     }
                 }
             }
@@ -128,38 +128,29 @@ class FollowedChannelsDataSource(
             }
             if (order == Order.ASC) {
                 when (sort) {
-                    Sort.FOLLOWED_AT -> list.sortBy { it.followed_at }
-                    Sort.LAST_BROADCAST -> {
-                        list.sortBy { it.lastBroadcast }
-                        list.sortBy { it.lastBroadcast == null }
-                    }
-                    else -> list.sortBy { it.to_login }
+                    Sort.FOLLOWED_AT -> list.sortedWith(compareBy(nullsLast()) { it.followed_at })
+                    Sort.LAST_BROADCAST -> list.sortedWith(compareBy(nullsLast()) { it.lastBroadcast })
+                    else -> list.sortedWith(compareBy(nullsLast()) { it.to_login })
                 }
             } else {
                 when (sort) {
-                    Sort.FOLLOWED_AT -> list.sortByDescending { it.followed_at }
-                    Sort.LAST_BROADCAST -> {
-                        list.sortByDescending { it.lastBroadcast }
-                        list.sortBy { it.lastBroadcast == null }
-                    }
-                    else -> list.sortByDescending { it.to_login }
+                    Sort.FOLLOWED_AT -> list.sortedWith(compareByDescending(nullsFirst()) { it.followed_at })
+                    Sort.LAST_BROADCAST -> list.sortedWith(compareByDescending(nullsFirst()) { it.lastBroadcast })
+                    else -> list.sortedWith(compareByDescending(nullsFirst()) { it.to_login })
                 }
             }
-            list
         }
     }
 
-    private suspend fun helixInitial(): List<Follow> {
-        api = C.HELIX
+    private suspend fun helixLoad(): List<Follow> {
         val get = helixApi.getFollowedChannels(helixClientId, helixToken, userId, 100, offset)
         return if (get.data != null) {
             offset = get.pagination?.cursor
             get.data
-        } else mutableListOf()
+        } else listOf()
     }
 
-    private suspend fun gqlQueryInitial(): List<Follow> {
-        api = C.GQL_QUERY
+    private suspend fun gqlQueryLoad(): List<Follow> {
         val get1 = apolloClientWithToken(XtraModule(), gqlClientId, gqlToken).query(FollowedUsersQuery(
             id = Optional.Present(userId),
             first = Optional.Present(100),
@@ -169,25 +160,22 @@ class FollowedChannelsDataSource(
         val list = mutableListOf<Follow>()
         if (get != null) {
             for (i in get) {
-                list.add(
-                    Follow(
-                        to_id = i?.node?.id,
-                        to_login = i?.node?.login,
-                        to_name = i?.node?.displayName,
-                        followed_at = i?.followedAt.toString(),
-                        lastBroadcast = i?.node?.lastBroadcast?.startedAt.toString(),
-                        profileImageURL = i?.node?.profileImageURL,
-                    )
-                )
+                list.add(Follow(
+                    to_id = i?.node?.id,
+                    to_login = i?.node?.login,
+                    to_name = i?.node?.displayName,
+                    followed_at = i?.followedAt?.toString(),
+                    lastBroadcast = i?.node?.lastBroadcast?.startedAt?.toString(),
+                    profileImageURL = i?.node?.profileImageURL,
+                ))
             }
-            offset = get.lastOrNull()?.cursor.toString()
+            offset = get.lastOrNull()?.cursor?.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list
     }
 
-    private suspend fun gqlInitial(): List<Follow> {
-        api = C.GQL
+    private suspend fun gqlLoad(): List<Follow> {
         val get = gqlApi.loadFollowedChannels(gqlClientId, gqlToken, 100, offset)
         offset = get.cursor
         return get.data
@@ -197,12 +185,12 @@ class FollowedChannelsDataSource(
         loadRange(params, callback) {
             val list = if (!offset.isNullOrBlank()) {
                 when (api) {
-                    C.HELIX -> helixRange()
-                    C.GQL_QUERY -> gqlQueryRange()
-                    C.GQL -> gqlRange()
-                    else -> mutableListOf()
+                    C.HELIX -> helixLoad()
+                    C.GQL_QUERY -> if (nextPage) gqlQueryLoad() else listOf()
+                    C.GQL -> gqlLoad()
+                    else -> listOf()
                 }
-            } else mutableListOf()
+            } else listOf()
             val allIds = mutableListOf<String>()
             for (i in list) {
                 if (i.profileImageURL == null || i.lastBroadcast == null) {
@@ -234,47 +222,6 @@ class FollowedChannelsDataSource(
             }
             list
         }
-    }
-
-    private suspend fun helixRange(): List<Follow> {
-        val get = helixApi.getFollowedChannels(helixClientId, helixToken, userId, 100, offset)
-        return if (get.data != null) {
-            offset = get.pagination?.cursor
-            get.data
-        } else mutableListOf()
-    }
-
-    private suspend fun gqlQueryRange(): List<Follow> {
-        val get1 = apolloClientWithToken(XtraModule(), gqlClientId, gqlToken).query(FollowedUsersQuery(
-            id = Optional.Present(userId),
-            first = Optional.Present(100),
-            after = Optional.Present(offset)
-        )).execute().data?.user?.follows
-        val get = get1?.edges
-        val list = mutableListOf<Follow>()
-        if (get != null && nextPage && offset != null && offset != "") {
-            for (i in get) {
-                list.add(
-                    Follow(
-                        to_id = i?.node?.id,
-                        to_login = i?.node?.login,
-                        to_name = i?.node?.displayName,
-                        followed_at = i?.followedAt.toString(),
-                        lastBroadcast = i?.node?.lastBroadcast?.startedAt.toString(),
-                        profileImageURL = i?.node?.profileImageURL,
-                    )
-                )
-            }
-            offset = get.lastOrNull()?.cursor.toString()
-            nextPage = get1.pageInfo?.hasNextPage ?: true
-        }
-        return list
-    }
-
-    private suspend fun gqlRange(): List<Follow> {
-        val get = gqlApi.loadFollowedChannels(gqlClientId, gqlToken, 100, offset)
-        offset = get.cursor
-        return get.data
     }
 
     private fun updateLocalUser(context: Context, userId: String, profileImageURL: String) {

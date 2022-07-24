@@ -254,7 +254,7 @@ class ApiRepository @Inject constructor(
             if (get != null) {
                 Stream(id = get.stream?.id, user_id = channelId, user_login = get.login, user_name = get.displayName, game_id = get.stream?.game?.id,
                     game_name = get.stream?.game?.displayName, type = get.stream?.type, title = get.stream?.broadcaster?.broadcastSettings?.title,
-                    viewer_count = get.stream?.viewersCount, started_at = get.stream?.createdAt.toString(), thumbnail_url = get.stream?.previewImageURL,
+                    viewer_count = get.stream?.viewersCount, started_at = get.stream?.createdAt?.toString(), thumbnail_url = get.stream?.previewImageURL,
                     profileImageURL = get.profileImageURL)
             } else null
         } catch (e: Exception) {
@@ -271,8 +271,8 @@ class ApiRepository @Inject constructor(
             val get = apolloClient(XtraModule(), gqlClientId).query(VideoQuery(Optional.Present(videoId))).execute().data
             if (get != null) {
                 Video(id = videoId, user_id = get.video?.owner?.id, user_login = get.video?.owner?.login, user_name = get.video?.owner?.displayName,
-                    profileImageURL = get.video?.owner?.profileImageURL, title = get.video?.title, createdAt = get.video?.createdAt.toString(), thumbnail_url = get.video?.previewThumbnailURL,
-                    type = get.video?.broadcastType.toString(), duration = get.video?.lengthSeconds.toString())
+                    profileImageURL = get.video?.owner?.profileImageURL, title = get.video?.title, createdAt = get.video?.createdAt?.toString(), thumbnail_url = get.video?.previewThumbnailURL,
+                    type = get.video?.broadcastType?.toString(), duration = get.video?.lengthSeconds?.toString())
             } else null
         } catch (e: Exception) {
             helix.getVideos(helixClientId, helixToken?.let { TwitchApiHelper.addTokenPrefixHelix(it) }, mutableListOf(videoId)).data?.firstOrNull()
@@ -310,7 +310,7 @@ class ApiRepository @Inject constructor(
                     type = i.stream?.type,
                     title = i.stream?.title,
                     viewer_count = i.stream?.viewersCount,
-                    started_at = i.stream?.createdAt.toString(),
+                    started_at = i.stream?.createdAt?.toString(),
                     profileImageURL = i.profileImageURL,
                     channelUser = User(
                         bannerImageURL = i.bannerImageURL,

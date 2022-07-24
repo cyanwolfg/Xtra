@@ -37,38 +37,37 @@ class GameClipsDataSource(
         loadInitial(params, callback) {
             try {
                 when (apiPref.elementAt(0)?.second) {
-                    C.HELIX -> if (!helixToken.isNullOrBlank() && gqlQueryLanguages.isNullOrEmpty()) helixInitial(params) else throw Exception()
-                    C.GQL_QUERY -> gqlQueryInitial(params)
-                    C.GQL -> if (gqlQueryLanguages.isNullOrEmpty()) gqlInitial(params) else throw Exception()
+                    C.HELIX -> if (!helixToken.isNullOrBlank() && gqlQueryLanguages.isNullOrEmpty()) { api = C.HELIX; helixLoad(params) } else throw Exception()
+                    C.GQL_QUERY -> { api = C.GQL_QUERY; gqlQueryLoad(params) }
+                    C.GQL -> if (gqlQueryLanguages.isNullOrEmpty()) { api = C.GQL; gqlLoad(params) } else throw Exception()
                     else -> throw Exception()
                 }
             } catch (e: Exception) {
                 try {
                     when (apiPref.elementAt(1)?.second) {
-                        C.HELIX -> if (!helixToken.isNullOrBlank() && gqlQueryLanguages.isNullOrEmpty()) helixInitial(params) else throw Exception()
-                        C.GQL_QUERY -> gqlQueryInitial(params)
-                        C.GQL -> if (gqlQueryLanguages.isNullOrEmpty()) gqlInitial(params) else throw Exception()
+                        C.HELIX -> if (!helixToken.isNullOrBlank() && gqlQueryLanguages.isNullOrEmpty()) { api = C.HELIX; helixLoad(params) } else throw Exception()
+                        C.GQL_QUERY -> { api = C.GQL_QUERY; gqlQueryLoad(params) }
+                        C.GQL -> if (gqlQueryLanguages.isNullOrEmpty()) { api = C.GQL; gqlLoad(params) } else throw Exception()
                         else -> throw Exception()
                     }
                 } catch (e: Exception) {
                     try {
                         when (apiPref.elementAt(2)?.second) {
-                            C.HELIX -> if (!helixToken.isNullOrBlank() && gqlQueryLanguages.isNullOrEmpty()) helixInitial(params) else throw Exception()
-                            C.GQL_QUERY -> gqlQueryInitial(params)
-                            C.GQL -> if (gqlQueryLanguages.isNullOrEmpty()) gqlInitial(params) else throw Exception()
+                            C.HELIX -> if (!helixToken.isNullOrBlank() && gqlQueryLanguages.isNullOrEmpty()) { api = C.HELIX; helixLoad(params) } else throw Exception()
+                            C.GQL_QUERY -> { api = C.GQL_QUERY; gqlQueryLoad(params) }
+                            C.GQL -> if (gqlQueryLanguages.isNullOrEmpty()) { api = C.GQL; gqlLoad(params) } else throw Exception()
                             else -> throw Exception()
                         }
                     } catch (e: Exception) {
-                        mutableListOf()
+                        listOf()
                     }
                 }
             }
         }
     }
 
-    private suspend fun helixInitial(params: LoadInitialParams): List<Clip> {
-        api = C.HELIX
-        val get = helixApi.getClips(clientId = helixClientId, token = helixToken, gameId = gameId, started_at = started_at, ended_at = ended_at, limit = params.requestedLoadSize, cursor = offset)
+    private suspend fun helixLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Clip> {
+        val get = helixApi.getClips(clientId = helixClientId, token = helixToken, gameId = gameId, started_at = started_at, ended_at = ended_at, limit = initialParams?.requestedLoadSize ?: rangeParams?.loadSize, cursor = offset)
         val list = mutableListOf<Clip>()
         get.data?.let { list.addAll(it) }
         val userIds = mutableListOf<String>()
@@ -91,129 +90,57 @@ class GameClipsDataSource(
         return list
     }
 
-    private suspend fun gqlQueryInitial(params: LoadInitialParams): List<Clip> {
-        api = C.GQL_QUERY
+    private suspend fun gqlQueryLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Clip> {
         val get1 = apolloClient(XtraModule(), gqlClientId).query(GameClipsQuery(
             id = Optional.Present(if (!gameId.isNullOrBlank()) gameId else null),
             name = Optional.Present(if (gameId.isNullOrBlank() && !gameName.isNullOrBlank()) gameName else null),
             languages = Optional.Present(gqlQueryLanguages),
             sort = Optional.Present(gqlQueryPeriod),
-            first = Optional.Present(params.requestedLoadSize),
+            first = Optional.Present(initialParams?.requestedLoadSize ?: rangeParams?.loadSize),
             after = Optional.Present(offset)
         )).execute().data?.game?.clips
         val get = get1?.edges
         val list = mutableListOf<Clip>()
         if (get != null) {
             for (i in get) {
-                list.add(
-                    Clip(
-                        id = i?.node?.slug ?: "",
-                        broadcaster_id = i?.node?.broadcaster?.id,
-                        broadcaster_login = i?.node?.broadcaster?.login,
-                        broadcaster_name = i?.node?.broadcaster?.displayName,
-                        video_id = i?.node?.video?.id,
-                        videoOffsetSeconds = i?.node?.videoOffsetSeconds,
-                        title = i?.node?.title,
-                        view_count = i?.node?.viewCount,
-                        created_at = i?.node?.createdAt.toString(),
-                        duration = i?.node?.durationSeconds?.toDouble(),
-                        thumbnail_url = i?.node?.thumbnailURL,
-                        profileImageURL = i?.node?.broadcaster?.profileImageURL,
-                    )
-                )
+                list.add(Clip(
+                    id = i?.node?.slug ?: "",
+                    broadcaster_id = i?.node?.broadcaster?.id,
+                    broadcaster_login = i?.node?.broadcaster?.login,
+                    broadcaster_name = i?.node?.broadcaster?.displayName,
+                    video_id = i?.node?.video?.id,
+                    videoOffsetSeconds = i?.node?.videoOffsetSeconds,
+                    title = i?.node?.title,
+                    view_count = i?.node?.viewCount,
+                    created_at = i?.node?.createdAt?.toString(),
+                    duration = i?.node?.durationSeconds?.toDouble(),
+                    thumbnail_url = i?.node?.thumbnailURL,
+                    profileImageURL = i?.node?.broadcaster?.profileImageURL,
+                ))
             }
-            offset = get.lastOrNull()?.cursor.toString()
+            offset = get.lastOrNull()?.cursor?.toString()
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list
     }
 
-    private suspend fun gqlInitial(params: LoadInitialParams): List<Clip> {
-        api = C.GQL
-        val get = gqlApi.loadGameClips(gqlClientId, gameName, gqlPeriod, params.requestedLoadSize, offset)
+    private suspend fun gqlLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Clip> {
+        val get = gqlApi.loadGameClips(gqlClientId, gameName, gqlPeriod, initialParams?.requestedLoadSize ?: rangeParams?.loadSize, offset)
         offset = get.cursor
         return get.data
     }
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<Clip>) {
         loadRange(params, callback) {
-            when (api) {
-                C.HELIX -> helixRange(params)
-                C.GQL_QUERY -> gqlQueryRange(params)
-                C.GQL -> gqlRange(params)
-                else -> mutableListOf()
-            }
-        }
-    }
-
-    private suspend fun helixRange(params: LoadRangeParams): List<Clip> {
-        val get = helixApi.getClips(clientId = helixClientId, token = helixToken, gameId = gameId, started_at = started_at, ended_at = ended_at, limit = params.loadSize, cursor = offset)
-        val list = mutableListOf<Clip>()
-        if (offset != null && offset != "") {
-            get.data?.let { list.addAll(it) }
-            val userIds = mutableListOf<String>()
-            for (i in list) {
-                i.broadcaster_id?.let { userIds.add(it) }
-            }
-            if (userIds.isNotEmpty()) {
-                val users = helixApi.getUsers(helixClientId, helixToken, userIds).data
-                if (users != null) {
-                    for (i in users) {
-                        val items = list.filter { it.broadcaster_id == i.id }
-                        for (item in items) {
-                            item.broadcaster_login = i.login
-                            item.profileImageURL = i.profile_image_url
-                        }
-                    }
+            if (!offset.isNullOrBlank()) {
+                when (api) {
+                    C.HELIX -> helixLoad(rangeParams = params)
+                    C.GQL_QUERY -> if (nextPage) gqlQueryLoad(rangeParams = params) else listOf()
+                    C.GQL -> gqlLoad(rangeParams = params)
+                    else -> listOf()
                 }
-            }
-            offset = get.pagination?.cursor
+            } else listOf()
         }
-        return list
-    }
-
-    private suspend fun gqlQueryRange(params: LoadRangeParams): List<Clip> {
-        val get1 = apolloClient(XtraModule(), gqlClientId).query(GameClipsQuery(
-            id = Optional.Present(if (!gameId.isNullOrBlank()) gameId else null),
-            name = Optional.Present(if (gameId.isNullOrBlank() && !gameName.isNullOrBlank()) gameName else null),
-            languages = Optional.Present(gqlQueryLanguages),
-            sort = Optional.Present(gqlQueryPeriod),
-            first = Optional.Present(params.loadSize),
-            after = Optional.Present(offset)
-        )).execute().data?.game?.clips
-        val get = get1?.edges
-        val list = mutableListOf<Clip>()
-        if (get != null && nextPage && offset != null && offset != "") {
-            for (i in get) {
-                list.add(
-                    Clip(
-                        id = i?.node?.slug ?: "",
-                        broadcaster_id = i?.node?.broadcaster?.id,
-                        broadcaster_login = i?.node?.broadcaster?.login,
-                        broadcaster_name = i?.node?.broadcaster?.displayName,
-                        video_id = i?.node?.video?.id,
-                        videoOffsetSeconds = i?.node?.videoOffsetSeconds,
-                        title = i?.node?.title,
-                        view_count = i?.node?.viewCount,
-                        created_at = i?.node?.createdAt.toString(),
-                        duration = i?.node?.durationSeconds?.toDouble(),
-                        thumbnail_url = i?.node?.thumbnailURL,
-                        profileImageURL = i?.node?.broadcaster?.profileImageURL,
-                    )
-                )
-            }
-            offset = get.lastOrNull()?.cursor.toString()
-            nextPage = get1.pageInfo?.hasNextPage ?: true
-        }
-        return list
-    }
-
-    private suspend fun gqlRange(params: LoadRangeParams): List<Clip> {
-        val get = gqlApi.loadGameClips(gqlClientId, gameName, gqlPeriod, params.loadSize, offset)
-        return if (offset != null && offset != "") {
-            offset = get.cursor
-            get.data
-        } else mutableListOf()
     }
 
     class Factory(

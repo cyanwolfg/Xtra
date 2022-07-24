@@ -42,15 +42,15 @@ class PlayerGamesAdapter(
             } else {
                 gameName.gone()
             }
-            val position = TwitchApiHelper.getDurationFromSeconds(context, (item.vodPosition?.div(1000)).toString(), true)
-            if (item.vodPosition != null && position?.isNotBlank() == true) {
+            val position = item.vodPosition?.div(1000)?.toString()?.let { TwitchApiHelper.getDurationFromSeconds(context, it, true) }
+            if (!position.isNullOrBlank()) {
                 viewers.visible()
                 viewers.text = context.getString(R.string.position, position)
             } else {
                 viewers.gone()
             }
-            val duration = TwitchApiHelper.getDurationFromSeconds(context, (item.vodDuration?.div(1000)).toString(), true)
-            if (item.vodDuration != null && duration?.isNotBlank() == true) {
+            val duration = item.vodDuration?.div(1000)?.toString()?.let { TwitchApiHelper.getDurationFromSeconds(context, it, true) }
+            if (!duration.isNullOrBlank()) {
                 broadcastersCount.visible()
                 broadcastersCount.text = context.getString(R.string.duration, duration)
             } else {

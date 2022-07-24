@@ -42,52 +42,49 @@ class ChannelVideosDataSource (
         loadInitial(params, callback) {
             try {
                 when (apiPref.elementAt(0)?.second) {
-                    C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial(params) else throw Exception()
-                    C.GQL_QUERY -> if (helixPeriod == Period.ALL) gqlQueryInitial(params) else throw Exception()
-                    C.GQL -> if (helixPeriod == Period.ALL) gqlInitial(params) else throw Exception()
+                    C.HELIX -> if (!helixToken.isNullOrBlank()) { api = C.HELIX; helixLoad(params) } else throw Exception()
+                    C.GQL_QUERY -> if (helixPeriod == Period.ALL) { api = C.GQL_QUERY; gqlQueryLoad(params) } else throw Exception()
+                    C.GQL -> if (helixPeriod == Period.ALL) { api = C.GQL; gqlLoad(params) } else throw Exception()
                     else -> throw Exception()
                 }
             } catch (e: Exception) {
                 try {
                     when (apiPref.elementAt(1)?.second) {
-                        C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial(params) else throw Exception()
-                        C.GQL_QUERY -> if (helixPeriod == Period.ALL) gqlQueryInitial(params) else throw Exception()
-                        C.GQL -> if (helixPeriod == Period.ALL) gqlInitial(params) else throw Exception()
+                        C.HELIX -> if (!helixToken.isNullOrBlank()) { api = C.HELIX; helixLoad(params) } else throw Exception()
+                        C.GQL_QUERY -> if (helixPeriod == Period.ALL) { api = C.GQL_QUERY; gqlQueryLoad(params) } else throw Exception()
+                        C.GQL -> if (helixPeriod == Period.ALL) { api = C.GQL; gqlLoad(params) } else throw Exception()
                         else -> throw Exception()
                     }
                 } catch (e: Exception) {
                     try {
                         when (apiPref.elementAt(2)?.second) {
-                            C.HELIX -> if (!helixToken.isNullOrBlank()) helixInitial(params) else throw Exception()
-                            C.GQL_QUERY -> if (helixPeriod == Period.ALL) gqlQueryInitial(params) else throw Exception()
-                            C.GQL -> if (helixPeriod == Period.ALL) gqlInitial(params) else throw Exception()
+                            C.HELIX -> if (!helixToken.isNullOrBlank()) { api = C.HELIX; helixLoad(params) } else throw Exception()
+                            C.GQL_QUERY -> if (helixPeriod == Period.ALL) { api = C.GQL_QUERY; gqlQueryLoad(params) } else throw Exception()
+                            C.GQL -> if (helixPeriod == Period.ALL) { api = C.GQL; gqlLoad(params) } else throw Exception()
                             else -> throw Exception()
                         }
                     } catch (e: Exception) {
-                        mutableListOf()
+                        listOf()
                     }
                 }
             }
         }
     }
 
-    private suspend fun helixInitial(params: LoadInitialParams): List<Video> {
-        api = C.HELIX
-        val get = helixApi.getChannelVideos(helixClientId, helixToken, channelId, helixPeriod, helixBroadcastTypes, helixSort, params.requestedLoadSize, offset)
+    private suspend fun helixLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
+        val get = helixApi.getChannelVideos(helixClientId, helixToken, channelId, helixPeriod, helixBroadcastTypes, helixSort, initialParams?.requestedLoadSize ?: rangeParams?.loadSize, offset)
         return if (get.data != null) {
             offset = get.pagination?.cursor
             get.data
-        } else mutableListOf()
+        } else listOf()
     }
 
-    private suspend fun gqlQueryInitial(params: LoadInitialParams): List<Video> {
-        api = C.GQL_QUERY
-        val typeList = if (gqlQueryType != null) mutableListOf(gqlQueryType) else null
+    private suspend fun gqlQueryLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
         val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(UserVideosQuery(
             id = Optional.Present(channelId),
             sort = Optional.Present(gqlQuerySort),
-            types = Optional.Present(typeList),
-            first = Optional.Present(params.requestedLoadSize),
+            types = Optional.Present(gqlQueryType?.let { listOf(it) }),
+            first = Optional.Present(initialParams?.requestedLoadSize ?: rangeParams?.loadSize),
             after = Optional.Present(offset)
         )).execute().data?.user
         val get = get1?.videos?.edges
@@ -101,110 +98,46 @@ class ChannelVideosDataSource (
                         name = tag.localizedName
                     ))
                 }
-                list.add(
-                    Video(
-                        id = i?.node?.id ?: "",
-                        user_id = channelId,
-                        user_login = get1.login,
-                        user_name = get1.displayName,
-                        gameId = i?.node?.game?.id,
-                        gameName = i?.node?.game?.displayName,
-                        type = i?.node?.broadcastType.toString(),
-                        title = i?.node?.title,
-                        view_count = i?.node?.viewCount,
-                        createdAt = i?.node?.createdAt.toString(),
-                        duration = i?.node?.lengthSeconds.toString(),
-                        thumbnail_url = i?.node?.previewThumbnailURL,
-                        profileImageURL = get1.profileImageURL,
-                        tags = tags
-                    )
-                )
+                list.add(Video(
+                    id = i?.node?.id ?: "",
+                    user_id = channelId,
+                    user_login = get1.login,
+                    user_name = get1.displayName,
+                    gameId = i?.node?.game?.id,
+                    gameName = i?.node?.game?.displayName,
+                    type = i?.node?.broadcastType?.toString(),
+                    title = i?.node?.title,
+                    view_count = i?.node?.viewCount,
+                    createdAt = i?.node?.createdAt?.toString(),
+                    duration = i?.node?.lengthSeconds?.toString(),
+                    thumbnail_url = i?.node?.previewThumbnailURL,
+                    profileImageURL = get1.profileImageURL,
+                    tags = tags
+                ))
             }
-            offset = get.lastOrNull()?.cursor.toString()
+            offset = get.lastOrNull()?.cursor?.toString()
             nextPage = get1.videos.pageInfo?.hasNextPage ?: true
         }
         return list
     }
 
-    private suspend fun gqlInitial(params: LoadInitialParams): List<Video> {
-        api = C.GQL
-        val get = gqlApi.loadChannelVideos(gqlClientId, channelLogin, gqlType, gqlSort, params.requestedLoadSize, offset)
+    private suspend fun gqlLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
+        val get = gqlApi.loadChannelVideos(gqlClientId, channelLogin, gqlType, gqlSort, initialParams?.requestedLoadSize ?: rangeParams?.loadSize, offset)
         offset = get.cursor
         return get.data
     }
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<Video>) {
         loadRange(params, callback) {
-            when (api) {
-                C.HELIX -> helixRange(params)
-                C.GQL_QUERY -> gqlQueryRange(params)
-                C.GQL -> gqlRange(params)
-                else -> mutableListOf()
-            }
-        }
-    }
-
-    private suspend fun helixRange(params: LoadRangeParams): List<Video> {
-        val get = helixApi.getChannelVideos(helixClientId, helixToken, channelId, helixPeriod, helixBroadcastTypes, helixSort, params.loadSize, offset)
-        return if (offset != null && offset != "") {
-            if (get.data != null) {
-                offset = get.pagination?.cursor
-                get.data
-            } else mutableListOf()
-        } else mutableListOf()
-    }
-
-    private suspend fun gqlQueryRange(params: LoadRangeParams): List<Video> {
-        val typeList = if (gqlQueryType != null) mutableListOf(gqlQueryType) else null
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(UserVideosQuery(
-            id = Optional.Present(channelId),
-            sort = Optional.Present(gqlQuerySort),
-            types = Optional.Present(typeList),
-            first = Optional.Present(params.loadSize),
-            after = Optional.Present(offset)
-        )).execute().data?.user
-        val get = get1?.videos?.edges
-        val list = mutableListOf<Video>()
-        if (get != null && nextPage && offset != null && offset != "") {
-            for (i in get) {
-                val tags = mutableListOf<Tag>()
-                i?.node?.contentTags?.forEach { tag ->
-                    tags.add(Tag(
-                        id = tag.id,
-                        name = tag.localizedName
-                    ))
+            if (!offset.isNullOrBlank()) {
+                when (api) {
+                    C.HELIX -> helixLoad(rangeParams = params)
+                    C.GQL_QUERY -> if (nextPage) gqlQueryLoad(rangeParams = params) else listOf()
+                    C.GQL -> gqlLoad(rangeParams = params)
+                    else -> listOf()
                 }
-                list.add(
-                    Video(
-                        id = i?.node?.id ?: "",
-                        user_id = channelId,
-                        user_login = get1.login,
-                        user_name = get1.displayName,
-                        gameId = i?.node?.game?.id,
-                        gameName = i?.node?.game?.displayName,
-                        type = i?.node?.broadcastType.toString(),
-                        title = i?.node?.title,
-                        view_count = i?.node?.viewCount,
-                        createdAt = i?.node?.createdAt.toString(),
-                        duration = i?.node?.lengthSeconds.toString(),
-                        thumbnail_url = i?.node?.previewThumbnailURL,
-                        profileImageURL = get1.profileImageURL,
-                        tags = tags
-                    )
-                )
-            }
-            offset = get.lastOrNull()?.cursor.toString()
-            nextPage = get1.videos.pageInfo?.hasNextPage ?: true
+            } else listOf()
         }
-        return list
-    }
-
-    private suspend fun gqlRange(params: LoadRangeParams): List<Video> {
-        val get = gqlApi.loadChannelVideos(gqlClientId, channelLogin, gqlType, gqlSort, params.loadSize, offset)
-        return if (offset != null && offset != "") {
-            offset = get.cursor
-            get.data
-        } else mutableListOf()
     }
 
     class Factory(

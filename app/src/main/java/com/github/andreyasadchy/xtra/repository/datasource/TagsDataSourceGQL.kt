@@ -19,10 +19,10 @@ class TagsDataSourceGQL private constructor(
             if (gameId != null && gameName != null) {
                 if (query.isNullOrBlank()) {
                     val get = api.loadGameStreamTags(clientId, gameName)
-                    get.data.ifEmpty { mutableListOf() }
+                    get.data.ifEmpty { listOf() }
                 } else {
                     val search = api.loadSearchGameTags(clientId, gameId, query)
-                    search.data.ifEmpty { mutableListOf() }
+                    search.data.ifEmpty { listOf() }
                 }
             } else {
                 if (query.isNullOrBlank()) {
@@ -32,20 +32,20 @@ class TagsDataSourceGQL private constructor(
                             if (get.data.isNotEmpty()) {
                                 savedGameTags = get.data
                                 get.data
-                            } else mutableListOf()
-                        } else savedGameTags ?: mutableListOf()
+                            } else listOf()
+                        } else savedGameTags ?: listOf()
                     } else {
                         if (savedAllTags == null) {
                             val get = api.loadStreamTags(clientId)
                             if (get.data.isNotEmpty()) {
                                 savedAllTags = get.data
                                 get.data
-                            } else mutableListOf()
-                        } else savedAllTags ?: mutableListOf()
+                            } else listOf()
+                        } else savedAllTags ?: listOf()
                     }
                 } else {
                     val search = api.loadSearchAllTags(clientId, query)
-                    search.data.ifEmpty { mutableListOf() }
+                    search.data.ifEmpty { listOf() }
                 }
             }
         }
@@ -53,7 +53,7 @@ class TagsDataSourceGQL private constructor(
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<Tag>) {
         loadRange(params, callback) {
-            mutableListOf()
+            listOf()
         }
     }
 

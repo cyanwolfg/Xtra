@@ -26,29 +26,28 @@ class SearchVideosDataSource private constructor(
         loadInitial(params, callback) {
             try {
                 when (apiPref?.elementAt(0)?.second) {
-                    C.GQL_QUERY -> gqlQueryInitial(params)
-                    C.GQL -> gqlInitial()
+                    C.GQL_QUERY -> { api = C.GQL_QUERY; gqlQueryLoad(params) }
+                    C.GQL -> { api = C.GQL; gqlLoad() }
                     else -> throw Exception()
                 }
             } catch (e: Exception) {
                 try {
                     when (apiPref?.elementAt(1)?.second) {
-                        C.GQL_QUERY -> gqlQueryInitial(params)
-                        C.GQL -> gqlInitial()
+                        C.GQL_QUERY -> { api = C.GQL_QUERY; gqlQueryLoad(params) }
+                        C.GQL -> { api = C.GQL; gqlLoad() }
                         else -> throw Exception()
                     }
                 } catch (e: Exception) {
-                    mutableListOf()
+                    listOf()
                 }
             }
         }
     }
 
-    private suspend fun gqlQueryInitial(params: LoadInitialParams): List<Video> {
-        api = C.GQL_QUERY
+    private suspend fun gqlQueryLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
         val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(SearchVideosQuery(
             query = query,
-            first = Optional.Present(params.requestedLoadSize),
+            first = Optional.Present(initialParams?.requestedLoadSize ?: rangeParams?.loadSize),
             after = Optional.Present(offset)
         )).execute().data?.searchFor?.videos
         val get = get1?.items
@@ -67,11 +66,11 @@ class SearchVideosDataSource private constructor(
                     user_id = i.owner?.id,
                     user_login = i.owner?.login,
                     user_name = i.owner?.displayName,
-                    type = i.broadcastType.toString(),
+                    type = i.broadcastType?.toString(),
                     title = i.title,
                     view_count = i.viewCount,
-                    createdAt = i.createdAt.toString(),
-                    duration = i.lengthSeconds.toString(),
+                    createdAt = i.createdAt?.toString(),
+                    duration = i.lengthSeconds?.toString(),
                     thumbnail_url = i.previewThumbnailURL,
                     gameId = i.game?.id,
                     gameName = i.game?.displayName,
@@ -79,13 +78,13 @@ class SearchVideosDataSource private constructor(
                     tags = tags
                 ))
             }
-            offset = get1.cursor.toString()
+            offset = get1.cursor
             nextPage = get1.pageInfo?.hasNextPage ?: true
         }
         return list
     }
 
-    private suspend fun gqlInitial(): List<Video> {
+    private suspend fun gqlLoad(): List<Video> {
         val get = gqlApi.loadSearchVideos(gqlClientId, query, offset)
         offset = get.cursor
         return get.data
@@ -93,61 +92,14 @@ class SearchVideosDataSource private constructor(
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<Video>) {
         loadRange(params, callback) {
-            when (api) {
-                C.GQL_QUERY -> gqlQueryRange(params)
-                C.GQL -> gqlRange()
-                else -> mutableListOf()
-            }
-        }
-    }
-
-    private suspend fun gqlQueryRange(params: LoadRangeParams): List<Video> {
-        api = C.GQL_QUERY
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(SearchVideosQuery(
-            query = query,
-            first = Optional.Present(params.loadSize),
-            after = Optional.Present(offset)
-        )).execute().data?.searchFor?.videos
-        val get = get1?.items
-        val list = mutableListOf<Video>()
-        if (get != null && nextPage && offset != null && offset != "") {
-            for (i in get) {
-                val tags = mutableListOf<Tag>()
-                i.contentTags?.forEach { tag ->
-                    tags.add(Tag(
-                        id = tag.id,
-                        name = tag.localizedName
-                    ))
+            if (!offset.isNullOrBlank()) {
+                when (api) {
+                    C.GQL_QUERY -> if (nextPage) gqlQueryLoad(rangeParams = params) else listOf()
+                    C.GQL -> gqlLoad()
+                    else -> listOf()
                 }
-                list.add(Video(
-                    id = i.id ?: "",
-                    user_id = i.owner?.id,
-                    user_login = i.owner?.login,
-                    user_name = i.owner?.displayName,
-                    type = i.broadcastType.toString(),
-                    title = i.title,
-                    view_count = i.viewCount,
-                    createdAt = i.createdAt.toString(),
-                    duration = i.lengthSeconds.toString(),
-                    thumbnail_url = i.previewThumbnailURL,
-                    gameId = i.game?.id,
-                    gameName = i.game?.displayName,
-                    profileImageURL = i.owner?.profileImageURL,
-                    tags = tags
-                ))
-            }
-            offset = get1.cursor.toString()
-            nextPage = get1.pageInfo?.hasNextPage ?: true
+            } else listOf()
         }
-        return list
-    }
-
-    private suspend fun gqlRange(): List<Video> {
-        val get = gqlApi.loadSearchVideos(gqlClientId, query, offset)
-        return if (offset != null && offset != "") {
-            offset = get.cursor
-            get.data
-        } else mutableListOf()
     }
 
     class Factory(
