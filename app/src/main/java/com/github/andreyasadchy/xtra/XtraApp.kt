@@ -62,7 +62,7 @@ class XtraApp : Application(), HasAndroidInjector, ImageLoaderFactory {
                 if (Build.VERSION.SDK_INT >= 28) {
                     add(ImageDecoderDecoder.Factory(enforceMinimumFrameDelay = true))
                 } else {
-                    add(GifDecoder.Factory())
+                    add(GifDecoder.Factory(enforceMinimumFrameDelay = true))
                 }
             }
         }

@@ -356,7 +356,8 @@ class ChatAdapter(
                     try {
                         builder.setSpan(ImageSpan(result), image.start, image.end, SPAN_EXCLUSIVE_EXCLUSIVE)
                         if (animateGifs) {
-                            (result as? coil.drawable.ScaleDrawable)?.start()
+                            (result as? coil.drawable.ScaleDrawable)?.start() ?:
+                            (result as? coil.drawable.MovieDrawable)?.start()
                         }
                     } catch (e: IndexOutOfBoundsException) {
                     }
@@ -525,6 +526,7 @@ class ChatAdapter(
         if (animateGifs) {
             (holder.textView.text as? Spannable)?.getSpans<ImageSpan>()?.forEach {
                 (it.drawable as? coil.drawable.ScaleDrawable)?.start() ?:
+                (it.drawable as? coil.drawable.MovieDrawable)?.start() ?:
                 (it.drawable as? GifDrawable)?.start() ?:
                 (it.drawable as? WebpDrawable)?.start()
             }
@@ -536,6 +538,7 @@ class ChatAdapter(
         if (animateGifs) {
             (holder.textView.text as? Spannable)?.getSpans<ImageSpan>()?.forEach {
                 (it.drawable as? coil.drawable.ScaleDrawable)?.stop() ?:
+                (it.drawable as? coil.drawable.MovieDrawable)?.stop() ?:
                 (it.drawable as? GifDrawable)?.stop() ?:
                 (it.drawable as? WebpDrawable)?.stop()
             }
@@ -548,6 +551,7 @@ class ChatAdapter(
             for (i in 0 until childCount) {
                 ((recyclerView.getChildAt(i) as TextView).text as? Spannable)?.getSpans<ImageSpan>()?.forEach {
                     (it.drawable as? coil.drawable.ScaleDrawable)?.stop() ?:
+                    (it.drawable as? coil.drawable.MovieDrawable)?.stop() ?:
                     (it.drawable as? GifDrawable)?.stop() ?:
                     (it.drawable as? WebpDrawable)?.stop()
                 }

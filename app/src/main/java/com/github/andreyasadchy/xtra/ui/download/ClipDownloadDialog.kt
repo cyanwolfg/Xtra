@@ -9,8 +9,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.helix.clip.Clip
@@ -45,10 +45,10 @@ class ClipDownloadDialog : BaseDownloadDialog() {
         with(requireArguments()) {
             viewModel.init(requireContext().prefs().getString(C.GQL_CLIENT_ID, ""), getParcelable(KEY_CLIP)!!, getSerializable(KEY_QUALITIES) as Map<String, String>?)
         }
-        viewModel.qualities.observe(viewLifecycleOwner, Observer {
-            (requireView() as ConstraintLayout).children.forEach { v -> v.isVisible = v.id != R.id.progressBar && v.id != R.id.storageSelectionContainer }
+        viewModel.qualities.observe(viewLifecycleOwner) {
+            ((requireView() as NestedScrollView).children.first() as ConstraintLayout).children.forEach { v -> v.isVisible = v.id != R.id.progressBar && v.id != R.id.storageSelectionContainer }
             init(it)
-        })
+        }
     }
 
     private fun init(qualities: Map<String, String>) {

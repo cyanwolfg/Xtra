@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
-import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -76,11 +75,8 @@ abstract class PlayerViewModel(context: Application) : BaseAndroidViewModel(cont
         get() = timerEndTime - System.currentTimeMillis()
 
     init {
-        val speed = context.prefs().getFloat(C.PLAYER_SPEED, 1f)
-        if (speed != 1f) {
-            setSpeed(speed, false)
-        }
-        player.volume = context.prefs().getInt(C.PLAYER_VOLUME, 100) / 100f
+        val volume = context.prefs().getInt(C.PLAYER_VOLUME, 100) / 100f
+        setVolume(volume)
     }
 
     fun setTimer(duration: Long) {
@@ -221,13 +217,11 @@ abstract class PlayerViewModel(context: Application) : BaseAndroidViewModel(cont
         timer?.cancel()
     }
 
-    open fun setSpeed(speed: Float, save: Boolean = true) {
+    fun setSpeed(speed: Float) {
         player.playbackParameters = PlaybackParameters(speed)
-        val context = getApplication<Application>()
-        if (save) context.prefs().edit { putFloat(C.PLAYER_SPEED, speed) }
     }
 
-    open fun setVolume(volume: Float) {
+    fun setVolume(volume: Float) {
         player.volume = volume
     }
 }

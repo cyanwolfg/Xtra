@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.github.andreyasadchy.xtra.R
@@ -76,7 +76,7 @@ class PlayerSettingsDialog : ExpandingBottomSheetDialogFragment(), RadioButtonDi
         }
         if (requireContext().prefs().getBoolean(C.PLAYER_MENU_QUALITY, false)) {
             menuQuality.visible()
-            menuQuality.isEnabled = false
+            menuQuality.setOnClickListener { dismiss() }
             setQualities(arguments.getCharSequenceArrayList(QUALITIES), arguments.getInt(QUALITY_INDEX))
         }
         if (parentFragment is StreamPlayerFragment) {
@@ -203,6 +203,7 @@ class PlayerSettingsDialog : ExpandingBottomSheetDialogFragment(), RadioButtonDi
             REQUEST_CODE_SPEED -> {
                 listener.onChangeSpeed(SPEEDS[index])
                 setSelectedSpeed(index)
+                requireContext().prefs().edit { putFloat(C.PLAYER_SPEED, SPEEDS[index]) }
             }
         }
     }
@@ -221,7 +222,7 @@ class PlayerSettingsDialog : ExpandingBottomSheetDialogFragment(), RadioButtonDi
         if (requireContext().prefs().getBoolean(C.PLAYER_MENU_GAMES, false)) {
             menuVodGames.visible()
             menuVodGames.setOnClickListener {
-                (parentFragment as? VideoPlayerFragment)?.view?.findViewById<ImageButton>(R.id.playerGames)?.performClick()
+                (parentFragment as? VideoPlayerFragment)?.showVodGames()
                 dismiss()
             }
         }
@@ -240,7 +241,6 @@ class PlayerSettingsDialog : ExpandingBottomSheetDialogFragment(), RadioButtonDi
             qualities = list
             qualityValue.visible()
             setSelectedQuality(index)
-            menuQuality.isEnabled = true
             menuQuality.setOnClickListener {
                 FragmentUtils.showRadioButtonDialogFragment(childFragmentManager, qualities, qualityIndex, REQUEST_CODE_QUALITY)
             }

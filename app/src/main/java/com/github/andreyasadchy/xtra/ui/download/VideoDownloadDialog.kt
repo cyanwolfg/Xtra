@@ -15,9 +15,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.User
@@ -53,14 +53,14 @@ class VideoDownloadDialog : BaseDownloadDialog() {
     @Deprecated("Deprecated in Java")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.videoInfo.observe(viewLifecycleOwner, Observer {
+        viewModel.videoInfo.observe(viewLifecycleOwner) {
             if (it != null) {
-                (requireView() as ConstraintLayout).children.forEach { v -> v.isVisible = v.id != R.id.progressBar && v.id != R.id.storageSelectionContainer }
+                ((requireView() as NestedScrollView).children.first() as ConstraintLayout).children.forEach { v -> v.isVisible = v.id != R.id.progressBar && v.id != R.id.storageSelectionContainer }
                 init(it)
             } else {
                 dismiss()
             }
-        })
+        }
         requireArguments().getParcelable<VideoDownloadInfo?>(KEY_VIDEO_INFO).let {
             if (it == null) {
                 viewModel.setVideo(

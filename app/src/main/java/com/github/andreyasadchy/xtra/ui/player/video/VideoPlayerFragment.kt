@@ -101,11 +101,14 @@ class VideoPlayerFragment : BasePlayerFragment(), HasDownloadDialog, ChatReplayP
                 showDownloadDialog()
             }
         }
-        if (prefs.getBoolean(C.PLAYER_GAMESBUTTON, true)) {
-            viewModel.loadGamesList(prefs.getString(C.GQL_CLIENT_ID, ""), video.id).observe(viewLifecycleOwner) { list ->
+        if (prefs.getBoolean(C.PLAYER_GAMESBUTTON, true) || prefs.getBoolean(C.PLAYER_MENU_GAMES, false)) {
+            viewModel.loadGamesList(prefs.getString(C.GQL_CLIENT_ID, ""), video.id)
+            viewModel.gamesList.observe(viewLifecycleOwner) { list ->
                 if (list.isNotEmpty()) {
-                    gamesButton.visible()
-                    gamesButton.setOnClickListener { FragmentUtils.showPlayerGamesDialog(childFragmentManager, list) }
+                    if (prefs.getBoolean(C.PLAYER_GAMESBUTTON, true)) {
+                        gamesButton.visible()
+                        gamesButton.setOnClickListener { showVodGames() }
+                    }
                     (childFragmentManager.findFragmentByTag("closeOnPip") as? PlayerSettingsDialog?)?.setVodGames()
                 }
             }
@@ -120,6 +123,10 @@ class VideoPlayerFragment : BasePlayerFragment(), HasDownloadDialog, ChatReplayP
                 }
             }
         }
+    }
+
+    fun showVodGames() {
+        viewModel.gamesList.value?.let { FragmentUtils.showPlayerGamesDialog(childFragmentManager, it) }
     }
 
     fun checkBookmark() {

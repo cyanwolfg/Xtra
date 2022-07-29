@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.core.widget.NestedScrollView
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.helix.game.Game
 import com.github.andreyasadchy.xtra.ui.common.ExpandingBottomSheetDialogFragment
@@ -49,9 +48,7 @@ class PlayerGamesDialog : ExpandingBottomSheetDialogFragment() {
             id = R.id.fragmentContainer
             setLayoutParams(layoutParams)
         }
-        val scrollView = NestedScrollView(context)
-        scrollView.addView(frameLayout)
-        return scrollView
+        return frameLayout
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -71,7 +71,12 @@ class VideoPlayerViewModel @Inject constructor(
     val gamesList = MutableLiveData<List<Game>>()
     private var isLoading = false
 
-    fun loadGamesList(clientId: String?, videoId: String): MutableLiveData<List<Game>> {
+    init {
+        val speed = context.prefs().getFloat(C.PLAYER_SPEED, 1f)
+        setSpeed(speed)
+    }
+
+    fun loadGamesList(clientId: String?, videoId: String) {
         if (gamesList.value == null && !isLoading) {
             isLoading = true
             viewModelScope.launch {
@@ -87,7 +92,6 @@ class VideoPlayerViewModel @Inject constructor(
                 }
             }
         }
-        return gamesList
     }
 
     fun seek(position: Long) {

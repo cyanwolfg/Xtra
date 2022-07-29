@@ -13,6 +13,7 @@ import com.github.andreyasadchy.xtra.model.helix.stream.Stream
 import com.github.andreyasadchy.xtra.ui.common.BaseNetworkFragment
 import com.github.andreyasadchy.xtra.ui.main.MainActivity
 import com.github.andreyasadchy.xtra.ui.player.BasePlayerFragment
+import com.github.andreyasadchy.xtra.ui.player.stream.StreamPlayerFragment
 import com.github.andreyasadchy.xtra.ui.view.chat.ChatView
 import com.github.andreyasadchy.xtra.ui.view.chat.MessageClickedDialog
 import com.github.andreyasadchy.xtra.util.*
@@ -101,6 +102,7 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
             viewModel.raidClicked.observe(viewLifecycleOwner) { onRaidClicked() }
             viewModel.host.observe(viewLifecycleOwner) { onHost(it) }
             viewModel.hostClicked.observe(viewLifecycleOwner) { onHostClicked() }
+            viewModel.viewerCount.observe(viewLifecycleOwner) { (parentFragment as? StreamPlayerFragment)?.updateViewerCount(it) }
         }
     }
 

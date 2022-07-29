@@ -82,6 +82,7 @@ class ChatViewModel @Inject constructor(
     var raidClosed = false
     val host = MutableLiveData<Stream>()
     val hostClicked = MutableLiveData<Boolean>()
+    val viewerCount = MutableLiveData<Int?>()
 
     private val _chatMessages by lazy {
         MutableLiveData<MutableList<ChatMessage>>().apply { value = Collections.synchronizedList(ArrayList(MAX_ADAPTER_COUNT + 1)) }
@@ -377,7 +378,7 @@ class ChatViewModel @Inject constructor(
             private val showClearMsg: Boolean,
             private val showClearChat: Boolean,
             private val collectPoints: Boolean,
-            private val notifyPoints: Boolean) : ChatController(), OnUserStateReceivedListener, OnRoomStateReceivedListener, OnCommandReceivedListener, OnRewardReceivedListener, OnPointsEarnedListener, OnClaimPointsListener, OnMinuteWatchedListener, OnRaidListener, ChatView.RaidCallback {
+            private val notifyPoints: Boolean) : ChatController(), OnUserStateReceivedListener, OnRoomStateReceivedListener, OnCommandReceivedListener, OnRewardReceivedListener, OnPointsEarnedListener, OnClaimPointsListener, OnMinuteWatchedListener, OnRaidListener, ChatView.RaidCallback, OnViewerCountReceivedListener {
 
         private var chat: LiveChatThread? = null
         private var loggedInChat: LoggedInChatThread? = null
@@ -416,7 +417,7 @@ class ChatViewModel @Inject constructor(
                 loggedInChat = TwitchApiHelper.startLoggedInChat(useSSl, user.login, user.gqlToken?.nullIfEmpty() ?: user.helixToken, channelLogin, showUserNotice, showClearMsg, showClearChat, usePubSub, this, this, this, this, this)
             }
             if (usePubSub && !channelId.isNullOrBlank()) {
-                pubSub = TwitchApiHelper.startPubSub(channelId, user.id, user.gqlToken, collectPoints, notifyPoints, showRaids, viewModelScope, this, this, this, this, this, this)
+                pubSub = TwitchApiHelper.startPubSub(channelId, user.id, user.gqlToken, collectPoints, notifyPoints, showRaids, viewModelScope, this, this, this, this, this, this, this)
             }
         }
 
@@ -550,6 +551,10 @@ class ChatViewModel @Inject constructor(
                     host.postValue(it)
                 }
             }
+        }
+
+        override fun onViewerCount(viewers: Int?) {
+            viewerCount.postValue(viewers)
         }
 
         fun addEmotes(list: List<Emote>) {

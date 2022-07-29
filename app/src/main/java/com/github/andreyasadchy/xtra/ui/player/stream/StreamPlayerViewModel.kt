@@ -64,7 +64,7 @@ class StreamPlayerViewModel @Inject constructor(
         .setPlaylistTrackerFactory(DefaultHlsPlaylistTracker.FACTORY)
         .setLoadErrorHandlingPolicy(DefaultLoadErrorHandlingPolicy(6))
 
-    fun startStream(user: User, includeToken: Boolean?, helixClientId: String?, gqlClientId: String?, stream: Stream, useAdBlock: Boolean?, randomDeviceId: Boolean?, xDeviceId: String?, deviceId: String?, playerType: String?, minSpeed: String?, maxSpeed: String?, targetOffset: String?) {
+    fun startStream(user: User, includeToken: Boolean?, helixClientId: String?, gqlClientId: String?, stream: Stream, useAdBlock: Boolean?, randomDeviceId: Boolean?, xDeviceId: String?, deviceId: String?, playerType: String?, minSpeed: String?, maxSpeed: String?, targetOffset: String?, updateStream: Boolean) {
         this.gqlClientId = gqlClientId
         if (includeToken == true) {
             this.gqlToken = user.gqlToken
@@ -80,40 +80,42 @@ class StreamPlayerViewModel @Inject constructor(
         if (_stream.value == null) {
             _stream.value = stream
             loadStream(stream)
-            viewModelScope.launch {
-                while (isActive) {
-                    try {
-                        val s = when {
-                            stream.user_id != null -> {
-                                repository.loadStream(stream.user_id, stream.user_login, helixClientId, user.helixToken, gqlClientId) ?:
-                                gql.loadViewerCount(gqlClientId, stream.user_login).let { get ->
-                                    _stream.value?.apply {
-                                        if (!get.streamId.isNullOrBlank()) {
-                                            id = get.streamId
+            if (updateStream) {
+                viewModelScope.launch {
+                    while (isActive) {
+                        try {
+                            val s = when {
+                                stream.user_id != null -> {
+                                    repository.loadStream(stream.user_id, stream.user_login, helixClientId, user.helixToken, gqlClientId) ?:
+                                    gql.loadViewerCount(gqlClientId, stream.user_login).let { get ->
+                                        _stream.value?.apply {
+                                            if (!get.streamId.isNullOrBlank()) {
+                                                id = get.streamId
+                                            }
+                                            viewer_count = get.viewers
                                         }
-                                        viewer_count = get.viewers
                                     }
                                 }
-                            }
-                            stream.user_login != null -> {
-                                gql.loadViewerCount(gqlClientId, stream.user_login).let { get ->
-                                    _stream.value?.apply {
-                                        if (!get.streamId.isNullOrBlank()) {
-                                            id = get.streamId
+                                stream.user_login != null -> {
+                                    gql.loadViewerCount(gqlClientId, stream.user_login).let { get ->
+                                        _stream.value?.apply {
+                                            if (!get.streamId.isNullOrBlank()) {
+                                                id = get.streamId
+                                            }
+                                            viewer_count = get.viewers
                                         }
-                                        viewer_count = get.viewers
                                     }
                                 }
+                                else -> null
                             }
-                            else -> null
+                            if (!s?.id.isNullOrBlank()) {
+                                stream_id = s?.id
+                            }
+                            _stream.postValue(s)
+                            delay(300000L)
+                        } catch (e: Exception) {
+                            delay(60000L)
                         }
-                        if (!s?.id.isNullOrBlank()) {
-                            stream_id = s?.id
-                        }
-                        _stream.postValue(s)
-                        delay(300000L)
-                    } catch (e: Exception) {
-                        delay(60000L)
                     }
                 }
             }
@@ -198,6 +200,4 @@ class StreamPlayerViewModel @Inject constructor(
             }
         }
     }
-
-    override fun setSpeed(speed: Float, save: Boolean) {}
 }

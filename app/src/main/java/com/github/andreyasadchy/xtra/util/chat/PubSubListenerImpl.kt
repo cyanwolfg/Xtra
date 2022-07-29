@@ -10,7 +10,14 @@ class PubSubListenerImpl(
     private val callbackPointsEarned: OnPointsEarnedListener,
     private val callbackClaim: OnClaimPointsListener,
     private val callbackMinute: OnMinuteWatchedListener,
-    private val callbackRaid: OnRaidListener) : PubSubWebSocket.OnMessageReceivedListener {
+    private val callbackRaid: OnRaidListener,
+    private val callbackViewers: OnViewerCountReceivedListener) : PubSubWebSocket.OnMessageReceivedListener {
+
+    override fun onPlaybackMessage(text: String) {
+        val data = if (text.isNotBlank()) JSONObject(text).optJSONObject("data") else null
+        val message = data?.optString("message")?.let { if (it.isNotBlank() && !data.isNull("message")) JSONObject(it) else null }
+        callbackViewers.onViewerCount(if (message?.isNull("viewers") == false) message.optInt("viewers") else null)
+    }
 
     override fun onPointReward(text: String) {
         val data = if (text.isNotBlank()) JSONObject(text).optJSONObject("data") else null

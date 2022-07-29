@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.helix.game.Game
@@ -28,7 +29,7 @@ class PlayerGamesFragment : PagedListFragment<Game, PlayerGamesViewModel, BasePa
             id = R.id.recyclerView
             setLayoutParams(layoutParams)
         }
-        return recycleView
+        return NestedScrollView(context).apply { addView(recycleView) }
     }
 
     override fun initialize() {

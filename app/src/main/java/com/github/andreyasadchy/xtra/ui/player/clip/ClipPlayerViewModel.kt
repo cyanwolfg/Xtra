@@ -55,6 +55,11 @@ class ClipPlayerViewModel @Inject constructor(
         get() { return clip.channelLogo }
     override lateinit var follow: FollowLiveData
 
+    init {
+        val speed = context.prefs().getFloat(C.PLAYER_SPEED, 1f)
+        setSpeed(speed)
+    }
+
     override fun changeQuality(index: Int) {
         playbackPosition = player.currentPosition
         val quality = helper.urls.values.elementAt(index)

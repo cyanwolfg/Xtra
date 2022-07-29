@@ -66,8 +66,6 @@ class RadioButtonDialogFragment : ExpandingBottomSheetDialogFragment() {
             radioGroup.addView(button, layoutParams)
         }
         radioGroup.check(checkedId)
-        val scrollView = NestedScrollView(context)
-        scrollView.addView(radioGroup)
-        return scrollView
+        return NestedScrollView(context).apply { addView(radioGroup) }
     }
 }

@@ -52,6 +52,7 @@ class PubSubWebSocket(
             put("type", "LISTEN")
             put("data", JSONObject().apply {
                 put("topics", JSONArray().apply {
+                    put("video-playback-by-id.$channelId")
                     put("community-points-channel-v1.$channelId")
                     if (showRaids) {
                         put("raid.$channelId")
@@ -150,6 +151,7 @@ class PubSubWebSocket(
                         val message = data?.optString("message")?.let { if (it.isNotBlank()) JSONObject(it) else null }
                         val messageType = message?.optString("type")
                         when {
+                            (topic?.startsWith("video-playback-by-id") == true) && (messageType?.startsWith("viewcount") == true || messageType?.startsWith("stream-down") == true) -> listener.onPlaybackMessage(text)
                             (topic?.startsWith("community-points-channel") == true) && (messageType?.startsWith("reward-redeemed") == true) -> listener.onPointReward(text)
                             topic?.startsWith("community-points-user") == true -> {
                                 when {
@@ -181,6 +183,7 @@ class PubSubWebSocket(
     }
 
     interface OnMessageReceivedListener {
+        fun onPlaybackMessage(text: String)
         fun onPointReward(text: String)
         fun onPointsEarned(text: String)
         fun onClaimPoints(text: String)

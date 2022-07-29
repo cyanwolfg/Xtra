@@ -1,72 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="5dp">
+    android:layout_height="match_parent">
 
-    <RadioGroup
-        android:id="@+id/sort"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:padding="5dp">
 
-        <TextView
+        <RadioGroup
+            android:id="@+id/sort"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sort"
+                android:textStyle="bold"
+                android:layout_marginStart="5dp" />
+
+            <RadioButton
+                android:id="@+id/time_followed"
+                style="@style/RadioButton"
+                android:text="@string/time_followed"/>
+
+            <RadioButton
+                android:id="@+id/alphabetically"
+                style="@style/RadioButton"
+                android:text="@string/alphabetically"/>
+
+            <RadioButton
+                android:id="@+id/last_broadcast"
+                style="@style/RadioButton"
+                android:text="@string/last_broadcast"/>
+        </RadioGroup>
+
+        <RadioGroup
+            android:id="@+id/order"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/order"
+                android:textStyle="bold"
+                android:layout_marginStart="5dp" />
+
+            <RadioButton
+                android:id="@+id/newest_first"
+                style="@style/RadioButton"
+                android:text="@string/descending"/>
+
+            <RadioButton
+                android:id="@+id/oldest_first"
+                style="@style/RadioButton"
+                android:text="@string/ascending"/>
+
+        </RadioGroup>
+
+        <CheckBox
+            android:id="@+id/saveDefault"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sort"
-            android:textStyle="bold"
-            android:layout_marginStart="5dp" />
+            android:text="@string/save_default" />
 
-        <RadioButton
-            android:id="@+id/time_followed"
-            style="@style/RadioButton"
-            android:text="@string/time_followed"/>
-
-        <RadioButton
-            android:id="@+id/alphabetically"
-            style="@style/RadioButton"
-            android:text="@string/alphabetically"/>
-
-        <RadioButton
-            android:id="@+id/last_broadcast"
-            style="@style/RadioButton"
-            android:text="@string/last_broadcast"/>
-    </RadioGroup>
-
-    <RadioGroup
-        android:id="@+id/order"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
+        <Button
+            android:id="@+id/apply"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/order"
-            android:textStyle="bold"
-            android:layout_marginStart="5dp" />
+            android:text="@string/apply"/>
 
-        <RadioButton
-            android:id="@+id/newest_first"
-            style="@style/RadioButton"
-            android:text="@string/descending"/>
-
-        <RadioButton
-            android:id="@+id/oldest_first"
-            style="@style/RadioButton"
-            android:text="@string/ascending"/>
-
-    </RadioGroup>
-
-    <CheckBox
-        android:id="@+id/saveDefault"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/save_default" />
-
-    <Button
-        android:id="@+id/apply"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/apply"/>
-
-</LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

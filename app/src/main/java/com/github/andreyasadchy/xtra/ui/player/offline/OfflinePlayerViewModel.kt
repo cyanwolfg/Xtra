@@ -21,6 +21,11 @@ class OfflinePlayerViewModel @Inject constructor(
     private lateinit var video: OfflineVideo
     val qualities = mutableListOf(context.getString(R.string.source), context.getString(R.string.audio_only))
 
+    init {
+        val speed = context.prefs().getFloat(C.PLAYER_SPEED, 1f)
+        setSpeed(speed)
+    }
+
     fun setVideo(video: OfflineVideo) {
         val context = getApplication<Application>()
         if (!this::video.isInitialized) {
