@@ -574,4 +574,5 @@ Removes a timeout on a user.</string>
     <string name="api_gql_token">GQL token</string>
     <string name="api_validate_tokens">Validate tokens on startup</string>
     <string name="tokens">Tokens</string>
+    <string name="download_limit">Download concurrent limit</string>
 </resources>

@@ -95,7 +95,6 @@ class DownloadService : IntentService(TAG) {
         pauseAction = createAction(R.string.pause, ACTION_PAUSE, 1)
         resumeAction = createAction(R.string.resume, ACTION_RESUME, 2)
         registerReceiver(notificationActionReceiver, IntentFilter().apply {
-            addAction(ACTION_CANCEL)
             addAction(ACTION_PAUSE)
             addAction(ACTION_RESUME)
         })
@@ -122,7 +121,6 @@ class DownloadService : IntentService(TAG) {
                 putExtra(MainActivity.KEY_CODE, MainActivity.INTENT_OPEN_DOWNLOADS_TAB)
             }
             setContentIntent(PendingIntent.getActivity(this@DownloadService, REQUEST_CODE_DOWNLOAD, clickIntent, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT))
-            addAction(createAction(android.R.string.cancel, ACTION_CANCEL, 0))
             addAction(pauseAction)
         }
 
@@ -337,7 +335,7 @@ class DownloadService : IntentService(TAG) {
                 ACTION_PAUSE -> {
                     Log.d(NOTIFICATION_TAG, "Paused download. Id: ${offlineVideo.id}")
                     notificationManager.notify(offlineVideo.id, notificationBuilder.run {
-                        mActions.removeAt(1)
+                        mActions.removeAt(0)
                         mActions.add(resumeAction)
                         build()
                     })
@@ -346,7 +344,7 @@ class DownloadService : IntentService(TAG) {
                 ACTION_RESUME -> {
                     Log.d(NOTIFICATION_TAG, "Resumed download. Id: ${offlineVideo.id}")
                     notificationManager.notify(offlineVideo.id, notificationBuilder.run {
-                        mActions.removeAt(1)
+                        mActions.removeAt(0)
                         mActions.add(pauseAction)
                         build()
                     })

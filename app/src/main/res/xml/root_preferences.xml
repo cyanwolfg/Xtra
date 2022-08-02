@@ -402,6 +402,15 @@
         android:title="@string/admin_settings"
         app:iconSpaceReserved="false" />
 
+    <SeekBarPreference
+        android:defaultValue="10"
+        android:key="download_concurrent_limit"
+        android:max="20"
+        android:title="@string/download_limit"
+        app:iconSpaceReserved="false"
+        app:min="1"
+        app:showSeekBarValue="true" />
+
     <PreferenceCategory android:title="@string/settings_debug" app:iconSpaceReserved="false"/>
     <SwitchPreferenceCompat
         android:defaultValue="false"

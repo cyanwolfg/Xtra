@@ -16,6 +16,7 @@ object C {
     const val TOKEN = "token"
     const val USERNAME = "username"
     const val USER_ID = "user_id"
+    const val DOWNLOAD_CONCURRENT_LIMIT = "download_concurrent_limit"
     const val DOWNLOAD_STORAGE = "downloadStorage"
     const val ASPECT_RATIO_LANDSCAPE = "aspectRatioLandscape"
     const val FIRST_LAUNCH = "first_launch"
