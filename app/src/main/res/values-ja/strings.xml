@@ -104,7 +104,7 @@
     <string name="notification_playback_channel_id" translatable="false">xtra_playback_channel</string>
     <string name="channels">チャンネル</string>
     <string name="watch_video">フルサイズの動画を視聴する</string>
-    <string name="animated_emotes">アニメーションエモート</string>
+    <string name="animated_emotes">アニメーションスタンプ</string>
     <string name="sleep_timer">スリープタイマー</string>
     <string name="start">スタート</string>
     <string name="set">セット</string>
@@ -147,7 +147,7 @@
     <string name="show_scrolltop">トップへ戻るスクロールボタンの表示</string>
     <string name="bold_usernames">太字のユーザー名表示</string>
     <string name="randomcolor">色の未設定ユーザーのランダムカラー表示</string>
-    <string name="zerowidth">ゼロ幅エモート</string>
+    <string name="zerowidth">ゼロ幅スタンプ</string>
     <string name="message_limit">メッセージ数の上限</string>
     <string name="player_defaultquality">標準のプレイヤー画質</string>
     <string name="player_doubletap">ダブルタップでのチャット切り替え</string>
@@ -185,7 +185,7 @@
     <string name="video_type_archive">過去の配信</string>
     <string name="video_type_highlight">ハイライト</string>
     <string name="video_type_upload">アップロード</string>
-    <string name="video_type_rerun">再視聴</string>
+    <string name="video_type_rerun">再配信</string>
     <string name="all">すべて</string>
     <string name="type">種類</string>
     <string name="room_emote">スタンプ限定モード</string>
@@ -534,19 +534,19 @@
     <string name="points_notify">チャンネルポイントの獲得時に通知する</string>
     <string name="points_collect">チャンネルポイントを自動的に獲得する</string>
     <string name="connect_chat">チャットの接続</string>
-    <string name="raid_text">Raiding %1$s with %2$d viewers</string>
-    <string name="show_raids">Show raids and hosts</string>
-    <string name="auto_switch_raids">Switch stream on raid automatically</string>
-    <string name="host_text">Hosting %s</string>
-    <string name="watch_stream">Watch stream</string>
-    <string name="search_streams">Search streams</string>
-    <string name="reload_emotes">Reload emotes</string>
-    <string name="api_current_login">Current login</string>
-    <string name="api_user_id">Account id</string>
-    <string name="api_user_login">Account login</string>
-    <string name="api_helix_token">Helix token</string>
-    <string name="api_gql_token">GQL token</string>
-    <string name="api_validate_tokens">Validate tokens on startup</string>
-    <string name="tokens">Tokens</string>
-    <string name="download_limit">Download concurrent limit</string>
+    <string name="raid_text">%1$s は %2$d 人のパーティーとRaid中です</string>
+    <string name="show_raids">Raidとホストを表示する</string>
+    <string name="auto_switch_raids">Raidの配信を自動で切り替える</string>
+    <string name="host_text">%s さんをホスト中</string>
+    <string name="watch_stream">視聴を続ける</string>
+    <string name="search_streams">配信検索</string>
+    <string name="reload_emotes">スタンプの再読み込み</string>
+    <string name="api_current_login">現在のログイン状態</string>
+    <string name="api_user_id">アカウントID</string>
+    <string name="api_user_login">アカウントログイン</string>
+    <string name="api_helix_token">Helixトークン</string>
+    <string name="api_gql_token">GQLトークン</string>
+    <string name="api_validate_tokens">起動時にトークンの適合性を検証する</string>
+    <string name="tokens">トークン</string>
+    <string name="download_limit">ダウンロードの同時接続制限</string>
 </resources>
