@@ -18,11 +18,11 @@
     <string name="auto">Автоматически</string>
     <string name="blue">Синий</string>
     <string name="bold_usernames">Жирный шрифт для имён пользователей</string>
-    <string name="broadcastersCount">Показать счётчик стримеров в играх</string>
+    <string name="broadcastersCount">Счётчик стримеров в играх</string>
     <string name="browser_workaround">Ваш системный браузер устарел. Пожалуйста, нажмите на кнопку ниже, чтобы войти, используя сторонний браузер</string>
     <string name="channels">Каналы</string>
     <string name="chat">Чат</string>
-    <string name="chatFirstMsgEntries1">Показать тип и изменить цвет фона</string>
+    <string name="chatFirstMsgEntries1">Показать тип и сменить цвет фона</string>
     <string name="chatFirstMsgEntries2">Изменить цвет фона</string>
     <string name="chatFirstMsgEntries3">Показывать как обычные сообщения</string>
     <string name="chat_ban">%s был навсегда заблокирован</string>
@@ -34,10 +34,10 @@
     <string name="chat_only">Только чат</string>
     <string name="chat_replay_unavailable">Повтор чата недоступен</string>
     <string name="chat_reward">Списание баллов канала</string>
-    <string name="chat_timeout">%1$s был отстранён от чата на %2$s</string>
+    <string name="chat_timeout">%1$s отстранён от чата на %2$s</string>
     <string name="clips">Клипы</string>
-    <string name="compact_streams_description">Не показывать предпросмотр</string>
-    <string name="compact_streams_title">Компактный интерфейс трансляций на экране подписок</string>
+    <string name="compact_streams_description">Скрывать эскизы предпросмотра</string>
+    <string name="compact_streams_title">Компактный список трансляций</string>
     <string name="connection_error">Ошибка подключения. Пожалуйста, попробуйте ещё раз</string>
     <string name="connection_restored">Соединение восстановлено</string>
     <string name="copy_clip">Копировать в буфер обмена</string>
@@ -155,7 +155,7 @@
     <string name="show_clearchat">Показать отстранения и блокировки</string>
     <string name="show_clearmsg">Показать удаления отдельных сообщений</string>
     <string name="show_follow_button">Показать кнопку «Отслеживать»</string>
-    <string name="show_scrolltop">Показать прокрутку до верхней кнопки</string>
+    <string name="show_scrolltop">Кнопка прокрутки до верха</string>
     <string name="show_tags">Показать теги</string>
     <string name="show_uptime">Показать время работы стримов</string>
     <string name="show_usernotice">Пользовательские уведомления (подписки, рейды)</string>
@@ -332,36 +332,36 @@
     <string name="irc_notice_timeout_success">%1$s был отстранён на %2$s.</string>
     <string name="irc_notice_tos_ban">Сообщество закрыло канал %s из-за нарушения Условий использования.</string>
     <string name="irc_notice_turbo_only_color">Только турбо-пользователи могут указать произвольный шестнадцатеричный цвет. Вместо этого используйте один из этих: %s.</string>
-    <string name="irc_notice_unavailable_command">Sorry, “%s” is not available through this client.</string>
-    <string name="irc_notice_unban_success">%s is no longer banned from this channel.</string>
-    <string name="irc_notice_unmod_success">You have removed %s as a moderator of this channel.</string>
-    <string name="irc_notice_unraid_error_no_active_raid">You do not have an active raid.</string>
-    <string name="irc_notice_unraid_error_unexpected">There was a problem stopping the raid. Please try again in a minute.</string>
-    <string name="irc_notice_unraid_success">The raid has been canceled.</string>
-    <string name="irc_notice_unrecognized_cmd">Unrecognized command: %s</string>
-    <string name="irc_notice_untimeout_banned">%s is permanently banned. Use “/unban” to remove a ban.</string>
-    <string name="irc_notice_untimeout_success">%s is no longer timed out in this channel.</string>
-    <string name="irc_notice_unvip_success">You have removed %s as a VIP of this channel.</string>
-    <string name="irc_notice_usage_ban">Usage: “/ban &lt;username&gt; [reason]” Permanently prevent a user from chatting. Reason is optional and will be shown to the target and other moderators. Use “/unban” to remove a ban.</string>
-    <string name="irc_notice_usage_clear">Usage: “/clear”
-Clear chat history for all users in this room.</string>
-    <string name="irc_notice_usage_color">Usage: “/color” &lt;color&gt;
-Change your username color. Color must be in hex (#000000) or one of the following: %s.</string>
-    <string name="irc_notice_usage_commercial">Usage: “/commercial [length]”
-Triggers a commercial. Length (optional) must be a positive number of seconds.</string>
-    <string name="irc_notice_usage_disconnect">Usage: “/disconnect”
-Reconnects to chat.</string>
-    <string name="irc_notice_usage_delete">Usage: “/delete &lt;msg id&gt;” - Deletes the specified message. For more information, see https://dev.twitch.tv/docs/irc/commands/#clearmsg-twitch-commands.</string>
-    <string name="irc_notice_usage_emote_only_off">Usage: /emoteonlyoff”
-Disables emote-only mode.</string>
-    <string name="irc_notice_usage_emote_only_on">Usage: “/emoteonly”
-Enables emote-only mode (only emoticons may be used in chat). Use /emoteonlyoff to disable.</string>
-    <string name="irc_notice_usage_followers_off">Usage: /followersoff”
-Disables followers-only mode.</string>
-    <string name="irc_notice_usage_followers_on">Usage: “/followers
-Enables followers-only mode (only users who have followed for “duration” may chat). Examples: “30m”, “1 week”, “5 days 12 hours”. Must be less than 3 months.</string>
-    <string name="irc_notice_usage_help">Usage: “/help”
-Lists the commands available to you in this room.</string>
+    <string name="irc_notice_unavailable_command">Извините, “%s” не доступно на этом клиенте.</string>
+    <string name="irc_notice_unban_success">%s более не заблокирован на этом канале.</string>
+    <string name="irc_notice_unmod_success">Вы удалили %s из модераторов этого канала.</string>
+    <string name="irc_notice_unraid_error_no_active_raid">У вас нет активного рейда.</string>
+    <string name="irc_notice_unraid_error_unexpected">Возникла проблема при остановке рейда. Пожалуйста, попробуйте через минуту.</string>
+    <string name="irc_notice_unraid_success">Рейд был отменён.</string>
+    <string name="irc_notice_unrecognized_cmd">Неизвестная команда: %s</string>
+    <string name="irc_notice_untimeout_banned">%s заблокирован навсегда. Используйте “/unban” для удаления бана.</string>
+    <string name="irc_notice_untimeout_success">%s более не отстранён от этого чата.</string>
+    <string name="irc_notice_unvip_success">Вы удалили %s из VIP-пользователей этого канала.</string>
+    <string name="irc_notice_usage_ban">Использование: “/ban &lt;имя_пользователя&gt; [причина]” Навсегда отстранить пользователя от чата. Причина не является обязательной и будет показана отстранённому и другим модераторам. Используйте “/unban” для снятия блокировки.</string>
+    <string name="irc_notice_usage_clear">Использование: “/clear”
+Очистить историю чата для всех пользователей в этой комнате.</string>
+    <string name="irc_notice_usage_color">Использование: “/color” &lt;color&gt;
+Сменить цвет вашего имени. Цвет должен быть в шестнадцатеричном формате (#000000) или одним из следующих: %s.</string>
+    <string name="irc_notice_usage_commercial">Использование: “/commercial [length]”
+Запускает рекламу. Длительность в секундах (необязательно) должна быть положительным числом.</string>
+    <string name="irc_notice_usage_disconnect">Использование: “/disconnect”
+Переподключиться к чату.</string>
+    <string name="irc_notice_usage_delete">Использование: “/delete &lt;msg id&gt;” - Удаляет указанное сообщение. ДЛя подробностей посетите https://dev.twitch.tv/docs/irc/commands/#clearmsg-twitch-commands.</string>
+    <string name="irc_notice_usage_emote_only_off">Использование: /emoteonlyoff”
+Отключает режим только смайлы.</string>
+    <string name="irc_notice_usage_emote_only_on">Использование: “/emoteonly”
+Включает режим только смайлы (в чате можно использовать только смайлы). Используйте /emoteonlyoff для отключения.</string>
+    <string name="irc_notice_usage_followers_off">Использование: /followersoff”
+Отключает режим только отслеживающие.</string>
+    <string name="irc_notice_usage_followers_on">Использование: “/followers” длительность
+Включает режим только отслеживающие (в чате могут писать только отслеживающие не менее “длительности”). Например: “30m”, “1 week”, “5 days 12 hours”. Должно быть меньше 3 месяцев.</string>
+    <string name="irc_notice_usage_help">Использование: “/help”
+Вывести список доступных команд в вашей комнате.</string>
     <string name="irc_notice_usage_host">Usage: “/host &lt;channel&gt;“
 Host another channel. Use “/unhost” to unset host mode.</string>
     <string name="irc_notice_usage_marker">Usage: “/marker &lt;optional comment&gt;“
@@ -463,11 +463,11 @@ Use “untimeout” to remove a timeout.</string>
     <string name="vod_time_left">Автоматически удалено в %s</string>
     <string name="vod_ignore_user">Игнорировать автоудаление для этого пользователя</string>
     <string name="bookmarks">Закладки</string>
-    <string name="use_savedpager">Вкладки на странице сохранённого</string>
-    <string name="default_saved_tab">Стандартная вкладка сохранённого</string>
+    <string name="use_savedpager">Вкладки на странице сохранений</string>
+    <string name="default_saved_tab">Стандартная вкладка сохранений</string>
     <string name="vod_remove_ignore">Удалить из списка игнорируемых</string>
     <string name="remove_bookmark">Удалить закладку</string>
-    <string name="saved">Сохранено</string>
+    <string name="saved">Сохранения</string>
     <string name="refresh">Обновить</string>
     <string name="image_library">Библиотека изображений</string>
     <string name="imageLibraryEntries1">Coil</string>
@@ -524,9 +524,9 @@ Use “untimeout” to remove a timeout.</string>
     <string name="user_redeemed">%1$s активировал(а) %2$s</string>
     <string name="enable_pubsub">Включить PubSub</string>
     <string name="bookmark">Закладка</string>
-    <string name="dark_theme_on">Тёмная тема включена.</string>
-    <string name="dark_theme_off">Тёмная тема отключена.</string>
-    <string name="follow_system_theme">Менять в зависимости от темы устройства</string>
+    <string name="dark_theme_on">Если тёмная тема включена</string>
+    <string name="dark_theme_off">Если тёмная тема отключена</string>
+    <string name="follow_system_theme">Соответствовать теме устройства</string>
     <string name="pixels">%d пикс</string>
     <string name="image_quality">Качество изображений</string>
     <string name="ignore_cutouts">Игнорировать вырезы дисплея</string>
