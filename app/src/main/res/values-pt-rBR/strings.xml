@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Xtra</string>
     <string name="games">Jogos</string>
     <string name="popular">Popular</string>
     <string name="following">Seguindo</string>
@@ -49,7 +48,6 @@
     <string name="no_connection">Sem conexão com a Internet</string>
     <string name="connection_restored">Online de volta</string>
     <string name="notification_downloads_channel_title">Baixados</string>
-    <string name="notification_downloads_channel_id" translatable="false">xtra_downloads_channel</string>
     <string name="storage_permission_title">O aplicativo precisa de permissão de armazenamento</string>
     <string name="storage_permission_message">A permissão de armazenamento é necessária para baixar vídeos.</string>
     <string name="permission_denied">Permissões necessárias foram negadas</string>
@@ -101,7 +99,6 @@
     <string name="chat">Chat</string>
     <string name="recent_emotes">Recente</string>
     <string name="notification_playback_channel_title">Reproduzir</string>
-    <string name="notification_playback_channel_id" translatable="false">xtra_playback_channel</string>
     <string name="channels">Canais</string>
     <string name="watch_video">Assista vídeo completo</string>
     <string name="animated_emotes">Emotes animados</string>
@@ -169,14 +166,7 @@
     <string name="api_gql">ID do cliente GQL</string>
     <string name="playback_speed">Velocidade de reprodução</string>
     <string name="quality">Qualidade</string>
-    <string name="speed0.25" translatable="false">0.25x</string>
-    <string name="speed0.5" translatable="false">0.5x</string>
-    <string name="speed0.75" translatable="false">0.75x</string>
     <string name="speed1">Normal</string>
-    <string name="speed1.25" translatable="false">1.25x</string>
-    <string name="speed1.5" translatable="false">1.5x</string>
-    <string name="speed1.75" translatable="false">1.75x</string>
-    <string name="speed2" translatable="false">2.0x</string>
     <string name="saved_value">Valor salvo</string>
     <string name="playerQualityEntries1">360p ou menor</string>
     <string name="playerQualityEntries2">480p ou menor</string>
@@ -352,66 +342,40 @@
     <string name="irc_notice_untimeout_banned">%s is permanently banned. Use “/unban” to remove a ban.</string>
     <string name="irc_notice_untimeout_success">%s is no longer timed out in this channel.</string>
     <string name="irc_notice_unvip_success">You have removed %s as a VIP of this channel.</string>
-    <string name="irc_notice_usage_ban">Usage: “/ban &lt;username&gt; [reason]” Permanently prevent a user from chatting. Reason is optional and will be shown to the target and other moderators. Use “/unban” to remove a ban.</string>
-    <string name="irc_notice_usage_clear">Usage: “/clear”
-Clear chat history for all users in this room.</string>
-    <string name="irc_notice_usage_color">Usage: “/color” &lt;color&gt;
-Change your username color. Color must be in hex (#000000) or one of the following: %s.</string>
-    <string name="irc_notice_usage_commercial">Usage: “/commercial [length]”
-Triggers a commercial. Length (optional) must be a positive number of seconds.</string>
-    <string name="irc_notice_usage_disconnect">Usage: “/disconnect”
-Reconnects to chat.</string>
-    <string name="irc_notice_usage_delete">Usage: “/delete &lt;msg id&gt;” - Deletes the specified message. For more information, see https://dev.twitch.tv/docs/irc/commands/#clearmsg-twitch-commands.</string>
-    <string name="irc_notice_usage_emote_only_off">Usage: /emoteonlyoff”
-Disables emote-only mode.</string>
-    <string name="irc_notice_usage_emote_only_on">Usage: “/emoteonly”
-Enables emote-only mode (only emoticons may be used in chat). Use /emoteonlyoff to disable.</string>
-    <string name="irc_notice_usage_followers_off">Usage: /followersoff”
-Disables followers-only mode.</string>
-    <string name="irc_notice_usage_followers_on">Usage: “/followers
-Enables followers-only mode (only users who have followed for “duration” may chat). Examples: “30m”, “1 week”, “5 days 12 hours”. Must be less than 3 months.</string>
-    <string name="irc_notice_usage_help">Usage: “/help”
-Lists the commands available to you in this room.</string>
-    <string name="irc_notice_usage_host">Usage: “/host &lt;channel&gt;“
-Host another channel. Use “/unhost” to unset host mode.</string>
-    <string name="irc_notice_usage_marker">Usage: “/marker &lt;optional comment&gt;“
-Adds a stream marker (with an optional comment, max 140 characters) at the current timestamp. You can use markers in the Highlighter for easier editing.</string>
-    <string name="irc_notice_usage_me">Usage: “/me &lt;message&gt;” - Express an action in the third-person.</string>
-    <string name="irc_notice_usage_mod">Usage: “/mod &lt;username&gt;” - Grant moderator status to a user. Use “/mods” to list the moderators of this channel.</string>
-    <string name="irc_notice_usage_mods">Usage: “/mods”
-Lists the moderators of this channel.</string>
-    <string name="irc_notice_usage_r9k_off">Usage: “/uniquechatoff” - Disables unique-chat mode.</string>
-    <string name="irc_notice_usage_r9k_on">Usage: “/uniquechat” - Enables unique-chat mode. Use “/uniquechatoff” to disable.</string>
-    <string name="irc_notice_usage_raid">Usage: “/raid &lt;channel&gt;“
-Raid another channel.
-Use “/unraid” to cancel the Raid.</string>
-    <string name="irc_notice_usage_slow_off">Usage: “/slowoff”
-Disables slow mode.</string>
-    <string name="irc_notice_usage_slow_on">Usage: “/slow” [duration]
-Enables slow mode (limit how often users may send messages). Duration (optional, default=%s) must be a positive integer number of seconds.
-Use “/slowoff” to disable.</string>
-    <string name="irc_notice_usage_subs_off">Usage: “/subscribersoff”
-Disables subscribers-only mode.</string>
-    <string name="irc_notice_usage_subs_on">Usage: “/subscribers”
-Enables subscribers-only mode (only subscribers may chat in this channel).
-Use “/subscribersoff” to disable.</string>
-    <string name="irc_notice_usage_timeout">Usage: “/timeout &lt;username&gt; [duration][time unit] [reason]”
-Temporarily prevent a user from chatting. Duration (optional, default=10 minutes) must be a positive integer; time unit (optional, default=s) must be one of s, m, h, d, w; maximum duration is 2 weeks. Combinations like 1d2h are also allowed. Reason is optional and will be shown to the target user and other moderators.
-Use “untimeout” to remove a timeout.</string>
-    <string name="irc_notice_usage_unban">Usage: “/unban &lt;username&gt;“
-Removes a ban on a user.</string>
-    <string name="irc_notice_usage_unhost">Usage: “/unhost”
-Stop hosting another channel.</string>
-    <string name="irc_notice_usage_unmod">Usage: “/unmod &lt;username&gt;” - Revoke moderator status from a user. Use “/mods” to list the moderators of this channel.</string>
-    <string name="irc_notice_usage_unraid">Usage: “/unraid”
-Cancel the Raid.</string>
-    <string name="irc_notice_usage_untimeout">Usage: “/untimeout &lt;username&gt;“
-Removes a timeout on a user.</string>
-    <string name="irc_notice_usage_unvip">Usage: “/unvip &lt;username&gt;” - Revoke VIP status from a user. Use “/vips” to list the VIPs of this channel.</string>
-    <string name="irc_notice_usage_user">Usage: “/user” &lt;username&gt; - Display information about a specific user on this channel.</string>
-    <string name="irc_notice_usage_vip">Usage: “/vip &lt;username&gt;” - Grant VIP status to a user. Use “/vips” to list the VIPs of this channel.</string>
-    <string name="irc_notice_usage_vips">Usage: “/vips” - Lists the VIPs of this channel.</string>
-    <string name="irc_notice_usage_whisper">Usage: “/w &lt;username&gt; &lt;message&gt;”</string>
+    <string name="irc_notice_usage_ban">Usage: \"/ban &lt;username&gt; [reason]\" - Permanently prevent a user from chatting. Reason is optional and will be shown to the target user and other moderators. Use \"/unban\" to remove a ban.</string>
+    <string name="irc_notice_usage_clear">Usage: \"/clear\" - Clear chat history for all users in this room.</string>
+    <string name="irc_notice_usage_color">Usage: \"/color &lt;color&gt;\" - Change your username color. Color must be in hex (#000000) or one of the following: %s.</string>
+    <string name="irc_notice_usage_commercial">Usage: \"/commercial [length]\" - Triggers a commercial. Length (optional) must be a positive number of seconds.</string>
+    <string name="irc_notice_usage_disconnect">Usage: \"/disconnect\" - Reconnects to chat.</string>
+    <string name="irc_notice_usage_delete">Usage: \"/delete &lt;msg id&gt;\" - Deletes the specified message. For more information, see https://dev.twitch.tv/docs/irc/commands/#clearmsg-twitch-commands.</string>
+    <string name="irc_notice_usage_emote_only_off">Usage: \"/emoteonlyoff\" - Disables emote-only mode.</string>
+    <string name="irc_notice_usage_emote_only_on">Usage: \"/emoteonly\" - Enables emote-only mode (only emoticons may be used in chat). Use \"/emoteonlyoff\" to disable.</string>
+    <string name="irc_notice_usage_followers_off">Usage: \"/followersoff\" - Disables followers-only mode.</string>
+    <string name="irc_notice_usage_followers_on">Usage: \"/followers [duration]\" - Enables followers-only mode (only users who have followed for \'duration\' may chat). Examples: \"30m\", \"1 week\", \"5 days 12 hours\". Must be less than 3 months.</string>
+    <string name="irc_notice_usage_help">Usage: \"/help\" - Lists the commands available to you in this room.</string>
+    <string name="irc_notice_usage_host">Usage: \"/host &lt;channel&gt;\" - Host another channel. Use \"/unhost\" to unset host mode.</string>
+    <string name="irc_notice_usage_marker">Usage: \"/marker &lt;optional comment&gt;\" - Adds a stream marker (with an optional comment, max 140 characters) at the current timestamp. You can use markers in the Highlighter for easier editing.</string>
+    <string name="irc_notice_usage_me">Usage: \"/me &lt;message&gt;\" - Express an action in the third-person.</string>
+    <string name="irc_notice_usage_mod">Usage: \"/mod &lt;username&gt;\" - Grant moderator status to a user. Use \"/mods\" to list the moderators of this channel.</string>
+    <string name="irc_notice_usage_mods">Usage: \"/mods\" - Lists the moderators of this channel.</string>
+    <string name="irc_notice_usage_r9k_off">Usage: \"/uniquechatoff\" - Disables unique-chat mode.</string>
+    <string name="irc_notice_usage_r9k_on">Usage: \"/uniquechat\" - Enables unique-chat mode. Use \"/uniquechatoff\" to disable.</string>
+    <string name="irc_notice_usage_raid">Usage: \"/raid &lt;channel&gt;\" - Raid another channel. Use \"/unraid\" to cancel the Raid.</string>
+    <string name="irc_notice_usage_slow_off">Usage: \"/slowoff\" - Disables slow mode.</string>
+    <string name="irc_notice_usage_slow_on">Usage: \"/slow [duration]\" - Enables slow mode (limit how often users may send messages). Duration (optional, default=%s) must be a positive number of seconds. Use \"/slowoff\" to disable.</string>
+    <string name="irc_notice_usage_subs_off">Usage: \"/subscribersoff\" - Disables subscribers-only mode.</string>
+    <string name="irc_notice_usage_subs_on">Usage: \"/subscribers\" - Enables subscribers-only mode (only subscribers may chat in this channel). Use \"/subscribersoff\" to disable.</string>
+    <string name="irc_notice_usage_timeout">Usage: \"/timeout &lt;username&gt; [duration][time unit] [reason]\" - Temporarily prevent a user from chatting. Duration (optional, default=10 minutes) must be a positive integer; time unit (optional, default=s) must be one of s, m, h, d, w; maximum duration is 2 weeks. Combinations like 1d2h are also allowed. Reason is optional and will be shown to the target user and other moderators. Use \"/untimeout\" to remove a timeout.</string>
+    <string name="irc_notice_usage_unban">Usage: \"/unban &lt;username&gt;\" - Removes a ban on a user.</string>
+    <string name="irc_notice_usage_unhost">Usage: \"/unhost\" - Stop hosting another channel.</string>
+    <string name="irc_notice_usage_unmod">Usage: \"/unmod &lt;username&gt;\" - Revoke moderator status from a user. Use \"/mods\" to list the moderators of this channel.</string>
+    <string name="irc_notice_usage_unraid">Usage: \"/unraid\" - Cancel the Raid.</string>
+    <string name="irc_notice_usage_untimeout">Usage: \"/untimeout &lt;username&gt;\" - Removes a timeout on a user.</string>
+    <string name="irc_notice_usage_unvip">Usage: \"/unvip &lt;username&gt;\" - Revoke VIP status from a user. Use \"/vips\" to list the VIPs of this channel.</string>
+    <string name="irc_notice_usage_user">Usage: \"/user &lt;username&gt;\" - Display information about a specific user on this channel.</string>
+    <string name="irc_notice_usage_vip">Usage: \"/vip &lt;username&gt;\" - Grant VIP status to a user. Use \"/vips\" to list the VIPs of this channel.</string>
+    <string name="irc_notice_usage_vips">Usage: \"/vips\" - Lists the VIPs of this channel.</string>
+    <string name="irc_notice_usage_whisper">Usage: \"/w &lt;username&gt; &lt;message&gt;\"</string>
     <string name="irc_notice_vip_success">You have added %s as a vip of this channel.</string>
     <string name="irc_notice_vips_success">The VIPs of this channel are: %s.</string>
     <string name="irc_notice_whisper_banned">You have been banned from sending whispers.</string>
@@ -544,6 +508,7 @@ Removes a timeout on a user.</string>
     <string name="lang_auto">System default</string>
     <string name="lang_en">English</string>
     <string name="lang_ar">Arabic</string>
+    <string name="lang_de">German</string>
     <string name="lang_es">Spanish</string>
     <string name="lang_ja">Japanese</string>
     <string name="lang_pt">Portuguese (Brazil)</string>
@@ -555,7 +520,6 @@ Removes a timeout on a user.</string>
     <string name="tags">Tags</string>
     <string name="show_player_mode">Show audio only button</string>
     <string name="search_videos">Search videos</string>
-    <string name="lang_de">German</string>
     <string name="points_earned">Received %d channel points</string>
     <string name="points_notify">Notify when earning channel points</string>
     <string name="points_collect">Collect channel points automatically</string>

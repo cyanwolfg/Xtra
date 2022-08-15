@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Xtra</string>
     <string name="games">ゲーム</string>
     <string name="popular">人気</string>
     <string name="following">フォロー中</string>
@@ -49,7 +48,6 @@
     <string name="no_connection">インターネット接続がありません</string>
     <string name="connection_restored">オンラインに戻りました</string>
     <string name="notification_downloads_channel_title">ダウンロード</string>
-    <string name="notification_downloads_channel_id" translatable="false">xtra_downloads_channel</string>
     <string name="storage_permission_title">アプリにストレージの許可が必要です</string>
     <string name="storage_permission_message">動画をダウンロードするにはストレージの許可が必要です。</string>
     <string name="permission_denied">必要なパーミッションが拒否されました</string>
@@ -101,7 +99,6 @@
     <string name="chat">チャット</string>
     <string name="recent_emotes">最新</string>
     <string name="notification_playback_channel_title">プレイバック</string>
-    <string name="notification_playback_channel_id" translatable="false">xtra_playback_channel</string>
     <string name="channels">チャンネル</string>
     <string name="watch_video">フルサイズの動画を視聴する</string>
     <string name="animated_emotes">アニメーションスタンプ</string>
@@ -169,14 +166,7 @@
     <string name="api_gql">GQLクライアントID</string>
     <string name="playback_speed">再生速度</string>
     <string name="quality">画質</string>
-    <string name="speed0.25" translatable="false">0.25x</string>
-    <string name="speed0.5" translatable="false">0.5x</string>
-    <string name="speed0.75" translatable="false">0.75x</string>
     <string name="speed1">標準</string>
-    <string name="speed1.25" translatable="false">1.25x</string>
-    <string name="speed1.5" translatable="false">1.5x</string>
-    <string name="speed1.75" translatable="false">1.75x</string>
-    <string name="speed2" translatable="false">2.0x</string>
     <string name="saved_value">保存した値</string>
     <string name="playerQualityEntries1">360p以下</string>
     <string name="playerQualityEntries2">480p以下</string>
@@ -352,40 +342,40 @@
     <string name="irc_notice_untimeout_banned">%s は無期限に追放されます。解除するには “/unban” を使用します。</string>
     <string name="irc_notice_untimeout_success">%s はこのチャネルから一時的に追放していません。</string>
     <string name="irc_notice_unvip_success">%s をこのチャンネルのVIPから削除しました。</string>
-    <string name="irc_notice_usage_ban">例: “/ban &lt;username&gt; [reason]” ユーザーをチャットから無期限に追放します。理由は任意で、対象のユーザーと他のモデレーターに表示されます。追放を解除するには “/unban” を使用します。</string>
-    <string name="irc_notice_usage_clear">例: “/clear” このルームにいる全てのユーザーのチャットの履歴を消去します。</string>
-    <string name="irc_notice_usage_color">例: “/color &lt;color&gt;” ユーザー名の色を変更します。色は16進数 (#000000) または以下のいずれかを指定してください。: %s.</string>
-    <string name="irc_notice_usage_commercial">例: “/commercial [length]” コマーシャルの起動する条件。長さ (オプション) は正の秒数である必要があります。</string>
-    <string name="irc_notice_usage_disconnect">例: “/disconnect” チャットに再接続します。</string>
-    <string name="irc_notice_usage_delete">例: “/delete &lt;msg id&gt;” - 指定されたメッセージを削除します。詳細は https://dev.twitch.tv/docs/irc/commands/#clearmsg-twitch-commands を参照してください。</string>
-    <string name="irc_notice_usage_emote_only_off">例: “/emoteonlyoff” スタンプ限定モードを無効にします。</string>
-    <string name="irc_notice_usage_emote_only_on">例: “/emoteonly” スタンプ限定モード (チャットでスタンプのみ使用可能) を有効にします。無効にするには /emoteonlyoff を使用してください。</string>
-    <string name="irc_notice_usage_followers_off">例: “/followersoff” フォロワー限定モードを無効にします。</string>
-    <string name="irc_notice_usage_followers_on">例: “/followers” フォロワー限定モードを有効にします。 (フォローしている “期間” のユーザーのみチャット可能) 例: “30m”, “1 week”, “5 days 12 hours”. 3ヶ月以内であることが条件です。</string>
-    <string name="irc_notice_usage_help">例: “/help” このルームで使用できるコマンドを一覧で表示します。</string>
-    <string name="irc_notice_usage_host">例: “/host &lt;channel&gt;” 他のチャンネルをホストします。解除するには “/unhost” を使用します。</string>
-    <string name="irc_notice_usage_marker">例: “/marker &lt;optional comment&gt;” 現在のタイムスタンプにストリームマーカーを追加します。 (オプションで140文字以内のコメントを添付できます) マーカーを使うと、ハイライトでの編集が容易になります。</string>
-    <string name="irc_notice_usage_me">例: “/me &lt;message&gt;” - 三人称で動作を表現する。</string>
-    <string name="irc_notice_usage_mod">例: “/mod &lt;username&gt;” - ユーザーにモデレーターの権限を付与します。このチャンネルのモデレーターを一覧で表示するには “/mods” を使用してください。</string>
-    <string name="irc_notice_usage_mods">例: “/mods” このチャンネルのモデレーターを一覧で表示します。</string>
-    <string name="irc_notice_usage_r9k_off">例: “/uniquechatoff” - 重複チャット禁止モードを無効にします。</string>
-    <string name="irc_notice_usage_r9k_on">例: “/uniquechat” - 重複チャット禁止モードを有効にします。無効にするには “/uniquechatoff” を使用します。</string>
-    <string name="irc_notice_usage_raid">例: “/raid &lt;channel&gt;” 他のチャンネルをRaidします。Raidを取り止めるには “/unraid” を使用します。</string>
-    <string name="irc_notice_usage_slow_off">例: “/slowoff” スローモードを無効にします。</string>
-    <string name="irc_notice_usage_slow_on">例: “/slow [duration]” スローモードを有効にします。 (ユーザーがメッセージを送信できる頻度を制限) Duration (オプション, default=%s) は、秒単位で正の値である必要があります。無効にするには “/slowoff” を使用します。</string>
-    <string name="irc_notice_usage_subs_off">例: “/subscribersoff” サブスクライバー限定モードを無効にします。</string>
-    <string name="irc_notice_usage_subs_on">例: “/subscribers” サブスクライバー限定モードを有効にします。 (サブスクライバーのみがこのチャンネルでチャットできます) 無効にするには “/subscribersoff” を使用してください。</string>
-    <string name="irc_notice_usage_timeout">例: “/timeout &lt;username&gt; [duration][time unit] [reason]” ユーザーをチャットから一時的に追放します。 Duration (オプション, default=10 minutes) は正の値である必要があります。時間の単位は (オプション, default=s) s, m, h, d, w; のいずれかで、最長の期間は2週間です。 1d2h のような組み合わせも可能です。理由は任意で、対象のユーザーと他のモデレータに表示されます。一時的な追放を解除するには “/untimeout” を使用します。</string>
-    <string name="irc_notice_usage_unban">例: “/unban &lt;username&gt;” ユーザーの無期限に追放を解除します。</string>
-    <string name="irc_notice_usage_unhost">例: “/unhost” 他のチャンネルのホストを中止します。</string>
-    <string name="irc_notice_usage_unmod">例: “/unmod &lt;username&gt;” - ユーザーからモデレーターの権限を削除します。このチャンネルのモデレーターを一覧表示するには “/mods” を使用してください。</string>
-    <string name="irc_notice_usage_unraid">例: “/unraid” Raidを中止します。</string>
-    <string name="irc_notice_usage_untimeout">例: “/untimeout &lt;username&gt;” ユーザーの一時的な追放を解除します。</string>
-    <string name="irc_notice_usage_unvip">例: “/unvip &lt;username&gt;” - ユーザーからVIPステータスを取り消します。このチャンネルのVIPを一覧表示するには “/vips” を使用します。</string>
-    <string name="irc_notice_usage_user">例: “/user &lt;username&gt;” - このチャンネルの特定のユーザーの情報を表示します。</string>
-    <string name="irc_notice_usage_vip">例: “/vip &lt;username&gt;” - ユーザーにVIPステータスを付与します。このチャンネルのVIPを一覧表示するには “/vips” を使用します。</string>
-    <string name="irc_notice_usage_vips">例: “/vips” - このチャンネルのVIPを一覧で表示します。</string>
-    <string name="irc_notice_usage_whisper">例: “/w &lt;username&gt; &lt;message&gt;”</string>
+    <string name="irc_notice_usage_ban">例: \"/ban &lt;username&gt; [reason]\" - ユーザーをチャットから無期限に追放します。理由は任意で、対象のユーザーと他のモデレーターに表示されます。追放を解除するには \"/unban\" を使用します。</string>
+    <string name="irc_notice_usage_clear">例: \"/clear\" - このルームにいる全てのユーザーのチャットの履歴を消去します。</string>
+    <string name="irc_notice_usage_color">例: \"/color &lt;color&gt;\" - ユーザー名の色を変更します。色は16進数 (#000000) または以下のいずれかを指定してください。: %s.</string>
+    <string name="irc_notice_usage_commercial">例: \"/commercial [length]\" - コマーシャルの起動する条件。長さ (オプション) は正の秒数である必要があります。</string>
+    <string name="irc_notice_usage_disconnect">例: \"/disconnect\" - チャットに再接続します。</string>
+    <string name="irc_notice_usage_delete">例: \"/delete &lt;msg id&gt;\" - 指定されたメッセージを削除します。詳細は https://dev.twitch.tv/docs/irc/commands/#clearmsg-twitch-commands を参照してください。</string>
+    <string name="irc_notice_usage_emote_only_off">例: \"/emoteonlyoff\" - スタンプ限定モードを無効にします。</string>
+    <string name="irc_notice_usage_emote_only_on">例: \"/emoteonly\" - スタンプ限定モード (チャットでスタンプのみ使用可能) を有効にします。無効にするには \"/emoteonlyoff\" を使用してください。</string>
+    <string name="irc_notice_usage_followers_off">例: \"/followersoff\" - フォロワー限定モードを無効にします。</string>
+    <string name="irc_notice_usage_followers_on">例: \"/followers [duration]\" - フォロワー限定モードを有効にします。 (フォローしている \'期間\' のユーザーのみチャット可能) 例: \"30m\", \"1 week\", \"5 days 12 hours\". 3ヶ月以内であることが条件です。</string>
+    <string name="irc_notice_usage_help">例: \"/help\" - このルームで使用できるコマンドを一覧で表示します。</string>
+    <string name="irc_notice_usage_host">例: \"/host &lt;channel&gt;\" - 他のチャンネルをホストします。解除するには \"/unhost\" を使用します。</string>
+    <string name="irc_notice_usage_marker">例: \"/marker &lt;optional comment&gt;\" - 現在のタイムスタンプにストリームマーカーを追加します。 (オプションで140文字以内のコメントを添付できます) マーカーを使うと、ハイライトでの編集が容易になります。</string>
+    <string name="irc_notice_usage_me">例: \"/me &lt;message&gt;\" - 三人称で動作を表現する。</string>
+    <string name="irc_notice_usage_mod">例: \"/mod &lt;username&gt;\" - ユーザーにモデレーターの権限を付与します。このチャンネルのモデレーターを一覧で表示するには \"/mods\" を使用してください。</string>
+    <string name="irc_notice_usage_mods">例: \"/mods\" - このチャンネルのモデレーターを一覧で表示します。</string>
+    <string name="irc_notice_usage_r9k_off">例: \"/uniquechatoff\" - 重複チャット禁止モードを無効にします。</string>
+    <string name="irc_notice_usage_r9k_on">例: \"/uniquechat\" - 重複チャット禁止モードを有効にします。無効にするには \"/uniquechatoff\" を使用します。</string>
+    <string name="irc_notice_usage_raid">例: \"/raid &lt;channel&gt;\" - 他のチャンネルをRaidします。Raidを取り止めるには \"/unraid\" を使用します。</string>
+    <string name="irc_notice_usage_slow_off">例: \"/slowoff\" - スローモードを無効にします。</string>
+    <string name="irc_notice_usage_slow_on">例: \"/slow [duration]\" - スローモードを有効にします。 (ユーザーがメッセージを送信できる頻度を制限) Duration (オプション, default=%s) は、秒単位で正の値である必要があります。無効にするには \"/slowoff\" を使用します。</string>
+    <string name="irc_notice_usage_subs_off">例: \"/subscribersoff\" - サブスクライバー限定モードを無効にします。</string>
+    <string name="irc_notice_usage_subs_on">例: \"/subscribers\" - サブスクライバー限定モードを有効にします。 (サブスクライバーのみがこのチャンネルでチャットできます) 無効にするには \"/subscribersoff\" を使用してください。</string>
+    <string name="irc_notice_usage_timeout">例: \"/timeout &lt;username&gt; [duration][time unit] [reason]\" - ユーザーをチャットから一時的に追放します。 Duration (オプション, default=10 minutes) は正の値である必要があります。時間の単位は (オプション, default=s) s, m, h, d, w; のいずれかで、最長の期間は2週間です。 1d2h のような組み合わせも可能です。理由は任意で、対象のユーザーと他のモデレータに表示されます。一時的な追放を解除するには \"/untimeout\" を使用します。</string>
+    <string name="irc_notice_usage_unban">例: \"/unban &lt;username&gt;\" - ユーザーの無期限に追放を解除します。</string>
+    <string name="irc_notice_usage_unhost">例: \"/unhost\" - 他のチャンネルのホストを中止します。</string>
+    <string name="irc_notice_usage_unmod">例: \"/unmod &lt;username&gt;\" - ユーザーからモデレーターの権限を削除します。このチャンネルのモデレーターを一覧表示するには \"/mods\" を使用してください。</string>
+    <string name="irc_notice_usage_unraid">例: \"/unraid\" - Raidを中止します。</string>
+    <string name="irc_notice_usage_untimeout">例: \"/untimeout &lt;username&gt;\" - ユーザーの一時的な追放を解除します。</string>
+    <string name="irc_notice_usage_unvip">例: \"/unvip &lt;username&gt;\" - ユーザーからVIPステータスを取り消します。このチャンネルのVIPを一覧表示するには \"/vips\" を使用します。</string>
+    <string name="irc_notice_usage_user">例: \"/user &lt;username&gt;\" - このチャンネルの特定のユーザーの情報を表示します。</string>
+    <string name="irc_notice_usage_vip">例: \"/vip &lt;username&gt;\" - ユーザーにVIPステータスを付与します。このチャンネルのVIPを一覧表示するには \"/vips\" を使用します。</string>
+    <string name="irc_notice_usage_vips">例: \"/vips\" - このチャンネルのVIPを一覧で表示します。</string>
+    <string name="irc_notice_usage_whisper">例: \"/w &lt;username&gt; &lt;message&gt;\"</string>
     <string name="irc_notice_vip_success">このチャンネルのVIPとして %s を追加しました。</string>
     <string name="irc_notice_vips_success">このチャネルのVIP: %s.</string>
     <string name="irc_notice_whisper_banned">ウィスパーの送信を禁止されています。</string>
@@ -396,10 +386,10 @@
     <string name="irc_notice_whisper_limit_per_sec">ウィスパーを送信したばかりです。少し待ってから送信してください。</string>
     <string name="irc_notice_whisper_restricted">設定により制限されているため、ウィスパーを送信できません。</string>
     <string name="irc_notice_whisper_restricted_recipient">受信者側の設定により、ウィスパーを送信できません。</string>
-    <string name="broadcaster">配信者</string>
-    <string name="viewers">視聴者</string>
-    <string name="vips">VIP</string>
     <string name="moderators">モデレーター</string>
+    <string name="vips">VIP</string>
+    <string name="viewers">視聴者</string>
+    <string name="broadcaster">配信者</string>
     <string name="user_count">%s 参加者</string>
     <string name="position">位置: %s</string>
     <string name="player_viewerlist">視聴者数から視聴者一覧を開く</string>
@@ -500,9 +490,9 @@
     <string name="include_gql_token">GQLのトークンを含める</string>
     <string name="sub_only_summary">サブスクコンテンツのみ</string>
     <string name="follow_button">フォローボタン</string>
-    <string name="hide">隠す</string>
     <string name="follow_account">Twitchアカウントでフォローする</string>
     <string name="follow_local">ローカルでフォローする</string>
+    <string name="hide">隠す</string>
     <string name="chat_ssl">SSLで接続する</string>
     <string name="redeemed">交換しました %s</string>
     <string name="user_redeemed">%1$s 交換します %2$s</string>
@@ -518,6 +508,7 @@
     <string name="lang_auto">システムの標準</string>
     <string name="lang_en">英語</string>
     <string name="lang_ar">アラビア語</string>
+    <string name="lang_de">ドイツ語</string>
     <string name="lang_es">スペイン語</string>
     <string name="lang_ja">日本語</string>
     <string name="lang_pt">ポルトガル語 (ブラジル)</string>
@@ -529,7 +520,6 @@
     <string name="tags">タグ</string>
     <string name="show_player_mode">音声のみボタンの表示</string>
     <string name="search_videos">動画検索</string>
-    <string name="lang_de">ドイツ語</string>
     <string name="points_earned">チャンネルポイントを %d 獲得しました</string>
     <string name="points_notify">チャンネルポイントの獲得時に通知する</string>
     <string name="points_collect">チャンネルポイントを自動的に獲得する</string>

@@ -12,7 +12,6 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
 import java.lang.reflect.Type
-import java.util.*
 
 class RecentMessagesDeserializer : JsonDeserializer<RecentMessagesResponse> {
 
@@ -175,13 +174,8 @@ class RecentMessagesDeserializer : JsonDeserializer<RecentMessagesResponse> {
         val msgIndex = messageInfo.indexOf(":", messageInfo.indexOf(":") + 1)
         val index2 = messageInfo.indexOf(" ", messageInfo.indexOf("#") + 1)
         val msg = messageInfo.substring(if (msgIndex != -1) msgIndex + 1 else index2 + 1)
-        val lang = Locale.getDefault().language
         return LiveChatMessage(
-            message = if (lang == "ar" || lang == "es" || lang == "ja" || lang == "pt" || lang == "ru") {
-                TwitchApiHelper.getNoticeString(context, msgId, msg) ?: msg
-            } else {
-                msg
-            },
+            message = TwitchApiHelper.getNoticeString(context, msgId, msg),
             color = "#999999",
             isAction = true,
             fullMsg = message

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Xtra</string>
     <string name="games">Oyunlar</string>
     <string name="popular">Popüler</string>
     <string name="following">Takip edilen</string>
@@ -49,7 +48,6 @@
     <string name="no_connection">İnternet bağlantısı yok</string>
     <string name="connection_restored">Tekrar çevrimiçi</string>
     <string name="notification_downloads_channel_title">İndirilenler</string>
-    <string name="notification_downloads_channel_id" translatable="false">xtra_downloads_channel</string>
     <string name="storage_permission_title">Uygulamanın depolama iznine ihtiyacı var</string>
     <string name="storage_permission_message">Videoları indirmek için depolama izni gereklidir.</string>
     <string name="permission_denied">Gerekli izinler reddedildi</string>
@@ -101,7 +99,6 @@
     <string name="chat">Sohbet</string>
     <string name="recent_emotes">Son</string>
     <string name="notification_playback_channel_title">Oynatma</string>
-    <string name="notification_playback_channel_id" translatable="false">xtra_playback_channel</string>
     <string name="channels">Kanallar</string>
     <string name="watch_video">Videonun tamamını izleyin</string>
     <string name="animated_emotes">Hareketli ifadeler</string>
@@ -169,14 +166,7 @@
     <string name="api_gql">GQL istemci kimliği</string>
     <string name="playback_speed">Oynatma hızı</string>
     <string name="quality">Kalite</string>
-    <string name="speed0.25" translatable="false">0.25x</string>
-    <string name="speed0.5" translatable="false">0.5x</string>
-    <string name="speed0.75" translatable="false">0.75x</string>
     <string name="speed1">Normal</string>
-    <string name="speed1.25" translatable="false">1.25x</string>
-    <string name="speed1.5" translatable="false">1.5x</string>
-    <string name="speed1.75" translatable="false">1.75x</string>
-    <string name="speed2" translatable="false">2.0x</string>
     <string name="saved_value">Kaydedilen değer</string>
     <string name="playerQualityEntries1">360p veya daha düşük</string>
     <string name="playerQualityEntries2">480p veya daha düşük</string>
@@ -352,66 +342,40 @@
     <string name="irc_notice_untimeout_banned">%s kalıcı olarak yasaklandı. Bir yasağı kaldırmak için “/unban” kullanın.</string>
     <string name="irc_notice_untimeout_success">%s artık bu kanalda zaman aşımında değil.</string>
     <string name="irc_notice_unvip_success">%s kullanıcısının bu kanalda VIP\'liğini kaldırdınız.</string>
-    <string name="irc_notice_usage_ban">Kullanım:  “/ban &lt;isim&gt; [sebep]” Bir kullanıcının sohbet etmesini kalıcı olarak engelle. Sebep isteğe bağlıdır ve hedefe ve diğer moderatörlere gösterilecektir. Bir yasağı kaldırmak için “/unban” kullanın.</string>
-    <string name="irc_notice_usage_clear">Kullanım: “/clear”
-Bu odadaki tüm kullanıcılar için sohbet geçmişini temizle.</string>
-    <string name="irc_notice_usage_color">Kullanım: “/color” &lt;color&gt;
-Kullanıcı adı renginizi değiştirin. Renk onaltılı (#000000) veya aşağıdakilerden biri olmalıdır: %s.</string>
-    <string name="irc_notice_usage_commercial">Kullanım: “/commercial [süre]”
-Reklamı tetikler. Uzunluk (isteğe bağlı) pozitif saniye sayısı olmalıdır.</string>
-    <string name="irc_notice_usage_disconnect">Kullanım: “/disconnect”
-Sohbete yeniden bağlanır.</string>
-    <string name="irc_notice_usage_delete">Kullanım: “/delete &lt;msj kimliği&gt;” - Belirtilen mesajı siler. Daha fazla bilgi için https://dev.twitch.tv/docs/irc/commands/#clearmsg-twitch-commands.</string>
-    <string name="irc_notice_usage_emote_only_off">Kullanım: /emoteonlyoff”
-Sadece ifade modunu devre dışı bırakır.</string>
-    <string name="irc_notice_usage_emote_only_on">Kullanım: “/emoteonly”
-Sadece ifade modunu etkinleştirir (sohbette yalnızca ifadeler kullanılabilir). Devre dışı bırakmak için /emoteonlyoff kullanın.</string>
-    <string name="irc_notice_usage_followers_off">Kullanım: /followersoff”
-Sadece takipçiler modunu devre dışı bırakır.</string>
-    <string name="irc_notice_usage_followers_on">Kullanım: “/followers
-Sadece takipçi modunu etkinleştirir (yalnızca belirtilen "süre" boyunca takip eden kullanıcılar sohbet edebilir). Örnekler: “30m”, “1 hafta”, “5 gün 12 saat”. 3 aydan az olmalıdır.</string>
-    <string name="irc_notice_usage_help">Kullanım: “/help”
-Bu odada kullanabileceğiniz komutları listeler.</string>
-    <string name="irc_notice_usage_host">Kullanım: “/host &lt;kanal&gt;“
-Başka bir kanala ev sahipliği yapın. Paylaşım modunun ayarını kaldırmak için “/unhost” kullanın.</string>
-    <string name="irc_notice_usage_marker">Kullanım: “/marker &lt;isteğe bağlı yorum&gt;“
-Geçerli zaman damgasına bir akış işaretçisi (isteğe bağlı bir yorumla, en fazla 140 karakter) ekler. Daha kolay düzenleme için İşaretleyicideki işaretleyicileri kullanabilirsiniz.</string>
-    <string name="irc_notice_usage_me">Kullanım: “/me &lt;mesaj&gt;” - Express an action in the third-person.</string>
-    <string name="irc_notice_usage_mod">Kullanım: “/mod &lt;isim&gt;” - Bir kullanıcıya moderatör statüsü verin. Bu kanalın moderatörlerini listelemek için “/mods” kullanın.</string>
-    <string name="irc_notice_usage_mods">Kullanım: “/mods”
-Bu kanalın moderatörlerini listeler.</string>
-    <string name="irc_notice_usage_r9k_off">Kullanım: “/uniquechatoff” - Benzersiz sohbet modunu devre dışı bırakır.</string>
-    <string name="irc_notice_usage_r9k_on">Kullanım: “/uniquechat” - Benzersiz sohbet modunu etkinleştirir. Devre dışı bırakmak için “/uniquechatoff” kullanın.</string>
-    <string name="irc_notice_usage_raid">Kullanım: “/raid &lt;kanal&gt;“
-Başka bir kanala baskın yapın.
-Baskını iptal etmek için “/unraid” kullanın.</string>
-    <string name="irc_notice_usage_slow_off">Kullanım: “/slowoff”
-Yavaş modu devre dışı bırakır.</string>
-    <string name="irc_notice_usage_slow_on">Kullanım: “/slow” [süre]
-Yavaş modu etkinleştirir (kullanıcıların ne sıklıkla mesaj gönderebileceğini sınırlayın). Süre (isteğe bağlı, varsayılan=%s), saniye cinsinden pozitif bir tam sayı olmalıdır.
-Devre dışı bırakmak için “/slowoff” kullanın.</string>
-    <string name="irc_notice_usage_subs_off">Kullanım: “/subscribersoff”
-Sadece aboneler modunu devre dışı bırakır.</string>
-    <string name="irc_notice_usage_subs_on">Kullanım: “/subscribers”
-Sadece aboneler modunu etkinleştirir (bu kanalda yalnızca aboneler sohbet edebilir).
-Devre dışı bırakmak için “/subscribersoff” kullanın.</string>
-    <string name="irc_notice_usage_timeout">Kullanım: “/timeout &lt;isim&gt; [duration][time unit] [reason]”
-Bir kullanıcının sohbet etmesini geçici olarak engelleyin. Süre (isteğe bağlı, varsayılan=10 dakika) pozitif bir tam sayı olmalıdır; zaman birimi (isteğe bağlı, varsayılan=sn) sn, dk, saat, gün, haftadan biri olmalıdır; en uzun süre 2 haftadır. 1 gün 2 saat gibi kombinasyonlara da izin verilir. Sebep isteğe bağlıdır ve hedef kullanıcıya ve diğer moderatörlere gösterilecektir.
-Bir zaman aşımı kaldırmak için “untimeout” kullanın.</string>
-    <string name="irc_notice_usage_unban">Kullanım: “/unban &lt;isim&gt;“
-Bir kullanıcı üzerindeki yasağı kaldırır.</string>
-    <string name="irc_notice_usage_unhost">Kullanım: “/unhost”
-Başka bir kanalı paylaşmayı bırakır.</string>
-    <string name="irc_notice_usage_unmod">Kullanım: “/unmod &lt;isim&gt;” - Bir kullanıcıdan moderatör durumunu iptal edin. Bu kanalın moderatörlerini listelemek için “/mods” kullanın.</string>
-    <string name="irc_notice_usage_unraid">Kullanım: “/unraid”
-Baskını iptal eder.</string>
-    <string name="irc_notice_usage_untimeout">Kullanım: “/untimeout &lt;isim&gt;“
-Bir kullanıcı üzerindeki zaman aşımını kaldırır.</string>
-    <string name="irc_notice_usage_unvip">Kullanım: “/unvip &lt;isim&gt;” - Bir kullanıcının VIP\'liğini iptal edin. Bu kanalın VIP\'lerini listelemek için “/vips” kullanın.</string>
-    <string name="irc_notice_usage_user">Kullanım: “/user” &lt;isim&gt; - Bu kanalda belirli bir kullanıcıyla ilgili bilgileri görüntüleyin.</string>
-    <string name="irc_notice_usage_vip">Kullanım: “/vip &lt;isim&gt;” - Bir kullanıcıya VIP\'lik verin. Bu kanalın VIP\'lerini listelemek için “/vips” kullanın.</string>
-    <string name="irc_notice_usage_vips">Kullanım: “/vips” - Bu kanalın VIP\'lerini listeler.</string>
-    <string name="irc_notice_usage_whisper">Kullanım: “/w &lt;isim&gt; &lt;mesaj&gt;”</string>
+    <string name="irc_notice_usage_ban">Kullanım:  \"/ban &lt;isim&gt; [sebep]\" Bir kullanıcının sohbet etmesini kalıcı olarak engelle. Sebep isteğe bağlıdır ve hedefe ve diğer moderatörlere gösterilecektir. Bir yasağı kaldırmak için \"/unban\" kullanın.</string>
+    <string name="irc_notice_usage_clear">Kullanım: \"/clear\" - Bu odadaki tüm kullanıcılar için sohbet geçmişini temizle.</string>
+    <string name="irc_notice_usage_color">Kullanım: \"/color &lt;color&gt;\" - Kullanıcı adı renginizi değiştirin. Renk onaltılı (#000000) veya aşağıdakilerden biri olmalıdır: %s.</string>
+    <string name="irc_notice_usage_commercial">Kullanım: \"/commercial [süre]\" - Reklamı tetikler. Uzunluk (isteğe bağlı) pozitif saniye sayısı olmalıdır.</string>
+    <string name="irc_notice_usage_disconnect">Kullanım: \"/disconnect\" - Sohbete yeniden bağlanır.</string>
+    <string name="irc_notice_usage_delete">Kullanım: \"/delete &lt;msj kimliği&gt;\" - Belirtilen mesajı siler. Daha fazla bilgi için https://dev.twitch.tv/docs/irc/commands/#clearmsg-twitch-commands.</string>
+    <string name="irc_notice_usage_emote_only_off">Kullanım: \"/emoteonlyoff\" - Sadece ifade modunu devre dışı bırakır.</string>
+    <string name="irc_notice_usage_emote_only_on">Kullanım: \"/emoteonly\" - Sadece ifade modunu etkinleştirir (sohbette yalnızca ifadeler kullanılabilir). Devre dışı bırakmak için \"/emoteonlyoff\" kullanın.</string>
+    <string name="irc_notice_usage_followers_off">Kullanım: \"/followersoff\" - Sadece takipçiler modunu devre dışı bırakır.</string>
+    <string name="irc_notice_usage_followers_on">Kullanım: \"/followers [süre]\" - Sadece takipçi modunu etkinleştirir (yalnızca belirtilen \'süre\' boyunca takip eden kullanıcılar sohbet edebilir). Örnekler: \"30m\", \"1 hafta\", \"5 gün 12 saat\". 3 aydan az olmalıdır.</string>
+    <string name="irc_notice_usage_help">Kullanım: \"/help\" - Bu odada kullanabileceğiniz komutları listeler.</string>
+    <string name="irc_notice_usage_host">Kullanım: \"/host &lt;kanal&gt;\" - Başka bir kanala ev sahipliği yapın. Paylaşım modunun ayarını kaldırmak için \"/unhost\" kullanın.</string>
+    <string name="irc_notice_usage_marker">Kullanım: \"/marker &lt;isteğe bağlı yorum&gt;\" - Geçerli zaman damgasına bir akış işaretçisi (isteğe bağlı bir yorumla, en fazla 140 karakter) ekler. Daha kolay düzenleme için İşaretleyicideki işaretleyicileri kullanabilirsiniz.</string>
+    <string name="irc_notice_usage_me">Kullanım: \"/me &lt;mesaj&gt;\" - Express an action in the third-person.</string>
+    <string name="irc_notice_usage_mod">Kullanım: \"/mod &lt;isim&gt;\" - Bir kullanıcıya moderatör statüsü verin. Bu kanalın moderatörlerini listelemek için \"/mods\" kullanın.</string>
+    <string name="irc_notice_usage_mods">Kullanım: \"/mods\" - Bu kanalın moderatörlerini listeler.</string>
+    <string name="irc_notice_usage_r9k_off">Kullanım: \"/uniquechatoff\" - Benzersiz sohbet modunu devre dışı bırakır.</string>
+    <string name="irc_notice_usage_r9k_on">Kullanım: \"/uniquechat\" - Benzersiz sohbet modunu etkinleştirir. Devre dışı bırakmak için \"/uniquechatoff\" kullanın.</string>
+    <string name="irc_notice_usage_raid">Kullanım: \"/raid &lt;kanal&gt;\" - Başka bir kanala baskın yapın. - Baskını iptal etmek için \"/unraid\" kullanın.</string>
+    <string name="irc_notice_usage_slow_off">Kullanım: \"/slowoff\" - Yavaş modu devre dışı bırakır.</string>
+    <string name="irc_notice_usage_slow_on">Kullanım: \"/slow [süre]\" - Yavaş modu etkinleştirir (kullanıcıların ne sıklıkla mesaj gönderebileceğini sınırlayın). Süre (isteğe bağlı, varsayılan=%s), saniye cinsinden pozitif bir tam sayı olmalıdır. - Devre dışı bırakmak için \"/slowoff\" kullanın.</string>
+    <string name="irc_notice_usage_subs_off">Kullanım: \"/subscribersoff\" - Sadece aboneler modunu devre dışı bırakır.</string>
+    <string name="irc_notice_usage_subs_on">Kullanım: \"/subscribers\" - Sadece aboneler modunu etkinleştirir (bu kanalda yalnızca aboneler sohbet edebilir). - Devre dışı bırakmak için \"/subscribersoff\" kullanın.</string>
+    <string name="irc_notice_usage_timeout">Kullanım: \"/timeout &lt;isim&gt; [duration][time unit] [reason]\" - Bir kullanıcının sohbet etmesini geçici olarak engelleyin. Süre (isteğe bağlı, varsayılan=10 dakika) pozitif bir tam sayı olmalıdır; zaman birimi (isteğe bağlı, varsayılan=sn) sn, dk, saat, gün, haftadan biri olmalıdır; en uzun süre 2 haftadır. 1 gün 2 saat gibi kombinasyonlara da izin verilir. Sebep isteğe bağlıdır ve hedef kullanıcıya ve diğer moderatörlere gösterilecektir. - Bir zaman aşımı kaldırmak için \"untimeout\" kullanın.</string>
+    <string name="irc_notice_usage_unban">Kullanım: \"/unban &lt;isim&gt;\" - Bir kullanıcı üzerindeki yasağı kaldırır.</string>
+    <string name="irc_notice_usage_unhost">Kullanım: \"/unhost\" - Başka bir kanalı paylaşmayı bırakır.</string>
+    <string name="irc_notice_usage_unmod">Kullanım: \"/unmod &lt;isim&gt;\" - Bir kullanıcıdan moderatör durumunu iptal edin. Bu kanalın moderatörlerini listelemek için \"/mods\" kullanın.</string>
+    <string name="irc_notice_usage_unraid">Kullanım: \"/unraid\" - Baskını iptal eder.</string>
+    <string name="irc_notice_usage_untimeout">Kullanım: \"/untimeout &lt;isim&gt;\" - Bir kullanıcı üzerindeki zaman aşımını kaldırır.</string>
+    <string name="irc_notice_usage_unvip">Kullanım: \"/unvip &lt;isim&gt;\" - Bir kullanıcının VIP\'liğini iptal edin. Bu kanalın VIP\'lerini listelemek için \"/vips\" kullanın.</string>
+    <string name="irc_notice_usage_user">Kullanım: \"/user\" &lt;isim&gt;\" - Bu kanalda belirli bir kullanıcıyla ilgili bilgileri görüntüleyin.</string>
+    <string name="irc_notice_usage_vip">Kullanım: \"/vip &lt;isim&gt;\" - Bir kullanıcıya VIP\'lik verin. Bu kanalın VIP\'lerini listelemek için \"/vips\" kullanın.</string>
+    <string name="irc_notice_usage_vips">Kullanım: \"/vips\" - Bu kanalın VIP\'lerini listeler.</string>
+    <string name="irc_notice_usage_whisper">Kullanım: \"/w &lt;isim&gt; &lt;mesaj&gt;\"</string>
     <string name="irc_notice_vip_success">%s bu kanala VIP olarak eklendi.</string>
     <string name="irc_notice_vips_success">Bu kanalın VIP\'leri: %s.</string>
     <string name="irc_notice_whisper_banned">Fısıltı göndermen yasaklandı.</string>
@@ -526,9 +490,9 @@ Bir kullanıcı üzerindeki zaman aşımını kaldırır.</string>
     <string name="include_gql_token">GQL belirtecini dahil et</string>
     <string name="sub_only_summary">Sadece aboneler için içerik</string>
     <string name="follow_button">Takip düğmesi</string>
-    <string name="hide">Gizle</string>
     <string name="follow_account">Twitch hesabı ile takip et</string>
     <string name="follow_local">Yerel olarak takip et</string>
+    <string name="hide">Gizle</string>
     <string name="chat_ssl">SSL kullanarak bağlan</string>
     <string name="redeemed">%s kullanıldı</string>
     <string name="user_redeemed">%1$s %2$s kullandı</string>
@@ -544,6 +508,7 @@ Bir kullanıcı üzerindeki zaman aşımını kaldırır.</string>
     <string name="lang_auto">Sistem varsayılanı</string>
     <string name="lang_en">İngilizce</string>
     <string name="lang_ar">Arapça</string>
+    <string name="lang_de">Almanca</string>
     <string name="lang_es">İspanyolca</string>
     <string name="lang_ja">Japonca</string>
     <string name="lang_pt">Portekizce (Brezilya)</string>
@@ -555,7 +520,6 @@ Bir kullanıcı üzerindeki zaman aşımını kaldırır.</string>
     <string name="tags">Etiketler</string>
     <string name="show_player_mode">Sadece ses düğmesini göster</string>
     <string name="search_videos">Videoları ara</string>
-    <string name="lang_de">Almanca</string>
     <string name="points_earned">%d kanal puanı kazanıldı</string>
     <string name="points_notify">Kanal puanı kazanırken bilgilendir</string>
     <string name="points_collect">Kanal puanlarını otomatik olarak topla</string>
