@@ -21,7 +21,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 32
         versionCode 109
-        versionName "2.4.4"
+        versionName "2.5.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -114,6 +114,7 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoplayer"
     implementation "com.google.android.exoplayer:exoplayer-ui:$exoplayer"
+    implementation "com.google.android.exoplayer:extension-mediasession:$exoplayer"
     implementation 'org.checkerframework:checker-qual:3.24.0'
 
     implementation "io.coil-kt:coil:$coil"

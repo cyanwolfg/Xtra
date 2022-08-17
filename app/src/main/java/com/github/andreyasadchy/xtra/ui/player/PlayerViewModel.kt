@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,6 +19,7 @@ import com.github.andreyasadchy.xtra.ui.player.stream.StreamPlayerViewModel
 import com.github.andreyasadchy.xtra.util.*
 import com.github.andreyasadchy.xtra.util.C
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -65,6 +67,9 @@ abstract class PlayerViewModel(context: Application) : BaseAndroidViewModel(cont
 
     protected var isResumed = true
     var userLeaveHint = false
+
+    lateinit var mediaSession: MediaSessionCompat
+    lateinit var mediaSessionConnector: MediaSessionConnector
 
     private var timer: Timer? = null
     private val _sleepTimer = MutableLiveData<Boolean>()
@@ -119,6 +124,8 @@ abstract class PlayerViewModel(context: Application) : BaseAndroidViewModel(cont
         if (this::mediaSource.isInitialized) { //TODO
             player.prepare(mediaSource)
             player.playWhenReady = true
+            mediaSessionConnector.setPlayer(player)
+            mediaSession.isActive = true
         }
     }
 
@@ -215,6 +222,8 @@ abstract class PlayerViewModel(context: Application) : BaseAndroidViewModel(cont
     override fun onCleared() {
         player.release()
         timer?.cancel()
+        mediaSessionConnector.setPlayer(null)
+        mediaSession.isActive = false
     }
 
     fun setSpeed(speed: Float) {
