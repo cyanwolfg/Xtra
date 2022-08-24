@@ -506,14 +506,6 @@
     <string name="ignore_cutouts">Игнорировать вырезы дисплея</string>
     <string name="portrait_only">Только портрет</string>
     <string name="lang_auto">Стандарт системы</string>
-    <string name="lang_en">Английский</string>
-    <string name="lang_ar">Арабский</string>
-    <string name="lang_de">Немецкий</string>
-    <string name="lang_es">Испанский</string>
-    <string name="lang_ja">Японский</string>
-    <string name="lang_pt">Бразильский португальский</string>
-    <string name="lang_ru">Русский</string>
-    <string name="lang_tr">Турецкий</string>
     <string name="save_default">Сохранить по умолчанию</string>
     <string name="viewers_high">Зрители (по убыванию)</string>
     <string name="viewers_low">Зрители (по возрастанию)</string>

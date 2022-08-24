@@ -506,14 +506,6 @@
     <string name="ignore_cutouts">ディスプレイのカットアウトを無視する</string>
     <string name="portrait_only">ポートレートのみ</string>
     <string name="lang_auto">システムの標準</string>
-    <string name="lang_en">英語</string>
-    <string name="lang_ar">アラビア語</string>
-    <string name="lang_de">ドイツ語</string>
-    <string name="lang_es">スペイン語</string>
-    <string name="lang_ja">日本語</string>
-    <string name="lang_pt">ポルトガル語 (ブラジル)</string>
-    <string name="lang_ru">ロシア語</string>
-    <string name="lang_tr">トルコ語</string>
     <string name="save_default">標準として保存する</string>
     <string name="viewers_high">視聴者数 (多い順)</string>
     <string name="viewers_low">視聴者数 (少ない順)</string>

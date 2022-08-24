@@ -10,6 +10,14 @@
     <string name="speed1.5" translatable="false">1.5x</string>
     <string name="speed1.75" translatable="false">1.75x</string>
     <string name="speed2" translatable="false">2.0x</string>
+    <string name="lang_en" translatable="false">English</string>
+    <string name="lang_ar" translatable="false">العربية</string>
+    <string name="lang_de" translatable="false">Deutsch</string>
+    <string name="lang_es" translatable="false">Español</string>
+    <string name="lang_ja" translatable="false">日本語</string>
+    <string name="lang_pt" translatable="false">Português - Brasil</string>
+    <string name="lang_ru" translatable="false">Русский</string>
+    <string name="lang_tr" translatable="false">Türkçe</string>
     <string name="games">Games</string>
     <string name="popular">Popular</string>
     <string name="following">Following</string>
@@ -516,14 +524,6 @@
     <string name="ignore_cutouts">Ignore display cutouts</string>
     <string name="portrait_only">Portrait only</string>
     <string name="lang_auto">System default</string>
-    <string name="lang_en">English</string>
-    <string name="lang_ar">Arabic</string>
-    <string name="lang_de">German</string>
-    <string name="lang_es">Spanish</string>
-    <string name="lang_ja">Japanese</string>
-    <string name="lang_pt">Portuguese (Brazil)</string>
-    <string name="lang_ru">Russian</string>
-    <string name="lang_tr">Turkish</string>
     <string name="save_default">Save as default</string>
     <string name="viewers_high">Viewers (high to low)</string>
     <string name="viewers_low">Viewers (low to high)</string>

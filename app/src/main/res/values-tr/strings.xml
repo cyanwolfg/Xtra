@@ -506,14 +506,6 @@
     <string name="ignore_cutouts">Ekran kesiklerini yoksay</string>
     <string name="portrait_only">Sadece portre</string>
     <string name="lang_auto">Sistem varsayılanı</string>
-    <string name="lang_en">İngilizce</string>
-    <string name="lang_ar">Arapça</string>
-    <string name="lang_de">Almanca</string>
-    <string name="lang_es">İspanyolca</string>
-    <string name="lang_ja">Japonca</string>
-    <string name="lang_pt">Portekizce (Brezilya)</string>
-    <string name="lang_ru">Rusça</string>
-    <string name="lang_tr">Türkçe</string>
     <string name="save_default">Varsayılan olarak kaydet</string>
     <string name="viewers_high">İzleyici (çoktan aza)</string>
     <string name="viewers_low">İzleyici (azdan çoğa)</string>

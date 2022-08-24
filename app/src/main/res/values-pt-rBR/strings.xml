@@ -506,14 +506,6 @@
     <string name="ignore_cutouts">Ignorar recortes de exibição</string>
     <string name="portrait_only">Somente retrato</string>
     <string name="lang_auto">System default</string>
-    <string name="lang_en">English</string>
-    <string name="lang_ar">Arabic</string>
-    <string name="lang_de">German</string>
-    <string name="lang_es">Spanish</string>
-    <string name="lang_ja">Japanese</string>
-    <string name="lang_pt">Português (Brasil)</string>
-    <string name="lang_ru">Russian</string>
-    <string name="lang_tr">Turkish</string>
     <string name="save_default">Salvar como padrão</string>
     <string name="viewers_high">Telespectadores (alto para baixo)</string>
     <string name="viewers_low">Telespectadores (baixo para alto)</string>
