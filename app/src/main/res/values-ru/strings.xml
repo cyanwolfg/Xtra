@@ -114,7 +114,7 @@
     <string name="trouble_logging_in">Проблемы со входом в аккаунт?</string>
     <string name="login_problem_solution">Вы можете выполнить авторизацию через сторонний браузер. После авторизации должна появится страница с ошибкой. Скопируйте ссылку, вернитесь в приложение и нажмите на кнопку \"Ввести ссылку\". Вставьте ссылку и нажмите \"Войти\"</string>
     <string name="no_browser_found">Не удалось найти установленный браузер</string>
-    <string name="browser_workaround">Ваш системный браузер устарел. Пожалуйста, нажмите на кнопку ниже, чтобы войти, используя сторонний браузер</string>
+    <string name="browser_workaround">Ваш системный браузер устарел. Пожалуйста, нажмите на кнопку ниже для входа через сторонний браузер</string>
     <string name="error">Ошибка: %s</string>
     <string name="to_enter_url">Ввести ссылку</string>
     <string name="enter_url">Введите ссылку</string>
@@ -140,10 +140,10 @@
     <string name="broadcastersCount">Счётчик стримеров в играх</string>
     <string name="startonfollowed">Запуск со страницы отслеживания</string>
     <string name="when_logged_in">При входе в систему</string>
-    <string name="show_follow_button">Показать кнопку «Отслеживать»</string>
+    <string name="show_follow_button">Кнопка «Отслеживать»</string>
     <string name="show_scrolltop">Кнопка прокрутки до верха</string>
-    <string name="bold_usernames">Жирный шрифт для имён пользователей</string>
-    <string name="randomcolor">Случайный цвет для пользователей без цвета</string>
+    <string name="bold_usernames">Жирный шрифт имён пользователей</string>
+    <string name="randomcolor">Случайный цвет пользователям без цвета</string>
     <string name="zerowidth">Смайлы нулевой ширины</string>
     <string name="message_limit">Ограничение сообщений</string>
     <string name="player_defaultquality">Качество видео по умолчанию</string>
@@ -171,7 +171,7 @@
     <string name="playerQualityEntries1">360p или ниже</string>
     <string name="playerQualityEntries2">480p или ниже</string>
     <string name="playerQualityEntries3">720p или ниже</string>
-    <string name="player_volumebutton">Кнопка регулировки громкости</string>
+    <string name="player_volumebutton">Кнопка громкости</string>
     <string name="video_type_archive">Прошедшая трансляция</string>
     <string name="video_type_highlight">Яркий момент</string>
     <string name="video_type_upload">Отправлено</string>
@@ -353,22 +353,22 @@
     <string name="irc_notice_usage_followers_off">Использование: \"/followersoff\" - Отключает режим только отслеживающие.</string>
     <string name="irc_notice_usage_followers_on">Использование: \"/followers [длительность]\" - Включает режим только отслеживающие (в чате могут писать только отслеживающие не менее \'длительности\'). Например: \"30m\", \"1 week\", \"5 days 12 hours\". Должно быть меньше 3 месяцев.</string>
     <string name="irc_notice_usage_help">Использование: \"/help\" - Вывести список доступных команд в вашей комнате.</string>
-    <string name="irc_notice_usage_host">Usage: \"/host &lt;channel&gt;\" - Host another channel. Use \"/unhost\" to unset host mode.</string>
-    <string name="irc_notice_usage_marker">Usage: \"/marker &lt;optional comment&gt;\" - Adds a stream marker (with an optional comment, max 140 characters) at the current timestamp. You can use markers in the Highlighter for easier editing.</string>
-    <string name="irc_notice_usage_me">Usage: \"/me &lt;message&gt;\" - Express an action in the third-person.</string>
-    <string name="irc_notice_usage_mod">Usage: \"/mod &lt;username&gt;\" - Grant moderator status to a user. Use \"/mods\" to list the moderators of this channel.</string>
-    <string name="irc_notice_usage_mods">Usage: \"/mods\" - Lists the moderators of this channel.</string>
-    <string name="irc_notice_usage_r9k_off">Usage: \"/uniquechatoff\" - Disables unique-chat mode.</string>
-    <string name="irc_notice_usage_r9k_on">Usage: \"/uniquechat\" - Enables unique-chat mode. Use \"/uniquechatoff\" to disable.</string>
-    <string name="irc_notice_usage_raid">Usage: \"/raid &lt;channel&gt;\" - Raid another channel. Use \"/unraid\" to cancel the Raid.</string>
-    <string name="irc_notice_usage_slow_off">Usage: \"/slowoff\" - Disables slow mode.</string>
-    <string name="irc_notice_usage_slow_on">Usage: \"/slow [duration]\" - Enables slow mode (limit how often users may send messages). Duration (optional, default=%s) must be a positive number of seconds. Use \"/slowoff\" to disable.</string>
-    <string name="irc_notice_usage_subs_off">Usage: \"/subscribersoff\" - Disables subscribers-only mode.</string>
-    <string name="irc_notice_usage_subs_on">Usage: \"/subscribers\" - Enables subscribers-only mode (only subscribers may chat in this channel). Use \"/subscribersoff\" to disable.</string>
-    <string name="irc_notice_usage_timeout">Usage: \"/timeout &lt;username&gt; [duration][time unit] [reason]\" - Temporarily prevent a user from chatting. Duration (optional, default=10 minutes) must be a positive integer; time unit (optional, default=s) must be one of s, m, h, d, w; maximum duration is 2 weeks. Combinations like 1d2h are also allowed. Reason is optional and will be shown to the target user and other moderators. Use \"/untimeout\" to remove a timeout.</string>
+    <string name="irc_notice_usage_host">Использование: \"/host &lt;channel&gt;\" - Хостить другой канал. Использование: \"/unhost\" для снятия режима хоста.</string>
+    <string name="irc_notice_usage_marker">Использование: \"/marker &lt;optional comment&gt;\" - Добавляет маркер трансляции (с необязательным комментарием, до 140 символов) в текущую метку времени. Вы можете использовать маркеры в Хайлайтере для простой правки.</string>
+    <string name="irc_notice_usage_me">Использование: \"/me &lt;message&gt;\" - Выразить действие от третьего лица.</string>
+    <string name="irc_notice_usage_mod">Использование: \"/mod &lt;username&gt;\" - Выдать статус модератора пользователю. Используйте \"/mods\" для вывода списка модераторов этого канала.</string>
+    <string name="irc_notice_usage_mods">Использование: \"/mods\" - Выводит список модераторов этого канала.</string>
+    <string name="irc_notice_usage_r9k_off">Использование: \"/uniquechatoff\" - Отключает режим уникальных сообщений в чате.</string>
+    <string name="irc_notice_usage_r9k_on">Использование: \"/uniquechat\" - Включает режим уникальных сообщений в чате. Используйте \"/uniquechatoff\" для отключения.</string>
+    <string name="irc_notice_usage_raid">Использование: \"/raid &lt;channel&gt;\" - Рейд другого канала. Используйте \"/unraid\" для отмены рейда.</string>
+    <string name="irc_notice_usage_slow_off">Использование: \"/slowoff\" - Отключает медленный режим.</string>
+    <string name="irc_notice_usage_slow_on">Использование: \"/slow [duration]\" - Включает медленный режим (ограничивает частоту отправки сообщений пользователями). Длительность (необязательно, стандарт=%s) должна быть положительным числом секунд. Используйте \"/slowoff\" для отключения.</string>
+    <string name="irc_notice_usage_subs_off">Использование: \"/subscribersoff\" - Отключает режим только для подписчиков.</string>
+    <string name="irc_notice_usage_subs_on">Использование: \"/subscribers\" - Включает режим только для подписчиков (только подписчики могут отправлять сообщения в чате этого канала). Используйте \"/subscribersoff\" для отключения.</string>
+    <string name="irc_notice_usage_timeout">Использование: \"/timeout &lt;username&gt; [длительность][единица времени] [причина]\" - Временно отстранить пользователя от чата. Длительность (необязательно, стандарт=10 минут) должна быть положительным целым числом; единица времени (необязательно, стандарт=s) может быть одной из s, m, h, d, w; максимальная длительнгость — 2 недели. Сочетания вроде 1d2h также допускаются. Причина необязательна и будет показана целевому пользователю и другим модераторам. Используйте \"/untimeout\" для снятия отстранения.</string>
     <string name="irc_notice_usage_unban">Использование: \"/unban &lt;username&gt;\" - Убрать блокировку пользователя.</string>
     <string name="irc_notice_usage_unhost">Использование: \"/unhost\" - Остановить хост другого канала.</string>
-    <string name="irc_notice_usage_unmod">Использование: \"/unmod &lt;username&gt;\" - Забрать статус модератора у пользователя. Используйте \"/mods\", чтобы вывести список всех модераторов этого канала.</string>
+    <string name="irc_notice_usage_unmod">Использование: \"/unmod &lt;username&gt;\" - Снять статус модератора с пользователя. Используйте \"/mods\" для вывода списка всех модераторов этого канала.</string>
     <string name="irc_notice_usage_unraid">Использование: \"/unraid\" - Отменить рейд.</string>
     <string name="irc_notice_usage_untimeout">Использование: \"/untimeout &lt;username&gt;\" - Убрать отстранение пользователя.</string>
     <string name="irc_notice_usage_unvip">Использование: \"/unvip &lt;username&gt;\" - Забрать статус VIP у пользователя. Используйте \"/vips\", чтобы вывести список всех VIP-пользователей этого канала.</string>
@@ -402,14 +402,14 @@
     <string name="disconnected">Отсоединено</string>
     <string name="other">Прочее</string>
     <string name="both">Оба</string>
-    <string name="timestamp_format_0">h:mm</string>
-    <string name="timestamp_format_1">hh:mm</string>
-    <string name="timestamp_format_2">h:mm:ss</string>
-    <string name="timestamp_format_3">hh:mm:ss</string>
-    <string name="timestamp_format_4">h:mm am/pm</string>
-    <string name="timestamp_format_5">hh:mm am/pm</string>
-    <string name="timestamp_format_6">h:mm:ss am/pm</string>
-    <string name="timestamp_format_7">hh:mm:ss am/pm</string>
+    <string name="timestamp_format_0">ч:мм</string>
+    <string name="timestamp_format_1">чч:мм</string>
+    <string name="timestamp_format_2">ч:мм:сс</string>
+    <string name="timestamp_format_3">чч:мм:сс</string>
+    <string name="timestamp_format_4">ч:мм am/pm</string>
+    <string name="timestamp_format_5">чч:мм am/pm</string>
+    <string name="timestamp_format_6">ч:мм:сс am/pm</string>
+    <string name="timestamp_format_7">чч:мм:сс am/pm</string>
     <string name="api_login">Получить токены для выбранных API</string>
     <string name="api_helix_redirect">Ссылка перенаправления для Helix</string>
     <string name="api_gql_redirect">Ссылка перенаправления для GQL</string>
