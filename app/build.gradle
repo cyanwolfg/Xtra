@@ -21,7 +21,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 32
         versionCode 121
-        versionName "2.5.5"
+        versionName "2.5.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
