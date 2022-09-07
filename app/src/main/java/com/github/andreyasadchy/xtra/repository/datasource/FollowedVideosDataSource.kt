@@ -54,7 +54,7 @@ class FollowedVideosDataSource(
             id = Optional.Present(userId),
             sort = Optional.Present(gqlQuerySort),
             type = Optional.Present(gqlQueryType?.let { listOf(it) }),
-            first = Optional.Present(initialParams?.requestedLoadSize ?: rangeParams?.loadSize),
+            first = Optional.Present(50 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/),
             after = Optional.Present(offset)
         )).execute().data?.user?.followedVideos
         val get = get1?.edges
@@ -92,7 +92,7 @@ class FollowedVideosDataSource(
     }
 
     private suspend fun gqlLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
-        val get = gqlApi.loadFollowedVideos(gqlClientId, gqlToken, initialParams?.requestedLoadSize ?: rangeParams?.loadSize, offset)
+        val get = gqlApi.loadFollowedVideos(gqlClientId, gqlToken, 50 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, offset)
         offset = get.cursor
         return get.data
     }

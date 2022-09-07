@@ -72,7 +72,7 @@ class ChannelVideosDataSource (
     }
 
     private suspend fun helixLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
-        val get = helixApi.getChannelVideos(helixClientId, helixToken, channelId, helixPeriod, helixBroadcastTypes, helixSort, initialParams?.requestedLoadSize ?: rangeParams?.loadSize, offset)
+        val get = helixApi.getChannelVideos(helixClientId, helixToken, channelId, helixPeriod, helixBroadcastTypes, helixSort, 30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, offset)
         return if (get.data != null) {
             offset = get.pagination?.cursor
             get.data
@@ -84,7 +84,7 @@ class ChannelVideosDataSource (
             id = Optional.Present(channelId),
             sort = Optional.Present(gqlQuerySort),
             types = Optional.Present(gqlQueryType?.let { listOf(it) }),
-            first = Optional.Present(initialParams?.requestedLoadSize ?: rangeParams?.loadSize),
+            first = Optional.Present(30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/),
             after = Optional.Present(offset)
         )).execute().data?.user
         val get = get1?.videos?.edges
@@ -122,7 +122,7 @@ class ChannelVideosDataSource (
     }
 
     private suspend fun gqlLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
-        val get = gqlApi.loadChannelVideos(gqlClientId, channelLogin, gqlType, gqlSort, initialParams?.requestedLoadSize ?: rangeParams?.loadSize, offset)
+        val get = gqlApi.loadChannelVideos(gqlClientId, channelLogin, gqlType, gqlSort, 30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, offset)
         offset = get.cursor
         return get.data
     }

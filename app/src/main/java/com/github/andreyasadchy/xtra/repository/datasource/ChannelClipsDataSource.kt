@@ -65,7 +65,7 @@ class ChannelClipsDataSource(
     }
 
     private suspend fun helixLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Clip> {
-        val get = helixApi.getClips(clientId = helixClientId, token = helixToken, channelId = channelId, started_at = started_at, ended_at = ended_at, limit = initialParams?.requestedLoadSize ?: rangeParams?.loadSize, cursor = offset)
+        val get = helixApi.getClips(clientId = helixClientId, token = helixToken, channelId = channelId, started_at = started_at, ended_at = ended_at, limit = 20 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, cursor = offset)
         val list = mutableListOf<Clip>()
         get.data?.let { list.addAll(it) }
         val gameIds = mutableListOf<String>()
@@ -92,7 +92,7 @@ class ChannelClipsDataSource(
         val get1 = apolloClient(XtraModule(), gqlClientId).query(UserClipsQuery(
             id = Optional.Present(channelId),
             sort = Optional.Present(gqlQueryPeriod),
-            first = Optional.Present(initialParams?.requestedLoadSize ?: rangeParams?.loadSize),
+            first = Optional.Present(20 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/),
             after = Optional.Present(offset)
         )).execute().data?.user
         val get = get1?.clips?.edges
@@ -123,7 +123,7 @@ class ChannelClipsDataSource(
     }
 
     private suspend fun gqlLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Clip> {
-        val get = gqlApi.loadChannelClips(gqlClientId, channelLogin, gqlPeriod, initialParams?.requestedLoadSize ?: rangeParams?.loadSize, offset)
+        val get = gqlApi.loadChannelClips(gqlClientId, channelLogin, gqlPeriod, 20 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, offset)
         offset = get.cursor
         return get.data
     }
