@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.github.andreyasadchy.xtra.R
+import com.github.andreyasadchy.xtra.XtraApp
 import com.github.andreyasadchy.xtra.di.Injectable
 import com.github.andreyasadchy.xtra.model.NotLoggedIn
 import com.github.andreyasadchy.xtra.model.User
@@ -35,6 +36,7 @@ import com.github.andreyasadchy.xtra.ui.download.HasDownloadDialog
 import com.github.andreyasadchy.xtra.ui.follow.FollowMediaFragment
 import com.github.andreyasadchy.xtra.ui.games.GameFragment
 import com.github.andreyasadchy.xtra.ui.games.GamesFragment
+import com.github.andreyasadchy.xtra.ui.player.AudioPlayerService
 import com.github.andreyasadchy.xtra.ui.player.BasePlayerFragment
 import com.github.andreyasadchy.xtra.ui.player.clip.ClipPlayerFragment
 import com.github.andreyasadchy.xtra.ui.player.offline.OfflinePlayerFragment
@@ -381,7 +383,9 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, 
             when (intent?.getIntExtra(KEY_CODE, -1)) {
                 INTENT_OPEN_DOWNLOADS_TAB -> navBar.selectedItemId = R.id.fragment_downloads
                 INTENT_OPEN_DOWNLOADED_VIDEO -> startOfflineVideo(intent.getParcelableExtra(KEY_VIDEO)!!)
-                INTENT_OPEN_PLAYER -> playerFragment!!.maximize() //TODO if was closed need to reopen
+                INTENT_OPEN_PLAYER -> { //TODO if was closed need to reopen
+                    playerFragment?.maximize() ?: AudioPlayerService.connection?.let { XtraApp.INSTANCE.unbindService(it) }
+                }
             }
         }
     }
