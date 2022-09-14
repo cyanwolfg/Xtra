@@ -537,20 +537,30 @@ class ApiRepository @Inject constructor(
         }
     }
 
+    override suspend fun loadClientIntegrityToken(gqlClientId: String?, gqlToken: String?): String? = withContext(Dispatchers.IO) {
+        val response = misc.getClientIntegrityToken(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }).string()
+        val tokenRegex = Regex("\"token\":\"(.*?)\"")
+        tokenRegex.find(response)?.groups?.get(1)?.value
+    }
+
     override suspend fun followUser(gqlClientId: String?, gqlToken: String?, userId: String?): Boolean = withContext(Dispatchers.IO) {
-        gql.loadFollowUser(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, userId).error.isNullOrBlank()
+        val integrityToken = loadClientIntegrityToken(gqlClientId, gqlToken)
+        gql.loadFollowUser(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, integrityToken, userId).error.isNullOrBlank()
     }
 
     override suspend fun unfollowUser(gqlClientId: String?, gqlToken: String?, userId: String?): Boolean = withContext(Dispatchers.IO) {
-        !gql.loadUnfollowUser(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, userId).isJsonNull
+        val integrityToken = loadClientIntegrityToken(gqlClientId, gqlToken)
+        !gql.loadUnfollowUser(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, integrityToken, userId).isJsonNull
     }
 
     override suspend fun followGame(gqlClientId: String?, gqlToken: String?, gameId: String?): Boolean = withContext(Dispatchers.IO) {
-        !gql.loadFollowGame(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, gameId).isJsonNull
+        val integrityToken = loadClientIntegrityToken(gqlClientId, gqlToken)
+        !gql.loadFollowGame(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, integrityToken, gameId).isJsonNull
     }
 
     override suspend fun unfollowGame(gqlClientId: String?, gqlToken: String?, gameId: String?): Boolean = withContext(Dispatchers.IO) {
-        !gql.loadUnfollowGame(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, gameId).isJsonNull
+        val integrityToken = loadClientIntegrityToken(gqlClientId, gqlToken)
+        !gql.loadUnfollowGame(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, integrityToken, gameId).isJsonNull
     }
 
     override fun loadTagsGQL(clientId: String?, getGameTags: Boolean, gameId: String?, gameName: String?, query: String?, coroutineScope: CoroutineScope): Listing<Tag> {

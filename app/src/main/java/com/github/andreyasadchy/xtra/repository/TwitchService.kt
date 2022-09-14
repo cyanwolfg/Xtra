@@ -65,6 +65,7 @@ interface TwitchService {
     suspend fun loadClaimPoints(gqlClientId: String?, gqlToken: String?, channelId: String?, claimID: String?)
     suspend fun loadJoinRaid(gqlClientId: String?, gqlToken: String?, raidId: String?)
     suspend fun loadMinuteWatched(userId: String?, streamId: String?, channelId: String?, channelLogin: String?)
+    suspend fun loadClientIntegrityToken(gqlClientId: String?, gqlToken: String?): String?
     suspend fun followUser(gqlClientId: String?, gqlToken: String?, userId: String?): Boolean
     suspend fun unfollowUser(gqlClientId: String?, gqlToken: String?, userId: String?): Boolean
     suspend fun followGame(gqlClientId: String?, gqlToken: String?, gameId: String?): Boolean

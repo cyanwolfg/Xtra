@@ -17,6 +17,9 @@ interface MiscApi {
     @POST
     suspend fun postUrl(@Url url: String, @Body body: RequestBody): Response<Unit>
 
+    @POST("https://gql.twitch.tv/integrity")
+    suspend fun getClientIntegrityToken(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?): ResponseBody
+
     @GET("https://api.twitch.tv/v5/videos/{id}/comments")
     suspend fun getVideoChatLog(@Header("Client-ID") clientId: String?, @Path("id") videoId: String?, @Query("content_offset_seconds") offsetSeconds: Double, @Query("limit") limit: Int): VideoMessagesResponse
 
