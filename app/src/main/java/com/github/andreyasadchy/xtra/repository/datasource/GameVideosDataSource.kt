@@ -141,6 +141,7 @@ class GameVideosDataSource private constructor(
     private suspend fun gqlLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
         val get = gqlApi.loadGameVideos(gqlClientId, gameName, gqlType, gqlSort, 30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, offset)
         offset = get.cursor
+        nextPage = get.hasNextPage ?: true
         return get.data
     }
 
@@ -150,7 +151,7 @@ class GameVideosDataSource private constructor(
                 when (api) {
                     C.HELIX -> helixLoad(rangeParams = params)
                     C.GQL_QUERY -> if (nextPage) gqlQueryLoad(rangeParams = params) else listOf()
-                    C.GQL -> gqlLoad(rangeParams = params)
+                    C.GQL -> if (nextPage) gqlLoad(rangeParams = params) else listOf()
                     else -> listOf()
                 }
             } else listOf()

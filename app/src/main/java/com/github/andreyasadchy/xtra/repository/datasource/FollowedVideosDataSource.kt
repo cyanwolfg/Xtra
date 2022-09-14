@@ -94,6 +94,7 @@ class FollowedVideosDataSource(
     private suspend fun gqlLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
         val get = gqlApi.loadFollowedVideos(gqlClientId, gqlToken, 50 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, offset)
         offset = get.cursor
+        nextPage = get.hasNextPage ?: true
         return get.data
     }
 
@@ -102,7 +103,7 @@ class FollowedVideosDataSource(
             if (!offset.isNullOrBlank()) {
                 when (api) {
                     C.GQL_QUERY -> if (nextPage) gqlQueryLoad(rangeParams = params) else listOf()
-                    C.GQL -> gqlLoad(rangeParams = params)
+                    C.GQL -> if (nextPage) gqlLoad(rangeParams = params) else listOf()
                     else -> listOf()
                 }
             } else listOf()

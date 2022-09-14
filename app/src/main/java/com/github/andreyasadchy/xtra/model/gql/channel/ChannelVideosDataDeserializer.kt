@@ -15,6 +15,7 @@ class ChannelVideosDataDeserializer : JsonDeserializer<ChannelVideosDataResponse
         val data = mutableListOf<Video>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("user")?.getAsJsonObject("videos")?.getAsJsonArray("edges")
         val cursor = dataJson?.lastOrNull()?.asJsonObject?.get("cursor")?.takeIf { !it.isJsonNull }?.asString
+        val hasNextPage = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("user")?.getAsJsonObject("videos")?.get("pageInfo")?.takeIf { !it.isJsonNull }?.asJsonObject?.get("hasNextPage")?.takeIf { !it.isJsonNull }?.asBoolean
         dataJson?.forEach { item ->
             item?.asJsonObject?.getAsJsonObject("node")?.let { obj ->
                 val tags = mutableListOf<Tag>()
@@ -43,6 +44,6 @@ class ChannelVideosDataDeserializer : JsonDeserializer<ChannelVideosDataResponse
                 ))
             }
         }
-        return ChannelVideosDataResponse(data, cursor)
+        return ChannelVideosDataResponse(data, cursor, hasNextPage)
     }
 }

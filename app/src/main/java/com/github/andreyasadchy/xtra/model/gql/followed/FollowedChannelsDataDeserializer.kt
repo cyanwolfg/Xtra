@@ -14,6 +14,7 @@ class FollowedChannelsDataDeserializer : JsonDeserializer<FollowedChannelsDataRe
         val data = mutableListOf<Follow>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("user")?.getAsJsonObject("follows")?.getAsJsonArray("edges")
         val cursor = dataJson?.lastOrNull()?.asJsonObject?.get("cursor")?.takeIf { !it.isJsonNull }?.asString
+        val hasNextPage = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("user")?.getAsJsonObject("follows")?.get("pageInfo")?.takeIf { !it.isJsonNull }?.asJsonObject?.get("hasNextPage")?.takeIf { !it.isJsonNull }?.asBoolean
         dataJson?.forEach { item ->
             item?.asJsonObject?.getAsJsonObject("node")?.let { obj ->
                 data.add(Follow(
@@ -25,6 +26,6 @@ class FollowedChannelsDataDeserializer : JsonDeserializer<FollowedChannelsDataRe
                 ))
             }
         }
-        return FollowedChannelsDataResponse(data, cursor)
+        return FollowedChannelsDataResponse(data, cursor, hasNextPage)
     }
 }

@@ -14,6 +14,7 @@ class ChannelClipsDataDeserializer : JsonDeserializer<ChannelClipsDataResponse> 
         val data = mutableListOf<Clip>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("user")?.getAsJsonObject("clips")?.getAsJsonArray("edges")
         val cursor = dataJson?.lastOrNull()?.asJsonObject?.get("cursor")?.takeIf { !it.isJsonNull }?.asString
+        val hasNextPage = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("user")?.getAsJsonObject("clips")?.get("pageInfo")?.takeIf { !it.isJsonNull }?.asJsonObject?.get("hasNextPage")?.takeIf { !it.isJsonNull }?.asBoolean
         dataJson?.forEach { item ->
             item?.asJsonObject?.getAsJsonObject("node")?.let { obj ->
                 data.add(Clip(
@@ -32,6 +33,6 @@ class ChannelClipsDataDeserializer : JsonDeserializer<ChannelClipsDataResponse> 
                 ))
             }
         }
-        return ChannelClipsDataResponse(data, cursor)
+        return ChannelClipsDataResponse(data, cursor, hasNextPage)
     }
 }

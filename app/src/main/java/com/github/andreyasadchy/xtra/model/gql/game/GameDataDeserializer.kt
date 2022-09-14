@@ -15,6 +15,7 @@ class GameDataDeserializer : JsonDeserializer<GameDataResponse> {
         val data = mutableListOf<Game>()
         val dataJson = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("directoriesWithTags")?.getAsJsonArray("edges")
         val cursor = dataJson?.lastOrNull()?.asJsonObject?.get("cursor")?.takeIf { !it.isJsonNull }?.asString
+        val hasNextPage = json.asJsonObject?.getAsJsonObject("data")?.getAsJsonObject("directoriesWithTags")?.get("pageInfo")?.takeIf { !it.isJsonNull }?.asJsonObject?.get("hasNextPage")?.takeIf { !it.isJsonNull }?.asBoolean
         dataJson?.forEach { item ->
             item?.asJsonObject?.getAsJsonObject("node")?.let { obj ->
                 val tags = mutableListOf<Tag>()
@@ -35,6 +36,6 @@ class GameDataDeserializer : JsonDeserializer<GameDataResponse> {
                 ))
             }
         }
-        return GameDataResponse(data, cursor)
+        return GameDataResponse(data, cursor, hasNextPage)
     }
 }
