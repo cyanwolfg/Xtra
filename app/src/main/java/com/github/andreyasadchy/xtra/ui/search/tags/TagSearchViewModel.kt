@@ -5,13 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.github.andreyasadchy.xtra.model.helix.tag.Tag
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.repository.Listing
-import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.ui.common.PagedListViewModel
 import javax.inject.Inject
 
 class TagSearchViewModel @Inject constructor(
-        private val repository: TwitchService) : PagedListViewModel<Tag>() {
+        private val repository: ApiRepository) : PagedListViewModel<Tag>() {
 
     private val filter = MutableLiveData<Filter>()
     override val result: LiveData<Listing<Tag>> = Transformations.map(filter) {

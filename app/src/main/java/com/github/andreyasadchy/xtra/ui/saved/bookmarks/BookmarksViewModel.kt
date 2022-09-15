@@ -11,9 +11,9 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.github.andreyasadchy.xtra.model.offline.Bookmark
 import com.github.andreyasadchy.xtra.model.offline.VodBookmarkIgnoredUser
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.repository.BookmarksRepository
 import com.github.andreyasadchy.xtra.repository.PlayerRepository
-import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.repository.VodBookmarkIgnoredUsersRepository
 import com.github.andreyasadchy.xtra.util.DownloadUtils
 import kotlinx.coroutines.GlobalScope
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 class BookmarksViewModel @Inject internal constructor(
     application: Application,
-    private val repository: TwitchService,
+    private val repository: ApiRepository,
     private val bookmarksRepository: BookmarksRepository,
     private val playerRepository: PlayerRepository,
     private val vodBookmarkIgnoredUsersRepository: VodBookmarkIgnoredUsersRepository) : AndroidViewModel(application) {

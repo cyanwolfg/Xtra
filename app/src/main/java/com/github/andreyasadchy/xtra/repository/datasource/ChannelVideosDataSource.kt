@@ -2,11 +2,10 @@ package com.github.andreyasadchy.xtra.repository.datasource
 
 import androidx.core.util.Pair
 import androidx.paging.DataSource
+import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.github.andreyasadchy.xtra.UserVideosQuery
 import com.github.andreyasadchy.xtra.api.HelixApi
-import com.github.andreyasadchy.xtra.di.XtraModule
-import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory
 import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.model.helix.video.BroadcastType
 import com.github.andreyasadchy.xtra.model.helix.video.Period
@@ -32,6 +31,7 @@ class ChannelVideosDataSource (
     private val gqlType: String?,
     private val gqlSort: String?,
     private val gqlApi: GraphQLRepository,
+    private val apolloClient: ApolloClient,
     private val apiPref: ArrayList<Pair<Long?, String?>?>,
     coroutineScope: CoroutineScope) : BasePositionalDataSource<Video>(coroutineScope) {
     private var api: String? = null
@@ -72,7 +72,16 @@ class ChannelVideosDataSource (
     }
 
     private suspend fun helixLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
-        val get = helixApi.getChannelVideos(helixClientId, helixToken, channelId, helixPeriod, helixBroadcastTypes, helixSort, 30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, offset)
+        val get = helixApi.getVideos(
+            clientId = helixClientId,
+            token = helixToken,
+            channelId = channelId,
+            period = helixPeriod,
+            broadcastType = helixBroadcastTypes,
+            sort = helixSort,
+            limit = 30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/,
+            offset = offset
+        )
         return if (get.data != null) {
             offset = get.pagination?.cursor
             get.data
@@ -80,7 +89,7 @@ class ChannelVideosDataSource (
     }
 
     private suspend fun gqlQueryLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(UserVideosQuery(
+        val get1 = apolloClient.newBuilder().apply { gqlClientId?.let { addHttpHeader("Client-ID", it) } }.build().query(UserVideosQuery(
             id = Optional.Present(channelId),
             sort = Optional.Present(gqlQuerySort),
             types = Optional.Present(gqlQueryType?.let { listOf(it) }),
@@ -156,10 +165,11 @@ class ChannelVideosDataSource (
         private val gqlType: String?,
         private val gqlSort: String?,
         private val gqlApi: GraphQLRepository,
+        private val apolloClient: ApolloClient,
         private val apiPref: ArrayList<Pair<Long?, String?>?>,
         private val coroutineScope: CoroutineScope) : BaseDataSourceFactory<Int, Video, ChannelVideosDataSource>() {
 
         override fun create(): DataSource<Int, Video> =
-                ChannelVideosDataSource(channelId, channelLogin, helixClientId, helixToken, helixPeriod, helixBroadcastTypes, helixSort, helixApi, gqlClientId, gqlQueryType, gqlQuerySort, gqlType, gqlSort, gqlApi, apiPref, coroutineScope).also(sourceLiveData::postValue)
+                ChannelVideosDataSource(channelId, channelLogin, helixClientId, helixToken, helixPeriod, helixBroadcastTypes, helixSort, helixApi, gqlClientId, gqlQueryType, gqlQuerySort, gqlType, gqlSort, gqlApi, apolloClient, apiPref, coroutineScope).also(sourceLiveData::postValue)
     }
 }

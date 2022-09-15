@@ -107,7 +107,7 @@ class DownloadService : IntentService(TAG) {
         offlineVideo = runBlocking { offlineRepository.getVideoById(request.offlineVideoId) }
             ?: return //Download was canceled
         Log.d(TAG, "Starting download. Id: ${offlineVideo.id}")
-        fetch = fetchProvider.get(offlineVideo.id, intent.getBooleanExtra(KEY_WIFI, false))
+        fetch = fetchProvider.get(offlineVideo.id)
         val countDownLatch = CountDownLatch(1)
         val channelId = getString(R.string.notification_downloads_channel_id)
         notificationBuilder = NotificationCompat.Builder(this, channelId).apply {

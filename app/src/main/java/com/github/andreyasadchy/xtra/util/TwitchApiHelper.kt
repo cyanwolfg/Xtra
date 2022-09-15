@@ -8,6 +8,7 @@ import com.github.andreyasadchy.xtra.XtraApp
 import com.github.andreyasadchy.xtra.model.helix.video.Period
 import com.github.andreyasadchy.xtra.util.chat.*
 import kotlinx.coroutines.CoroutineScope
+import okhttp3.OkHttpClient
 import java.lang.Integer.parseInt
 import java.lang.Long.parseLong
 import java.text.ParseException
@@ -214,8 +215,8 @@ object TwitchApiHelper {
         return LoggedInChatThread(useSSl, userName, userToken, channelName, MessageListenerImpl(newMessageListener, UserStateListener, RoomStateListener, CommandListener, callbackReward, showUserNotice, showClearMsg, showClearChat, usePubSub)).apply { start() }
     }
 
-    fun startPubSub(channelId: String, userId: String?, gqlToken: String?, collectPoints: Boolean, notifyPoints: Boolean, showRaids: Boolean, coroutineScope: CoroutineScope, newMessageListener: OnChatMessageReceivedListener, callbackReward: OnRewardReceivedListener, callbackPointsEarned: OnPointsEarnedListener, callbackClaim: OnClaimPointsListener, callbackMinute: OnMinuteWatchedListener, callbackRaid: OnRaidListener, callbackViewers: OnViewerCountReceivedListener): PubSubWebSocket {
-        return PubSubWebSocket(channelId, userId, gqlToken, collectPoints, notifyPoints, showRaids, coroutineScope, PubSubListenerImpl(newMessageListener, callbackReward, callbackPointsEarned, callbackClaim, callbackMinute, callbackRaid, callbackViewers)).apply { connect() }
+    fun startPubSub(channelId: String, userId: String?, gqlToken: String?, collectPoints: Boolean, notifyPoints: Boolean, showRaids: Boolean, client: OkHttpClient, coroutineScope: CoroutineScope, newMessageListener: OnChatMessageReceivedListener, callbackReward: OnRewardReceivedListener, callbackPointsEarned: OnPointsEarnedListener, callbackClaim: OnClaimPointsListener, callbackMinute: OnMinuteWatchedListener, callbackRaid: OnRaidListener, callbackViewers: OnViewerCountReceivedListener): PubSubWebSocket {
+        return PubSubWebSocket(channelId, userId, gqlToken, collectPoints, notifyPoints, showRaids, client, coroutineScope, PubSubListenerImpl(newMessageListener, callbackReward, callbackPointsEarned, callbackClaim, callbackMinute, callbackRaid, callbackViewers)).apply { connect() }
     }
 
     fun parseClipOffset(url: String): Double {

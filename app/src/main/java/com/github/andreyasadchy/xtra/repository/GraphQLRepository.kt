@@ -28,7 +28,6 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -577,7 +576,7 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
         return graphQL.getFollowedGames(clientId, token, json)
     }
 
-    suspend fun loadFollowUser(clientId: String?, token: String?, integrityToken: String?, userId: String?): FollowUserDataResponse {
+    suspend fun loadFollowUser(clientId: String?, token: String?, integrityToken: String?, deviceId: String?, userId: String?): FollowUserDataResponse {
         val json = JsonObject().apply {
             addProperty("operationName", "FollowButton_FollowUser")
             add("variables", JsonObject().apply {
@@ -593,11 +592,10 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
                 })
             })
         }
-        val randomId = UUID.randomUUID().toString().replace("-", "").substring(0, 32)
-        return graphQL.getFollowUser(clientId, token, integrityToken, randomId, json)
+        return graphQL.getFollowUser(clientId, token, integrityToken, deviceId, json)
     }
 
-    suspend fun loadUnfollowUser(clientId: String?, token: String?, integrityToken: String?, userId: String?): JsonElement {
+    suspend fun loadUnfollowUser(clientId: String?, token: String?, integrityToken: String?, deviceId: String?, userId: String?): JsonElement {
         val json = JsonObject().apply {
             addProperty("operationName", "FollowButton_UnfollowUser")
             add("variables", JsonObject().apply {
@@ -612,11 +610,10 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
                 })
             })
         }
-        val randomId = UUID.randomUUID().toString().replace("-", "").substring(0, 32)
-        return graphQL.getUnfollowUser(clientId, token, integrityToken, randomId, json)
+        return graphQL.getUnfollowUser(clientId, token, integrityToken, deviceId, json)
     }
 
-    suspend fun loadFollowGame(clientId: String?, token: String?, integrityToken: String?, gameId: String?): JsonElement {
+    suspend fun loadFollowGame(clientId: String?, token: String?, integrityToken: String?, deviceId: String?, gameId: String?): JsonElement {
         val json = JsonObject().apply {
             addProperty("operationName", "FollowGameButton_FollowGame")
             add("variables", JsonObject().apply {
@@ -631,11 +628,10 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
                 })
             })
         }
-        val randomId = UUID.randomUUID().toString().replace("-", "").substring(0, 32)
-        return graphQL.getFollowGame(clientId, token, integrityToken, randomId, json)
+        return graphQL.getFollowGame(clientId, token, integrityToken, deviceId, json)
     }
 
-    suspend fun loadUnfollowGame(clientId: String?, token: String?, integrityToken: String?, gameId: String?): JsonElement {
+    suspend fun loadUnfollowGame(clientId: String?, token: String?, integrityToken: String?, deviceId: String?, gameId: String?): JsonElement {
         val json = JsonObject().apply {
             addProperty("operationName", "FollowGameButton_UnfollowGame")
             add("variables", JsonObject().apply {
@@ -650,8 +646,7 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
                 })
             })
         }
-        val randomId = UUID.randomUUID().toString().replace("-", "").substring(0, 32)
-        return graphQL.getUnfollowGame(clientId, token, integrityToken, randomId, json)
+        return graphQL.getUnfollowGame(clientId, token, integrityToken, deviceId, json)
     }
 
     suspend fun loadFollowingUser(clientId: String?, token: String?, userLogin: String?): FollowingUserDataResponse {

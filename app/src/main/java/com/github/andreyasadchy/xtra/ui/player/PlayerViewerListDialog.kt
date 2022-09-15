@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.helix.channel.ChannelViewerList
-import com.github.andreyasadchy.xtra.repository.TwitchService
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.ui.common.ExpandingBottomSheetDialogFragment
 import com.github.andreyasadchy.xtra.util.*
 import kotlinx.android.synthetic.main.fragment_viewer_list.*
@@ -20,13 +20,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class PlayerViewerListDialog @Inject constructor(val repository: TwitchService) : ExpandingBottomSheetDialogFragment() {
+class PlayerViewerListDialog @Inject constructor(val repository: ApiRepository) : ExpandingBottomSheetDialogFragment() {
 
     companion object {
 
         private const val LOGIN = "login"
 
-        fun newInstance(login: String, repository: TwitchService): PlayerViewerListDialog {
+        fun newInstance(login: String, repository: ApiRepository): PlayerViewerListDialog {
             return PlayerViewerListDialog(repository).apply {
                 arguments = bundleOf(LOGIN to login)
             }

@@ -2,10 +2,9 @@ package com.github.andreyasadchy.xtra.repository.datasource
 
 import androidx.core.util.Pair
 import androidx.paging.DataSource
+import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.github.andreyasadchy.xtra.SearchVideosQuery
-import com.github.andreyasadchy.xtra.di.XtraModule
-import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory
 import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.model.helix.video.Video
 import com.github.andreyasadchy.xtra.repository.GraphQLRepository
@@ -16,6 +15,7 @@ class SearchVideosDataSource private constructor(
     private val query: String,
     private val gqlClientId: String?,
     private val gqlApi: GraphQLRepository,
+    private val apolloClient: ApolloClient,
     private val apiPref: ArrayList<Pair<Long?, String?>?>?,
     coroutineScope: CoroutineScope) : BasePositionalDataSource<Video>(coroutineScope) {
     private var api: String? = null
@@ -45,7 +45,7 @@ class SearchVideosDataSource private constructor(
     }
 
     private suspend fun gqlQueryLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(SearchVideosQuery(
+        val get1 = apolloClient.newBuilder().apply { gqlClientId?.let { addHttpHeader("Client-ID", it) } }.build().query(SearchVideosQuery(
             query = query,
             first = Optional.Present(initialParams?.requestedLoadSize ?: rangeParams?.loadSize),
             after = Optional.Present(offset)
@@ -106,10 +106,11 @@ class SearchVideosDataSource private constructor(
         private val query: String,
         private val gqlClientId: String?,
         private val gqlApi: GraphQLRepository,
+        private val apolloClient: ApolloClient,
         private val apiPref: ArrayList<Pair<Long?, String?>?>?,
         private val coroutineScope: CoroutineScope) : BaseDataSourceFactory<Int, Video, SearchVideosDataSource>() {
 
         override fun create(): DataSource<Int, Video> =
-                SearchVideosDataSource(query, gqlClientId, gqlApi, apiPref, coroutineScope).also(sourceLiveData::postValue)
+                SearchVideosDataSource(query, gqlClientId, gqlApi, apolloClient, apiPref, coroutineScope).also(sourceLiveData::postValue)
     }
 }

@@ -3,12 +3,12 @@ package com.github.andreyasadchy.xtra.ui.view.chat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.github.andreyasadchy.xtra.model.helix.user.User
-import com.github.andreyasadchy.xtra.repository.TwitchService
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.ui.common.BaseViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class MessageClickedViewModel @Inject constructor(private val repository: TwitchService) : BaseViewModel() {
+class MessageClickedViewModel @Inject constructor(private val repository: ApiRepository) : BaseViewModel() {
 
     private val user = MutableLiveData<User?>()
     private var isLoading = false

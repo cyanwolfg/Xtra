@@ -10,9 +10,9 @@ import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.helix.clip.Clip
 import com.github.andreyasadchy.xtra.model.helix.video.Video
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.repository.GraphQLRepository
 import com.github.andreyasadchy.xtra.repository.LocalFollowChannelRepository
-import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.ui.common.follow.FollowLiveData
 import com.github.andreyasadchy.xtra.ui.common.follow.FollowViewModel
 import com.github.andreyasadchy.xtra.ui.player.PlayerHelper
@@ -30,7 +30,7 @@ private const val TAG = "ClipPlayerViewModel"
 class ClipPlayerViewModel @Inject constructor(
     context: Application,
     private val graphQLRepository: GraphQLRepository,
-    private val repository: TwitchService,
+    private val repository: ApiRepository,
     private val localFollowsChannel: LocalFollowChannelRepository) : PlayerViewModel(context), FollowViewModel {
 
     private lateinit var clip: Clip

@@ -2,11 +2,10 @@ package com.github.andreyasadchy.xtra.repository.datasource
 
 import androidx.core.util.Pair
 import androidx.paging.DataSource
+import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.github.andreyasadchy.xtra.SearchStreamsQuery
 import com.github.andreyasadchy.xtra.api.HelixApi
-import com.github.andreyasadchy.xtra.di.XtraModule
-import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory
 import com.github.andreyasadchy.xtra.model.helix.stream.Stream
 import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.util.C
@@ -18,6 +17,7 @@ class SearchStreamsDataSource private constructor(
     private val helixToken: String?,
     private val helixApi: HelixApi,
     private val gqlClientId: String?,
+    private val apolloClient: ApolloClient,
     private val apiPref: ArrayList<Pair<Long?, String?>?>?,
     coroutineScope: CoroutineScope) : BasePositionalDataSource<Stream>(coroutineScope) {
     private var api: String? = null
@@ -47,7 +47,14 @@ class SearchStreamsDataSource private constructor(
     }
 
     private suspend fun helixLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Stream> {
-        val get = helixApi.getChannels(helixClientId, helixToken, query, initialParams?.requestedLoadSize ?: rangeParams?.loadSize, offset, true)
+        val get = helixApi.getChannels(
+            clientId = helixClientId,
+            token = helixToken,
+            query = query,
+            limit = initialParams?.requestedLoadSize ?: rangeParams?.loadSize,
+            offset = offset,
+            live = true
+        )
         val list = mutableListOf<Stream>()
         get.data?.forEach {
             list.add(Stream(
@@ -66,7 +73,7 @@ class SearchStreamsDataSource private constructor(
     }
 
     private suspend fun gqlQueryLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Stream> {
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(SearchStreamsQuery(
+        val get1 = apolloClient.newBuilder().apply { gqlClientId?.let { addHttpHeader("Client-ID", it) } }.build().query(SearchStreamsQuery(
             query = query,
             first = Optional.Present(initialParams?.requestedLoadSize ?: rangeParams?.loadSize),
             after = Optional.Present(offset)
@@ -124,10 +131,11 @@ class SearchStreamsDataSource private constructor(
         private val helixToken: String?,
         private val helixApi: HelixApi,
         private val gqlClientId: String?,
+        private val apolloClient: ApolloClient,
         private val apiPref: ArrayList<Pair<Long?, String?>?>?,
         private val coroutineScope: CoroutineScope) : BaseDataSourceFactory<Int, Stream, SearchStreamsDataSource>() {
 
         override fun create(): DataSource<Int, Stream> =
-                SearchStreamsDataSource(query, helixClientId, helixToken, helixApi, gqlClientId, apiPref, coroutineScope).also(sourceLiveData::postValue)
+                SearchStreamsDataSource(query, helixClientId, helixToken, helixApi, gqlClientId, apolloClient, apiPref, coroutineScope).also(sourceLiveData::postValue)
     }
 }

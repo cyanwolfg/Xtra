@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.chat.*
 import com.github.andreyasadchy.xtra.model.helix.stream.Stream
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.repository.PlayerRepository
-import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.ui.common.BaseViewModel
 import com.github.andreyasadchy.xtra.ui.player.ChatReplayManager
 import com.github.andreyasadchy.xtra.ui.player.stream.stream_id
@@ -20,6 +20,7 @@ import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.chat.*
 import com.github.andreyasadchy.xtra.util.nullIfEmpty
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
@@ -43,8 +44,9 @@ import kotlin.collections.set
 import kotlin.collections.sortedBy
 
 class ChatViewModel @Inject constructor(
-        private val repository: TwitchService,
-        private val playerRepository: PlayerRepository) : BaseViewModel(), ChatView.MessageSenderCallback {
+    private val repository: ApiRepository,
+    private val playerRepository: PlayerRepository,
+    private val okHttpClient: OkHttpClient) : BaseViewModel(), ChatView.MessageSenderCallback {
 
     val recentEmotes: LiveData<List<Emote>> by lazy {
         MediatorLiveData<List<Emote>>().apply {
@@ -125,7 +127,7 @@ class ChatViewModel @Inject constructor(
             )
             init(
                 helixClientId = helixClientId,
-                helixToken = user.helixToken?.nullIfEmpty(),
+                helixToken = user.helixToken,
                 gqlClientId = gqlClientId,
                 channelId = channelId,
                 channelLogin = channelLogin,
@@ -145,7 +147,7 @@ class ChatViewModel @Inject constructor(
             )
             init(
                 helixClientId = helixClientId,
-                helixToken = user.helixToken?.nullIfEmpty(),
+                helixToken = user.helixToken,
                 gqlClientId = gqlClientId,
                 channelId = channelId
             )
@@ -417,7 +419,7 @@ class ChatViewModel @Inject constructor(
                 loggedInChat = TwitchApiHelper.startLoggedInChat(useSSl, user.login, user.gqlToken?.nullIfEmpty() ?: user.helixToken, channelLogin, showUserNotice, showClearMsg, showClearChat, usePubSub, this, this, this, this, this)
             }
             if (usePubSub && !channelId.isNullOrBlank()) {
-                pubSub = TwitchApiHelper.startPubSub(channelId, user.id, user.gqlToken, collectPoints, notifyPoints, showRaids, viewModelScope, this, this, this, this, this, this, this)
+                pubSub = TwitchApiHelper.startPubSub(channelId, user.id, user.gqlToken, collectPoints, notifyPoints, showRaids, okHttpClient, viewModelScope, this, this, this, this, this, this, this)
             }
         }
 

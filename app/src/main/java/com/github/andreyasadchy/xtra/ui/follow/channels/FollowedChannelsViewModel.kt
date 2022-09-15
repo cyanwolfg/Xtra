@@ -15,9 +15,9 @@ import com.github.andreyasadchy.xtra.model.helix.follows.Follow
 import com.github.andreyasadchy.xtra.model.helix.follows.Order
 import com.github.andreyasadchy.xtra.model.helix.follows.Sort
 import com.github.andreyasadchy.xtra.model.offline.SortChannel
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.repository.Listing
 import com.github.andreyasadchy.xtra.repository.SortChannelRepository
-import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.ui.common.PagedListViewModel
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.prefs
@@ -26,9 +26,9 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class FollowedChannelsViewModel @Inject constructor(
-        context: Application,
-        private val repository: TwitchService,
-        private val sortChannelRepository: SortChannelRepository) : PagedListViewModel<Follow>() {
+    context: Application,
+    private val repository: ApiRepository,
+    private val sortChannelRepository: SortChannelRepository) : PagedListViewModel<Follow>() {
 
     private val _sortText = MutableLiveData<CharSequence>()
     val sortText: LiveData<CharSequence>

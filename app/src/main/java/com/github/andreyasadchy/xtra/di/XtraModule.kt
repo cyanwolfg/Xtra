@@ -28,17 +28,13 @@ import com.github.andreyasadchy.xtra.model.gql.vod.VodGamesDataDeserializer
 import com.github.andreyasadchy.xtra.model.gql.vod.VodGamesDataResponse
 import com.github.andreyasadchy.xtra.model.helix.emote.EmoteSetDeserializer
 import com.github.andreyasadchy.xtra.model.helix.emote.EmoteSetResponse
-import com.github.andreyasadchy.xtra.repository.ApiRepository
-import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.util.FetchProvider
 import com.google.gson.GsonBuilder
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import dagger.Module
 import dagger.Provides
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -47,12 +43,6 @@ import javax.inject.Singleton
 
 @Module
 class XtraModule {
-
-    @Singleton
-    @Provides
-    fun providesTwitchService(repository: ApiRepository): TwitchService {
-        return repository
-    }
 
     @Singleton
     @Provides
@@ -176,40 +166,12 @@ class XtraModule {
 
     @Singleton
     @Provides
-    fun apolloClient(clientId: String?): ApolloClient {
-        val builder = ApolloClient.Builder()
-            .serverUrl("https://gql.twitch.tv/gql/")
-            .okHttpClient(OkHttpClient.Builder().apply {
-                addInterceptor(AuthorizationInterceptor(clientId))
-                if (BuildConfig.DEBUG) {
-                    addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
-                }
-            }.build())
-        return builder.build()
-    }
-
-    @Singleton
-    @Provides
-    fun apolloClientWithToken(clientId: String?, token: String?): ApolloClient {
-        val builder = ApolloClient.Builder()
-            .serverUrl("https://gql.twitch.tv/gql/")
-            .okHttpClient(OkHttpClient.Builder().apply {
-                addInterceptor(AuthorizationInterceptor(clientId, token))
-                if (BuildConfig.DEBUG) {
-                    addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
-                }
-            }.build())
-        return builder.build()
-    }
-
-    private class AuthorizationInterceptor(val clientId: String?, val token: String? = null): Interceptor {
-        override fun intercept(chain: Interceptor.Chain): Response {
-            val request = chain.request().newBuilder().apply {
-                clientId?.let { addHeader("Client-ID", it) }
-                token?.let { addHeader("Authorization", it) }
-            }.build()
-            return chain.proceed(request)
+    fun providesApolloClient(okHttpClient: OkHttpClient): ApolloClient {
+        val builder = ApolloClient.Builder().apply {
+            serverUrl("https://gql.twitch.tv/gql/")
+            okHttpClient(okHttpClient)
         }
+        return builder.build()
     }
 
     @Singleton

@@ -2,11 +2,10 @@ package com.github.andreyasadchy.xtra.repository.datasource
 
 import androidx.core.util.Pair
 import androidx.paging.DataSource
+import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.github.andreyasadchy.xtra.GameStreamsQuery
 import com.github.andreyasadchy.xtra.api.HelixApi
-import com.github.andreyasadchy.xtra.di.XtraModule
-import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory.apolloClient
 import com.github.andreyasadchy.xtra.model.helix.stream.Sort
 import com.github.andreyasadchy.xtra.model.helix.stream.Stream
 import com.github.andreyasadchy.xtra.model.helix.tag.Tag
@@ -26,6 +25,7 @@ class GameStreamsDataSource private constructor(
     private val gqlSort: Sort?,
     private val tags: List<String>?,
     private val gqlApi: GraphQLRepository,
+    private val apolloClient: ApolloClient,
     private val apiPref: ArrayList<Pair<Long?, String?>?>,
     coroutineScope: CoroutineScope) : BasePositionalDataSource<Stream>(coroutineScope) {
     private var api: String? = null
@@ -66,7 +66,13 @@ class GameStreamsDataSource private constructor(
     }
 
     private suspend fun helixLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Stream> {
-        val get = helixApi.getTopStreams(helixClientId, helixToken, gameId, null, 30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, offset)
+        val get = helixApi.getStreams(
+            clientId = helixClientId,
+            token = helixToken,
+            gameId = gameId,
+            limit = 30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/,
+            offset = offset
+        )
         val list = mutableListOf<Stream>()
         get.data?.let { list.addAll(it) }
         val ids = mutableListOf<String>()
@@ -74,7 +80,7 @@ class GameStreamsDataSource private constructor(
             i.user_id?.let { ids.add(it) }
         }
         if (ids.isNotEmpty()) {
-            val users = helixApi.getUsers(helixClientId, helixToken, ids).data
+            val users = helixApi.getUsers(clientId = helixClientId, token = helixToken, ids = ids).data
             if (users != null) {
                 for (i in users) {
                     val items = list.filter { it.user_id == i.id }
@@ -89,7 +95,7 @@ class GameStreamsDataSource private constructor(
     }
 
     private suspend fun gqlQueryLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Stream> {
-        val get1 = apolloClient(XtraModule(), gqlClientId).query(GameStreamsQuery(
+        val get1 = apolloClient.newBuilder().apply { gqlClientId?.let { addHttpHeader("Client-ID", it) } }.build().query(GameStreamsQuery(
             id = Optional.Present(if (!gameId.isNullOrBlank()) gameId else null),
             name = Optional.Present(if (gameId.isNullOrBlank() && !gameName.isNullOrBlank()) gameName else null),
             sort = Optional.Present(gqlQuerySort),
@@ -159,10 +165,11 @@ class GameStreamsDataSource private constructor(
         private val gqlSort: Sort?,
         private val tags: List<String>?,
         private val gqlApi: GraphQLRepository,
+        private val apolloClient: ApolloClient,
         private val apiPref: ArrayList<Pair<Long?, String?>?>,
         private val coroutineScope: CoroutineScope) : BaseDataSourceFactory<Int, Stream, GameStreamsDataSource>() {
 
         override fun create(): DataSource<Int, Stream> =
-            GameStreamsDataSource(gameId, gameName, helixClientId, helixToken, helixApi, gqlClientId, gqlQuerySort, gqlSort, tags, gqlApi, apiPref, coroutineScope).also(sourceLiveData::postValue)
+            GameStreamsDataSource(gameId, gameName, helixClientId, helixToken, helixApi, gqlClientId, gqlQuerySort, gqlSort, tags, gqlApi, apolloClient, apiPref, coroutineScope).also(sourceLiveData::postValue)
     }
 }

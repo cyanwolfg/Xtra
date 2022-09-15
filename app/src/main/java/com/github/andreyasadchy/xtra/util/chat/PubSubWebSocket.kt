@@ -17,24 +17,20 @@ class PubSubWebSocket(
     private val collectPoints: Boolean,
     private val notifyPoints: Boolean,
     private val showRaids: Boolean,
+    private val client: OkHttpClient,
     private val coroutineScope: CoroutineScope,
     private val listener: OnMessageReceivedListener) {
-    private var client: OkHttpClient? = null
     private var socket: WebSocket? = null
     private var isActive = false
     private var pongReceived = false
 
     fun connect() {
-        if (client == null) {
-            client = OkHttpClient()
-        }
-        socket = client?.newWebSocket(Request.Builder().url("wss://pubsub-edge.twitch.tv").build(), PubSubListener())
+        socket = client.newWebSocket(Request.Builder().url("wss://pubsub-edge.twitch.tv").build(), PubSubListener())
     }
 
     fun disconnect() {
         isActive = false
         socket?.close(1000, null)
-        client?.dispatcher?.cancelAll()
     }
 
     private fun reconnect() {

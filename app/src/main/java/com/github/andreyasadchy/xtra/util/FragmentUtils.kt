@@ -5,7 +5,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentManager
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.helix.game.Game
-import com.github.andreyasadchy.xtra.repository.TwitchService
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.ui.common.RadioButtonDialogFragment
 import com.github.andreyasadchy.xtra.ui.player.PlayerGamesDialog
 import com.github.andreyasadchy.xtra.ui.player.PlayerSettingsDialog
@@ -63,7 +63,7 @@ object FragmentUtils {
         PlayerGamesDialog.newInstance(gamesList).show(fragmentManager, "closeOnPip")
     }
 
-    fun showPlayerViewerListDialog(fragmentManager: FragmentManager, login: String, repository: TwitchService) {
+    fun showPlayerViewerListDialog(fragmentManager: FragmentManager, login: String, repository: ApiRepository) {
         PlayerViewerListDialog.newInstance(login, repository).show(fragmentManager, "closeOnPip")
     }
 }

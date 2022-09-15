@@ -2,11 +2,10 @@ package com.github.andreyasadchy.xtra.repository.datasource
 
 import androidx.core.util.Pair
 import androidx.paging.DataSource
+import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.github.andreyasadchy.xtra.UserClipsQuery
 import com.github.andreyasadchy.xtra.api.HelixApi
-import com.github.andreyasadchy.xtra.di.XtraModule
-import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory.apolloClient
 import com.github.andreyasadchy.xtra.model.helix.clip.Clip
 import com.github.andreyasadchy.xtra.repository.GraphQLRepository
 import com.github.andreyasadchy.xtra.type.ClipsPeriod
@@ -25,6 +24,7 @@ class ChannelClipsDataSource(
     private val gqlQueryPeriod: ClipsPeriod?,
     private val gqlPeriod: String?,
     private val gqlApi: GraphQLRepository,
+    private val apolloClient: ApolloClient,
     private val apiPref: ArrayList<Pair<Long?, String?>?>,
     coroutineScope: CoroutineScope) : BasePositionalDataSource<Clip>(coroutineScope) {
     private var api: String? = null
@@ -65,7 +65,15 @@ class ChannelClipsDataSource(
     }
 
     private suspend fun helixLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Clip> {
-        val get = helixApi.getClips(clientId = helixClientId, token = helixToken, channelId = channelId, started_at = started_at, ended_at = ended_at, limit = 20 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, cursor = offset)
+        val get = helixApi.getClips(
+            clientId = helixClientId,
+            token = helixToken,
+            channelId = channelId,
+            started_at = started_at,
+            ended_at = ended_at,
+            limit = 20 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/,
+            cursor = offset
+        )
         val list = mutableListOf<Clip>()
         get.data?.let { list.addAll(it) }
         val gameIds = mutableListOf<String>()
@@ -74,7 +82,11 @@ class ChannelClipsDataSource(
             i.game_id?.let { gameIds.add(it) }
         }
         if (gameIds.isNotEmpty()) {
-            val games = helixApi.getGames(helixClientId, helixToken, gameIds).data
+            val games = helixApi.getGames(
+                clientId = helixClientId,
+                token = helixToken,
+                ids = gameIds
+            ).data
             if (games != null) {
                 for (i in games) {
                     val items = list.filter { it.game_id == i.id }
@@ -89,7 +101,7 @@ class ChannelClipsDataSource(
     }
 
     private suspend fun gqlQueryLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Clip> {
-        val get1 = apolloClient(XtraModule(), gqlClientId).query(UserClipsQuery(
+        val get1 = apolloClient.newBuilder().apply { gqlClientId?.let { addHttpHeader("Client-ID", it) } }.build().query(UserClipsQuery(
             id = Optional.Present(channelId),
             sort = Optional.Present(gqlQueryPeriod),
             first = Optional.Present(20 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/),
@@ -154,10 +166,11 @@ class ChannelClipsDataSource(
         private val gqlQueryPeriod: ClipsPeriod?,
         private val gqlPeriod: String?,
         private val gqlApi: GraphQLRepository,
+        private val apolloClient: ApolloClient,
         private val apiPref: ArrayList<Pair<Long?, String?>?>,
         private val coroutineScope: CoroutineScope) : BaseDataSourceFactory<Int, Clip, ChannelClipsDataSource>() {
 
         override fun create(): DataSource<Int, Clip> =
-                ChannelClipsDataSource(channelId, channelLogin, helixClientId, helixToken, started_at, ended_at, helixApi, gqlClientId, gqlQueryPeriod, gqlPeriod, gqlApi, apiPref, coroutineScope).also(sourceLiveData::postValue)
+                ChannelClipsDataSource(channelId, channelLogin, helixClientId, helixToken, started_at, ended_at, helixApi, gqlClientId, gqlQueryPeriod, gqlPeriod, gqlApi, apolloClient, apiPref, coroutineScope).also(sourceLiveData::postValue)
     }
 }

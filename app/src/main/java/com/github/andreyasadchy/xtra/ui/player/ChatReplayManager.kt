@@ -1,7 +1,7 @@
 package com.github.andreyasadchy.xtra.ui.player
 
 import com.github.andreyasadchy.xtra.model.chat.VideoChatMessage
-import com.github.andreyasadchy.xtra.repository.TwitchService
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.util.chat.OnChatMessageReceivedListener
 import kotlinx.coroutines.*
 import java.util.*
@@ -10,14 +10,14 @@ import kotlin.concurrent.fixedRateTimer
 import kotlin.math.max
 
 class ChatReplayManager @Inject constructor(
-        private val clientId: String?,
-        private val repository: TwitchService,
-        private val videoId: String,
-        private val startTime: Double,
-        private val currentPosition: () -> Double,
-        private val messageListener: OnChatMessageReceivedListener,
-        private val clearMessages: () -> Unit,
-        private val coroutineScope: CoroutineScope) {
+    private val clientId: String?,
+    private val repository: ApiRepository,
+    private val videoId: String,
+    private val startTime: Double,
+    private val currentPosition: () -> Double,
+    private val messageListener: OnChatMessageReceivedListener,
+    private val clearMessages: () -> Unit,
+    private val coroutineScope: CoroutineScope) {
 
     private val timer: Timer
     private var cursor: String? = null

@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 class ClipsViewModel @Inject constructor(
         context: Application,
-        private val repository: TwitchService,
+        private val repository: ApiRepository,
         private val localFollowsGame: LocalFollowGameRepository,
         private val sortChannelRepository: SortChannelRepository,
         private val sortGameRepository: SortGameRepository) : PagedListViewModel<Clip>(), FollowViewModel {

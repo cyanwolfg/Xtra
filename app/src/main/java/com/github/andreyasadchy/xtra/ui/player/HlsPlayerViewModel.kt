@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.User
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.repository.LocalFollowChannelRepository
-import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.ui.common.follow.FollowLiveData
 import com.github.andreyasadchy.xtra.ui.common.follow.FollowViewModel
 import com.github.andreyasadchy.xtra.ui.player.PlayerMode.AUDIO_ONLY
@@ -27,7 +27,7 @@ private const val VIDEO_RENDERER = 0
 
 abstract class HlsPlayerViewModel(
     context: Application,
-    val repository: TwitchService,
+    val repository: ApiRepository,
     private val localFollowsChannel: LocalFollowChannelRepository) : PlayerViewModel(context), FollowViewModel {
 
     protected val helper = PlayerHelper()

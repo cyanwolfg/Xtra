@@ -2,10 +2,9 @@ package com.github.andreyasadchy.xtra.repository.datasource
 
 import androidx.core.util.Pair
 import androidx.paging.DataSource
+import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.github.andreyasadchy.xtra.FollowedGamesQuery
-import com.github.andreyasadchy.xtra.di.XtraModule
-import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientWithTokenFactory.apolloClientWithToken
 import com.github.andreyasadchy.xtra.model.helix.game.Game
 import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.repository.GraphQLRepository
@@ -19,6 +18,7 @@ class FollowedGamesDataSource(
     private val gqlClientId: String?,
     private val gqlToken: String?,
     private val gqlApi: GraphQLRepository,
+    private val apolloClient: ApolloClient,
     private val apiPref: ArrayList<Pair<Long?, String?>?>,
     coroutineScope: CoroutineScope) : BasePositionalDataSource<Game>(coroutineScope) {
 
@@ -65,7 +65,10 @@ class FollowedGamesDataSource(
     }
 
     private suspend fun gqlQueryLoad(): List<Game> {
-        val get1 = apolloClientWithToken(XtraModule(), gqlClientId, gqlToken).query(FollowedGamesQuery(
+        val get1 = apolloClient.newBuilder().apply {
+            gqlClientId?.let { addHttpHeader("Client-ID", it) }
+            gqlToken?.let { addHttpHeader("Authorization", it) }
+        }.build().query(FollowedGamesQuery(
             id = Optional.Present(userId),
             first = Optional.Present(100)
         )).execute().data?.user?.followedGames
@@ -110,10 +113,11 @@ class FollowedGamesDataSource(
         private val gqlClientId: String?,
         private val gqlToken: String?,
         private val gqlApi: GraphQLRepository,
+        private val apolloClient: ApolloClient,
         private val apiPref: ArrayList<Pair<Long?, String?>?>,
         private val coroutineScope: CoroutineScope) : BaseDataSourceFactory<Int, Game, FollowedGamesDataSource>() {
 
         override fun create(): DataSource<Int, Game> =
-                FollowedGamesDataSource(localFollowsGame, userId, gqlClientId, gqlToken, gqlApi, apiPref, coroutineScope).also(sourceLiveData::postValue)
+                FollowedGamesDataSource(localFollowsGame, userId, gqlClientId, gqlToken, gqlApi, apolloClient, apiPref, coroutineScope).also(sourceLiveData::postValue)
     }
 }

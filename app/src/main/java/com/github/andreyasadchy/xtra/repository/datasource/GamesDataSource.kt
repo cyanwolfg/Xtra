@@ -2,11 +2,10 @@ package com.github.andreyasadchy.xtra.repository.datasource
 
 import androidx.core.util.Pair
 import androidx.paging.DataSource
+import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.github.andreyasadchy.xtra.TopGamesQuery
 import com.github.andreyasadchy.xtra.api.HelixApi
-import com.github.andreyasadchy.xtra.di.XtraModule
-import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory
 import com.github.andreyasadchy.xtra.model.helix.game.Game
 import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.repository.GraphQLRepository
@@ -20,6 +19,7 @@ class GamesDataSource(
     private val gqlClientId: String?,
     private val tags: List<String>?,
     private val gqlApi: GraphQLRepository,
+    private val apolloClient: ApolloClient,
     private val apiPref: ArrayList<Pair<Long?, String?>?>,
     coroutineScope: CoroutineScope) : BasePositionalDataSource<Game>(coroutineScope) {
     private var api: String? = null
@@ -60,7 +60,12 @@ class GamesDataSource(
     }
 
     private suspend fun helixLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Game> {
-        val get = helixApi.getTopGames(helixClientId, helixToken, 30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, offset)
+        val get = helixApi.getTopGames(
+            clientId = helixClientId,
+            token = helixToken,
+            limit = 30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/,
+            offset = offset
+        )
         return if (get.data != null) {
             offset = get.pagination?.cursor
             get.data
@@ -68,7 +73,7 @@ class GamesDataSource(
     }
 
     private suspend fun gqlQueryLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Game> {
-        val get1 = XtraModule_ApolloClientFactory.apolloClient(XtraModule(), gqlClientId).query(TopGamesQuery(
+        val get1 = apolloClient.newBuilder().apply { gqlClientId?.let { addHttpHeader("Client-ID", it) } }.build().query(TopGamesQuery(
             tags = Optional.Present(tags),
             first = Optional.Present(30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/),
             after = Optional.Present(offset)
@@ -126,9 +131,10 @@ class GamesDataSource(
         private val gqlClientId: String?,
         private val tags: List<String>?,
         private val gqlApi: GraphQLRepository,
+        private val apolloClient: ApolloClient,
         private val apiPref: ArrayList<Pair<Long?, String?>?>,
         private val coroutineScope: CoroutineScope) : BaseDataSourceFactory<Int, Game, GamesDataSource>() {
 
-        override fun create(): DataSource<Int, Game> = GamesDataSource(helixClientId, helixToken, helixApi, gqlClientId, tags, gqlApi, apiPref, coroutineScope).also(sourceLiveData::postValue)
+        override fun create(): DataSource<Int, Game> = GamesDataSource(helixClientId, helixToken, helixApi, gqlClientId, tags, gqlApi, apolloClient, apiPref, coroutineScope).also(sourceLiveData::postValue)
     }
 }

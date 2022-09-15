@@ -6,14 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.github.andreyasadchy.xtra.model.helix.channel.ChannelSearch
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.repository.Listing
-import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.ui.common.PagedListViewModel
 import com.github.andreyasadchy.xtra.util.nullIfEmpty
 import javax.inject.Inject
 
 class ChannelSearchViewModel @Inject constructor(
-        private val repository: TwitchService) : PagedListViewModel<ChannelSearch>() {
+        private val repository: ApiRepository) : PagedListViewModel<ChannelSearch>() {
 
     private val query = MutableLiveData<String>()
     private var helixClientId = MutableLiveData<String>()

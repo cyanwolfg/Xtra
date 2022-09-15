@@ -2,11 +2,10 @@ package com.github.andreyasadchy.xtra.repository.datasource
 
 import androidx.core.util.Pair
 import androidx.paging.DataSource
+import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.github.andreyasadchy.xtra.GameVideosQuery
 import com.github.andreyasadchy.xtra.api.HelixApi
-import com.github.andreyasadchy.xtra.di.XtraModule
-import com.github.andreyasadchy.xtra.di.XtraModule_ApolloClientFactory.apolloClient
 import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.model.helix.video.Period
 import com.github.andreyasadchy.xtra.model.helix.video.Sort
@@ -34,6 +33,7 @@ class GameVideosDataSource private constructor(
     private val gqlType: String?,
     private val gqlSort: String?,
     private val gqlApi: GraphQLRepository,
+    private val apolloClient: ApolloClient,
     private val apiPref: ArrayList<Pair<Long?, String?>?>,
     coroutineScope: CoroutineScope) : BasePositionalDataSource<Video>(coroutineScope) {
     private var api: String? = null
@@ -74,7 +74,17 @@ class GameVideosDataSource private constructor(
     }
 
     private suspend fun helixLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
-        val get = helixApi.getTopVideos(helixClientId, helixToken, gameId, helixPeriod, helixBroadcastTypes, helixLanguage, helixSort, 30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/, offset)
+        val get = helixApi.getVideos(
+            clientId = helixClientId,
+            token = helixToken,
+            gameId = gameId,
+            period = helixPeriod,
+            broadcastType = helixBroadcastTypes,
+            language = helixLanguage,
+            sort = helixSort,
+            limit = 30 /*initialParams?.requestedLoadSize ?: rangeParams?.loadSize*/,
+            offset = offset
+        )
         val list = mutableListOf<Video>()
         get.data?.let { list.addAll(it) }
         val ids = mutableListOf<String>()
@@ -82,7 +92,7 @@ class GameVideosDataSource private constructor(
             i.user_id?.let { ids.add(it) }
         }
         if (ids.isNotEmpty()) {
-            val users = helixApi.getUsers(helixClientId, helixToken, ids).data
+            val users = helixApi.getUsers(clientId = helixClientId, token = helixToken, ids = ids).data
             if (users != null) {
                 for (i in users) {
                     val items = list.filter { it.user_id == i.id }
@@ -97,7 +107,7 @@ class GameVideosDataSource private constructor(
     }
 
     private suspend fun gqlQueryLoad(initialParams: LoadInitialParams? = null, rangeParams: LoadRangeParams? = null): List<Video> {
-        val get1 = apolloClient(XtraModule(), gqlClientId).query(GameVideosQuery(
+        val get1 = apolloClient.newBuilder().apply { gqlClientId?.let { addHttpHeader("Client-ID", it) } }.build().query(GameVideosQuery(
             id = Optional.Present(if (!gameId.isNullOrBlank()) gameId else null),
             name = Optional.Present(if (gameId.isNullOrBlank() && !gameName.isNullOrBlank()) gameName else null),
             languages = Optional.Present(gqlQueryLanguages),
@@ -175,10 +185,11 @@ class GameVideosDataSource private constructor(
         private val gqlType: String?,
         private val gqlSort: String?,
         private val gqlApi: GraphQLRepository,
+        private val apolloClient: ApolloClient,
         private val apiPref: ArrayList<Pair<Long?, String?>?>,
         private val coroutineScope: CoroutineScope) : BaseDataSourceFactory<Int, Video, GameVideosDataSource>() {
 
         override fun create(): DataSource<Int, Video> =
-                GameVideosDataSource(gameId, gameName, helixClientId, helixToken, helixPeriod, helixBroadcastTypes, helixLanguage, helixSort, helixApi, gqlClientId, gqlQueryLanguages, gqlQueryType, gqlQuerySort, gqlType, gqlSort, gqlApi, apiPref, coroutineScope).also(sourceLiveData::postValue)
+                GameVideosDataSource(gameId, gameName, helixClientId, helixToken, helixPeriod, helixBroadcastTypes, helixLanguage, helixSort, helixApi, gqlClientId, gqlQueryLanguages, gqlQueryType, gqlQuerySort, gqlType, gqlSort, gqlApi, apolloClient, apiPref, coroutineScope).also(sourceLiveData::postValue)
     }
 }

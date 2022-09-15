@@ -14,10 +14,10 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.github.andreyasadchy.xtra.model.helix.video.Video
 import com.github.andreyasadchy.xtra.model.offline.Bookmark
+import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.repository.BookmarksRepository
 import com.github.andreyasadchy.xtra.repository.Listing
 import com.github.andreyasadchy.xtra.repository.PlayerRepository
-import com.github.andreyasadchy.xtra.repository.TwitchService
 import com.github.andreyasadchy.xtra.ui.videos.BaseVideosViewModel
 import com.github.andreyasadchy.xtra.util.DownloadUtils
 import com.github.andreyasadchy.xtra.util.nullIfEmpty
@@ -27,10 +27,10 @@ import java.io.File
 import javax.inject.Inject
 
 class VideoSearchViewModel @Inject constructor(
-        context: Application,
-        private val repository: TwitchService,
-        playerRepository: PlayerRepository,
-        private val bookmarksRepository: BookmarksRepository) : BaseVideosViewModel(playerRepository, bookmarksRepository) {
+    context: Application,
+    private val repository: ApiRepository,
+    playerRepository: PlayerRepository,
+    private val bookmarksRepository: BookmarksRepository) : BaseVideosViewModel(playerRepository, bookmarksRepository) {
 
     private val query = MutableLiveData<String>()
     private var gqlClientId = MutableLiveData<String>()

@@ -36,7 +36,7 @@ import javax.inject.Inject
 
 class FollowedVideosViewModel @Inject constructor(
         context: Application,
-        private val repository: TwitchService,
+        private val repository: ApiRepository,
         playerRepository: PlayerRepository,
         private val bookmarksRepository: BookmarksRepository,
         private val sortChannelRepository: SortChannelRepository) : BaseVideosViewModel(playerRepository, bookmarksRepository) {

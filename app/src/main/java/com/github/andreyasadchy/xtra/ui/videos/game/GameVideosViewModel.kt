@@ -38,7 +38,7 @@ import javax.inject.Inject
 
 class GameVideosViewModel @Inject constructor(
         context: Application,
-        private val repository: TwitchService,
+        private val repository: ApiRepository,
         playerRepository: PlayerRepository,
         private val localFollowsGame: LocalFollowGameRepository,
         private val bookmarksRepository: BookmarksRepository,

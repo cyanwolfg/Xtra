@@ -64,11 +64,11 @@ class OfflineRepository @Inject constructor(
         }
     }
 
-    fun resumeDownloads(context: Context, wifiOnly: Boolean) {
+    fun resumeDownloads(context: Context) {
         GlobalScope.launch {
             requestsDao.getAll().forEach {
                 if (DownloadService.activeRequests.add(it.offlineVideoId)) {
-                    DownloadUtils.download(context, it, wifiOnly)
+                    DownloadUtils.download(context, it)
                 }
             }
         }
