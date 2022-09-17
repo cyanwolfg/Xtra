@@ -20,7 +20,8 @@ class FollowedGamesAdapter(
             override fun areItemsTheSame(oldItem: Game, newItem: Game): Boolean =
                     oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: Game, newItem: Game): Boolean = true
+            override fun areContentsTheSame(oldItem: Game, newItem: Game): Boolean =
+                    oldItem.viewersCount == newItem.viewersCount
         }) {
 
     override val layoutId: Int = R.layout.fragment_followed_games_list_item

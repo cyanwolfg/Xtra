@@ -18,11 +18,13 @@ import com.github.andreyasadchy.xtra.ui.view.chat.ChatView
 import com.github.andreyasadchy.xtra.ui.view.chat.MessageClickedDialog
 import com.github.andreyasadchy.xtra.util.*
 import com.github.andreyasadchy.xtra.util.chat.Raid
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.view_chat.view.*
 
+@AndroidEntryPoint
 class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDialog.OnButtonClickListener {
 
-    private val viewModel by viewModels<ChatViewModel> { viewModelFactory }
+    private val viewModel: ChatViewModel by viewModels()
     private lateinit var chatView: ChatView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

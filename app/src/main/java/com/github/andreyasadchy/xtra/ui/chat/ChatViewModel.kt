@@ -19,6 +19,7 @@ import com.github.andreyasadchy.xtra.util.SingleLiveEvent
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.chat.*
 import com.github.andreyasadchy.xtra.util.nullIfEmpty
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import java.util.*
@@ -43,6 +44,7 @@ import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 import kotlin.collections.sortedBy
 
+@HiltViewModel
 class ChatViewModel @Inject constructor(
     private val repository: ApiRepository,
     private val playerRepository: PlayerRepository,

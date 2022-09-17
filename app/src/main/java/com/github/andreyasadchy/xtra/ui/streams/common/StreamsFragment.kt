@@ -14,12 +14,14 @@ import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.prefs
 import com.github.andreyasadchy.xtra.util.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_media.*
 import kotlinx.android.synthetic.main.fragment_streams.*
 
+@AndroidEntryPoint
 class StreamsFragment : BaseStreamsFragment<StreamsViewModel>(), StreamsSortDialog.OnFilter, FollowFragment {
 
-    override val viewModel by viewModels<StreamsViewModel> { viewModelFactory }
+    override val viewModel: StreamsViewModel by viewModels()
 
     override val adapter: BasePagedListAdapter<Stream> by lazy {
         if (!compactStreams) {

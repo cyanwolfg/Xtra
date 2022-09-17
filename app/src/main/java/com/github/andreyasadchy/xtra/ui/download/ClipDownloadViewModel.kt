@@ -10,11 +10,13 @@ import com.github.andreyasadchy.xtra.model.offline.Request
 import com.github.andreyasadchy.xtra.repository.GraphQLRepository
 import com.github.andreyasadchy.xtra.repository.OfflineRepository
 import com.github.andreyasadchy.xtra.util.DownloadUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
+@HiltViewModel
 class ClipDownloadViewModel @Inject constructor(
     application: Application,
     private val graphQLRepository: GraphQLRepository,
@@ -30,7 +32,7 @@ class ClipDownloadViewModel @Inject constructor(
     fun init(clientId: String?, clip: Clip, qualities: Map<String, String>?) {
         if (!this::clip.isInitialized) {
             this.clip = clip
-            if (qualities == null) {
+            if (qualities.isNullOrEmpty()) {
                 viewModelScope.launch {
                     try {
                         val urls = graphQLRepository.loadClipUrls(clientId, clip.id)

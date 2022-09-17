@@ -3,14 +3,10 @@ package com.github.andreyasadchy.xtra.ui.common
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.github.andreyasadchy.xtra.di.Injectable
 import com.github.andreyasadchy.xtra.ui.main.MainViewModel
 import com.github.andreyasadchy.xtra.util.isNetworkAvailable
-import javax.inject.Inject
 
-abstract class BaseNetworkFragment : Fragment(), Injectable {
+abstract class BaseNetworkFragment : Fragment() {
 
     private companion object {
         const val LAST_KEY = "last"
@@ -18,9 +14,7 @@ abstract class BaseNetworkFragment : Fragment(), Injectable {
         const val CREATED_KEY = "created"
     }
 
-    @Inject
-    protected lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val mainViewModel by activityViewModels<MainViewModel> { viewModelFactory }
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     protected var enableNetworkCheck = true
     private var lastState = false
@@ -49,7 +43,7 @@ abstract class BaseNetworkFragment : Fragment(), Injectable {
             if (!isInitialized && (created || (lastState && userVisibleHint))) {
                 init()
             }
-            mainViewModel.isNetworkAvailable.observe(viewLifecycleOwner, Observer {
+            mainViewModel.isNetworkAvailable.observe(viewLifecycleOwner) {
                 val isOnline = it.peekContent()
                 if (isOnline) {
                     if (!lastState) {
@@ -70,7 +64,7 @@ abstract class BaseNetworkFragment : Fragment(), Injectable {
                     }
                 }
                 lastState = isOnline
-            })
+            }
         } else {
             initialize()
         }

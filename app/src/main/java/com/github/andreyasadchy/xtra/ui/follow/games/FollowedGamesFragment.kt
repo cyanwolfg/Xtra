@@ -15,11 +15,13 @@ import com.github.andreyasadchy.xtra.ui.main.MainActivity
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.prefs
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.common_recycler_view_layout.*
 
+@AndroidEntryPoint
 class FollowedGamesFragment : PagedListFragment<Game, FollowedGamesViewModel, BasePagedListAdapter<Game>>(), Scrollable {
 
-    override val viewModel by viewModels<FollowedGamesViewModel> { viewModelFactory }
+    override val viewModel: FollowedGamesViewModel by viewModels()
     override val adapter: BasePagedListAdapter<Game> by lazy {
         val activity = requireActivity() as MainActivity
         FollowedGamesAdapter(this, activity, activity)

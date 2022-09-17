@@ -9,23 +9,16 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.*
 import com.github.andreyasadchy.xtra.R
-import com.github.andreyasadchy.xtra.di.Injectable
 import com.github.andreyasadchy.xtra.ui.Utils
 import com.github.andreyasadchy.xtra.ui.settings.api.DragListFragment
 import com.github.andreyasadchy.xtra.util.*
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_settings.*
-import javax.inject.Inject
 
-class SettingsActivity : AppCompatActivity(), HasAndroidInjector, Injectable {
-
-    @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
+@AndroidEntryPoint
+class SettingsActivity : AppCompatActivity() {
 
     var recreate = false
 
@@ -50,14 +43,10 @@ class SettingsActivity : AppCompatActivity(), HasAndroidInjector, Injectable {
         outState.putBoolean(SettingsFragment.KEY_CHANGED, recreate)
     }
 
-    override fun androidInjector(): AndroidInjector<Any> {
-        return dispatchingAndroidInjector
-    }
+    @AndroidEntryPoint
+    class SettingsFragment : PreferenceFragmentCompat() {
 
-    class SettingsFragment : PreferenceFragmentCompat(), Injectable {
-
-        @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-        private val viewModel by viewModels<SettingsViewModel> { viewModelFactory }
+        private val viewModel: SettingsViewModel by viewModels()
 
         private var changed = false
 

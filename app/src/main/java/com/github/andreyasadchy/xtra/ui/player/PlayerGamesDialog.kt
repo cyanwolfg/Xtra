@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.core.widget.NestedScrollView
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.helix.game.Game
 import com.github.andreyasadchy.xtra.ui.common.ExpandingBottomSheetDialogFragment
-import com.github.andreyasadchy.xtra.ui.player.games.PlayerGamesFragment
+import com.github.andreyasadchy.xtra.ui.view.GridRecyclerView
 import com.github.andreyasadchy.xtra.util.C
 
 
@@ -38,21 +38,19 @@ class PlayerGamesDialog : ExpandingBottomSheetDialogFragment() {
         listener = parentFragment as PlayerSeekListener
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val context = requireContext()
         val layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        val frameLayout = FrameLayout(context).apply {
-            id = R.id.fragmentContainer
+        val recycleView = GridRecyclerView(context).apply {
+            id = R.id.recyclerView
             setLayoutParams(layoutParams)
+            adapter = PlayerGamesDialogAdapter(this@PlayerGamesDialog).also {
+                it.submitList(arguments?.getParcelableArrayList<Game>(C.GAMES_LIST)?.toList())
+            }
         }
-        return frameLayout
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        childFragmentManager.beginTransaction().replace(R.id.fragmentContainer, PlayerGamesFragment().also { it.arguments = requireArguments() }).commit()
+        return NestedScrollView(context).apply { addView(recycleView) }
     }
 }

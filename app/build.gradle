@@ -3,6 +3,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-android-extensions")
     id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
     id("com.apollographql.apollo3").version("$apollo_ver")
 }
 
@@ -15,17 +16,16 @@ android {
             storePassword '123456'
         }
     }
-    compileSdkVersion 32
+    compileSdk 32
     defaultConfig {
         applicationId "com.github.andreyasadchy.xtra"
-        minSdkVersion 21
-        targetSdkVersion 32
+        minSdk 21
+        targetSdk 32
         versionCode 121
         versionName "2.6.1"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
     }
@@ -43,26 +43,9 @@ android {
             signingConfig signingConfigs.debug
         }
     }
-
-    // Delete large build log files from ~/.gradle/daemon/X.X/daemon-XXX.out.log
-    // Source: https://discuss.gradle.org/t/gradle-daemon-produces-a-lot-of-logs/9905
-    def gradle = project.getGradle()
-    new File("${gradle.getGradleUserHomeDir().getAbsolutePath()}/daemon/${gradle.getGradleVersion()}").listFiles().each {
-        if (it.getName().endsWith('.out.log')) {
-            // println("Deleting gradle log file: $it") // Optional debug output
-            it.delete()
-        }
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
-    }
-    sourceSets {
-        main {
-            java.srcDirs += 'src/main/kotlin'
-        }
-        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -71,6 +54,16 @@ android {
         disable 'ContentDescription'
     }
     namespace 'com.github.andreyasadchy.xtra'
+}
+
+// Delete large build log files from ~/.gradle/daemon/X.X/daemon-XXX.out.log
+// Source: https://discuss.gradle.org/t/gradle-daemon-produces-a-lot-of-logs/9905
+def gradle = project.getGradle()
+new File("${gradle.getGradleUserHomeDir().getAbsolutePath()}/daemon/${gradle.getGradleVersion()}").listFiles().each {
+    if (it.getName().endsWith('.out.log')) {
+        // println("Deleting gradle log file: $it") // Optional debug output
+        it.delete()
+    }
 }
 
 dependencies {
@@ -96,20 +89,20 @@ dependencies {
     kapt "androidx.room:room-compiler:$room"
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.fragment:fragment-ktx:1.5.2'
+    implementation 'androidx.webkit:webkit:1.5.0'
 
     //Misc
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.9'
-    implementation 'com.ncapdevi:frag-nav:3.3.0'
-    implementation 'com.iheartradio.m3u8:open-m3u8:0.2.6'
-
     implementation "com.squareup.retrofit2:retrofit:$retrofit"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit"
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.9'
+
+    implementation "com.apollographql.apollo3:apollo-runtime:$apollo_ver"
+
+    implementation 'com.ncapdevi:frag-nav:3.3.0'
 
     implementation "androidx.tonyodev.fetch2:xfetch2:$fetch"
     implementation "androidx.tonyodev.fetch2okhttp:xfetch2okhttp:$fetch"
-
-    implementation 'androidx.webkit:webkit:1.5.0'
-    implementation "com.apollographql.apollo3:apollo-runtime:$apollo_ver"
+    implementation 'com.iheartradio.m3u8:open-m3u8:0.2.6'
 
     implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoplayer"
@@ -120,16 +113,13 @@ dependencies {
     implementation "io.coil-kt:coil:$coil"
     implementation "io.coil-kt:coil-gif:$coil"
 
-    implementation 'com.github.zjupure:webpdecoder:2.1.4.13.2'
     implementation "com.github.bumptech.glide:glide:$glide"
     kapt "com.github.bumptech.glide:compiler:$glide"
     implementation "com.github.bumptech.glide:okhttp3-integration:$glide@aar"
+    implementation 'com.github.zjupure:webpdecoder:2.1.4.13.2'
 
-    implementation "com.google.dagger:dagger:$dagger"
-    kapt "com.google.dagger:dagger-compiler:$dagger"
-    implementation "com.google.dagger:dagger-android:$dagger"
-    implementation "com.google.dagger:dagger-android-support:$dagger"
-    kapt "com.google.dagger:dagger-android-processor:$dagger"
+    implementation "com.google.dagger:hilt-android:$dagger"
+    kapt "com.google.dagger:hilt-compiler:$dagger"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'

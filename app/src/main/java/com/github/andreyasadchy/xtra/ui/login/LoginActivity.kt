@@ -16,7 +16,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import com.github.andreyasadchy.xtra.R
-import com.github.andreyasadchy.xtra.di.Injectable
 import com.github.andreyasadchy.xtra.model.LoggedIn
 import com.github.andreyasadchy.xtra.model.NotLoggedIn
 import com.github.andreyasadchy.xtra.model.User
@@ -29,7 +28,7 @@ import java.io.IOException
 import java.util.regex.Pattern
 import javax.inject.Inject
 
-class LoginActivity : AppCompatActivity(), Injectable {
+class LoginActivity : AppCompatActivity() {
 
     @Inject
     lateinit var repository: AuthRepository
@@ -113,15 +112,15 @@ class LoginActivity : AppCompatActivity(), Injectable {
                     .show()
         }
         clearCookies()
-        val theme = if (prefs().getBoolean(C.UI_THEME_FOLLOW_SYSTEM, false)) {
-            when (resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)) {
-                Configuration.UI_MODE_NIGHT_YES -> prefs().getString(C.UI_THEME_DARK_ON, "0")!!
-                else -> prefs().getString(C.UI_THEME_DARK_OFF, "2")!!
-            }
-        } else {
-            prefs().getString(C.THEME, "0")!!
-        }
         with(webView) {
+            val theme = if (prefs().getBoolean(C.UI_THEME_FOLLOW_SYSTEM, false)) {
+                when (resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                    Configuration.UI_MODE_NIGHT_YES -> prefs().getString(C.UI_THEME_DARK_ON, "0")!!
+                    else -> prefs().getString(C.UI_THEME_DARK_OFF, "2")!!
+                }
+            } else {
+                prefs().getString(C.THEME, "0")!!
+            }
             if (theme != "2") {
                 if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
                     WebSettingsCompat.setForceDark(this.settings, WebSettingsCompat.FORCE_DARK_ON)

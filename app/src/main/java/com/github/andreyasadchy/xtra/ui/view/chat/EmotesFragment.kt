@@ -17,8 +17,10 @@ import com.github.andreyasadchy.xtra.ui.chat.ChatFragment
 import com.github.andreyasadchy.xtra.ui.chat.ChatViewModel
 import com.github.andreyasadchy.xtra.ui.view.GridAutofitLayoutManager
 import com.github.andreyasadchy.xtra.util.convertDpToPixels
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class EmotesFragment : Fragment() {
 
     private lateinit var listener: (Emote) -> Unit

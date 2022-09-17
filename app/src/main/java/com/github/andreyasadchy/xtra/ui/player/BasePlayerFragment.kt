@@ -21,9 +21,7 @@ import androidx.core.view.*
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.github.andreyasadchy.xtra.R
-import com.github.andreyasadchy.xtra.di.Injectable
 import com.github.andreyasadchy.xtra.model.User
-import com.github.andreyasadchy.xtra.ui.common.AlertDialogFragment
 import com.github.andreyasadchy.xtra.ui.common.BaseNetworkFragment
 import com.github.andreyasadchy.xtra.ui.common.follow.FollowFragment
 import com.github.andreyasadchy.xtra.ui.common.follow.FollowViewModel
@@ -42,7 +40,7 @@ import kotlinx.coroutines.launch
 
 
 @Suppress("PLUGIN_WARNING")
-abstract class BasePlayerFragment : BaseNetworkFragment(), Injectable, LifecycleListener, SlidingLayout.Listener, FollowFragment, SleepTimerDialog.OnSleepTimerStartedListener, AlertDialogFragment.OnDialogResultListener {
+abstract class BasePlayerFragment : BaseNetworkFragment(), LifecycleListener, SlidingLayout.Listener, FollowFragment, SleepTimerDialog.OnSleepTimerStartedListener {
 
     lateinit var slidingLayout: SlidingLayout
     private lateinit var playerView: CustomPlayerView
@@ -322,9 +320,7 @@ abstract class BasePlayerFragment : BaseNetworkFragment(), Injectable, Lifecycle
         }
     }
 
-    override fun onClose() {
-
-    }
+    override fun onClose() {}
 
     override fun onSleepTimerChanged(durationMs: Long, hours: Int, minutes: Int, lockScreen: Boolean) {
         val context = requireContext()
@@ -341,14 +337,6 @@ abstract class BasePlayerFragment : BaseNetworkFragment(), Injectable, Lifecycle
             prefs.edit { putBoolean(C.SLEEP_TIMER_LOCK, lockScreen) }
         }
         viewModel.setTimer(durationMs)
-    }
-
-    override fun onDialogResult(requestCode: Int, resultCode: Int) {
-        when (requestCode) {
-            REQUEST_FOLLOW -> {
-                //TODO
-            }
-        }
     }
 
     //    abstract fun play(obj: Parcelable) //TODO instead maybe add livedata in mainactivity and observe it
@@ -521,9 +509,7 @@ abstract class BasePlayerFragment : BaseNetworkFragment(), Injectable, Lifecycle
         if ((requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive) {
             try {
                 (requireContext().getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager).lockNow()
-            } catch (e: SecurityException) {
-
-            }
+            } catch (e: SecurityException) {}
         }
     }
 
@@ -533,9 +519,5 @@ abstract class BasePlayerFragment : BaseNetworkFragment(), Injectable, Lifecycle
 
     fun isPaused(): Boolean {
         return viewModel.isPaused()
-    }
-
-    private companion object {
-        const val REQUEST_FOLLOW = 0
     }
 }

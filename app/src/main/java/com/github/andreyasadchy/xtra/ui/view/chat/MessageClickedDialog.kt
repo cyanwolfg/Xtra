@@ -12,16 +12,15 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.github.andreyasadchy.xtra.R
-import com.github.andreyasadchy.xtra.di.Injectable
 import com.github.andreyasadchy.xtra.model.helix.user.User
 import com.github.andreyasadchy.xtra.ui.common.ExpandingBottomSheetDialogFragment
 import com.github.andreyasadchy.xtra.util.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_chat_message_click.*
-import javax.inject.Inject
 
-class MessageClickedDialog : ExpandingBottomSheetDialogFragment(), Injectable {
+@AndroidEntryPoint
+class MessageClickedDialog : ExpandingBottomSheetDialogFragment() {
 
     interface OnButtonClickListener {
         fun onReplyClicked(userName: String)
@@ -45,8 +44,7 @@ class MessageClickedDialog : ExpandingBottomSheetDialogFragment(), Injectable {
         }
     }
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel by viewModels<MessageClickedViewModel> { viewModelFactory }
+    private val viewModel: MessageClickedViewModel by viewModels()
 
     private lateinit var listener: OnButtonClickListener
 

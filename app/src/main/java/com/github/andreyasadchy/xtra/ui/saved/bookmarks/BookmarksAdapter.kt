@@ -36,13 +36,12 @@ class BookmarksAdapter(
     private val vodIgnoreUser: (String) -> Unit,
     private val deleteVideo: (Bookmark) -> Unit) : BaseListAdapter<Bookmark>(
     object : DiffUtil.ItemCallback<Bookmark>() {
-        override fun areItemsTheSame(oldItem: Bookmark, newItem: Bookmark): Boolean {
-            return oldItem.id == newItem.id
-        }
+        override fun areItemsTheSame(oldItem: Bookmark, newItem: Bookmark): Boolean =
+            oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: Bookmark, newItem: Bookmark): Boolean {
-            return false //bug, oldItem and newItem are sometimes the same
-        }
+        override fun areContentsTheSame(oldItem: Bookmark, newItem: Bookmark): Boolean =
+            oldItem.title == newItem.title &&
+                    oldItem.duration == newItem.duration
     }) {
 
     override val layoutId: Int = R.layout.fragment_videos_list_item

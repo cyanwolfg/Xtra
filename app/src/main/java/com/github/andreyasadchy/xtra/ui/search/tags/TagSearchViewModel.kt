@@ -8,8 +8,10 @@ import com.github.andreyasadchy.xtra.model.helix.tag.Tag
 import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.repository.Listing
 import com.github.andreyasadchy.xtra.ui.common.PagedListViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+@HiltViewModel
 class TagSearchViewModel @Inject constructor(
         private val repository: ApiRepository) : PagedListViewModel<Tag>() {
 

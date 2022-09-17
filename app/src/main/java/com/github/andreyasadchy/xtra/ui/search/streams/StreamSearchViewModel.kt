@@ -10,8 +10,10 @@ import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.repository.Listing
 import com.github.andreyasadchy.xtra.ui.common.PagedListViewModel
 import com.github.andreyasadchy.xtra.util.nullIfEmpty
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+@HiltViewModel
 class StreamSearchViewModel @Inject constructor(
         private val repository: ApiRepository) : PagedListViewModel<Stream>() {
 

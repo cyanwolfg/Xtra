@@ -11,10 +11,12 @@ import com.github.andreyasadchy.xtra.ui.streams.StreamsCompactAdapter
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.prefs
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FollowedStreamsFragment : BaseStreamsFragment<FollowedStreamsViewModel>() {
 
-    override val viewModel by viewModels<FollowedStreamsViewModel> { viewModelFactory }
+    override val viewModel: FollowedStreamsViewModel by viewModels()
 
     override val adapter: BasePagedListAdapter<Stream> by lazy {
         if (!compactStreams) {

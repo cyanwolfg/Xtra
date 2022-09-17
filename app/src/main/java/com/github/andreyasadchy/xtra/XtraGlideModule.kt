@@ -13,26 +13,28 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
-import com.github.andreyasadchy.xtra.di.AppInjector
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors.fromApplication
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import java.io.InputStream
-import javax.inject.Inject
 
 
 @GlideModule
 class XtraGlideModule : AppGlideModule() {
 
-    @Inject
-    lateinit var okHttpClient: OkHttpClient
-
-    init {
-        AppInjector.daggerComponent.inject(this)
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    internal interface GlideModuleEntryPoint {
+        fun okHttpClient(): OkHttpClient
     }
 
     override fun isManifestParsingEnabled(): Boolean = false
 
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
-        registry.replace(GlideUrl::class.java, InputStream::class.java, OkHttpUrlLoader.Factory(okHttpClient))
+        val entryPoint = fromApplication(context.applicationContext, GlideModuleEntryPoint::class.java)
+        registry.replace(GlideUrl::class.java, InputStream::class.java, OkHttpUrlLoader.Factory(entryPoint.okHttpClient()))
         super.registerComponents(context, glide, registry)
     }
 

@@ -1,6 +1,5 @@
 package com.github.andreyasadchy.xtra.ui.download
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -18,17 +17,16 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.VideoDownloadInfo
 import com.github.andreyasadchy.xtra.model.helix.video.Video
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.prefs
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_video_download.*
-import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class VideoDownloadDialog : BaseDownloadDialog() {
 
     companion object {
@@ -44,8 +42,7 @@ class VideoDownloadDialog : BaseDownloadDialog() {
         }
     }
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel by viewModels<VideoDownloadViewModel> { viewModelFactory }
+    private val viewModel: VideoDownloadViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?  =
             inflater.inflate(R.layout.dialog_video_download, container, false)
@@ -74,7 +71,6 @@ class VideoDownloadDialog : BaseDownloadDialog() {
         }
     }
 
-    @SuppressLint("InflateParams")
     private fun init(videoInfo: VideoDownloadInfo) {
         val context = requireContext()
         init(context)

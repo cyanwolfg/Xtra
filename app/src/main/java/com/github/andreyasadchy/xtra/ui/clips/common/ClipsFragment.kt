@@ -17,13 +17,15 @@ import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.prefs
 import com.github.andreyasadchy.xtra.util.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_clips.*
 import kotlinx.android.synthetic.main.fragment_media.*
 import kotlinx.android.synthetic.main.sort_bar.*
 
+@AndroidEntryPoint
 class ClipsFragment : BaseClipsFragment<ClipsViewModel>(), VideosSortDialog.OnFilter, FollowFragment {
 
-    override val viewModel by viewModels<ClipsViewModel> { viewModelFactory }
+    override val viewModel: ClipsViewModel by viewModels()
     override val adapter: BasePagedListAdapter<Clip> by lazy {
         val activity = requireActivity() as MainActivity
         val showDialog: (Clip) -> Unit = {

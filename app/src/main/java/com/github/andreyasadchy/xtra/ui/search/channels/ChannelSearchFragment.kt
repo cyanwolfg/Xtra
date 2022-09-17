@@ -16,11 +16,13 @@ import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.gone
 import com.github.andreyasadchy.xtra.util.prefs
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.common_recycler_view_layout.*
 
+@AndroidEntryPoint
 class ChannelSearchFragment : PagedListFragment<ChannelSearch, ChannelSearchViewModel, BasePagedListAdapter<ChannelSearch>>(), Searchable {
 
-    override val viewModel by viewModels<ChannelSearchViewModel> { viewModelFactory }
+    override val viewModel: ChannelSearchViewModel by viewModels()
     override val adapter: BasePagedListAdapter<ChannelSearch> by lazy { ChannelSearchAdapter(this, requireActivity() as MainActivity) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

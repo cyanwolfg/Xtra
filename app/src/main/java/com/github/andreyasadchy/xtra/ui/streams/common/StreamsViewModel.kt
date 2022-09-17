@@ -23,11 +23,13 @@ import com.github.andreyasadchy.xtra.ui.common.follow.FollowLiveData
 import com.github.andreyasadchy.xtra.ui.common.follow.FollowViewModel
 import com.github.andreyasadchy.xtra.util.DownloadUtils
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
+@HiltViewModel
 class StreamsViewModel @Inject constructor(
     private val repository: ApiRepository,
     private val localFollowsGame: LocalFollowGameRepository) : PagedListViewModel<Stream>(), FollowViewModel {

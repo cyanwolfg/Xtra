@@ -15,11 +15,9 @@ import androidx.core.content.edit
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.XtraApp
-import com.github.andreyasadchy.xtra.di.Injectable
 import com.github.andreyasadchy.xtra.model.NotLoggedIn
 import com.github.andreyasadchy.xtra.model.User
 import com.github.andreyasadchy.xtra.model.helix.clip.Clip
@@ -53,12 +51,9 @@ import com.github.andreyasadchy.xtra.ui.view.SlidingLayout
 import com.github.andreyasadchy.xtra.util.*
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.ncapdevi.fragnav.FragNavController
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_media_pager.view.*
-import javax.inject.Inject
 
 
 const val INDEX_GAMES = FragNavController.TAB1
@@ -66,7 +61,8 @@ const val INDEX_TOP = FragNavController.TAB2
 const val INDEX_FOLLOWED = FragNavController.TAB3
 const val INDEX_DOWNLOADS = FragNavController.TAB4
 
-class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, GamesFragment.OnTagGames, BaseStreamsFragment.OnStreamSelectedListener, OnChannelSelectedListener, BaseClipsFragment.OnClipSelectedListener, BaseVideosFragment.OnVideoSelectedListener, HasAndroidInjector, DownloadsFragment.OnVideoSelectedListener, Injectable, SlidingLayout.Listener {
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, GamesFragment.OnTagGames, BaseStreamsFragment.OnStreamSelectedListener, OnChannelSelectedListener, BaseClipsFragment.OnClipSelectedListener, BaseVideosFragment.OnVideoSelectedListener, DownloadsFragment.OnVideoSelectedListener, SlidingLayout.Listener {
 
     companion object {
         const val KEY_CODE = "code"
@@ -77,12 +73,7 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, 
         const val INTENT_OPEN_PLAYER = 2
     }
 
-    @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel by viewModels<MainViewModel> { viewModelFactory }
+    private val viewModel: MainViewModel by viewModels()
     var playerFragment: BasePlayerFragment? = null
         private set
     private val fragNavController = FragNavController(supportFragmentManager, R.id.fragmentContainer)
@@ -484,10 +475,6 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, 
 
     fun openTagSearch(getGameTags: Boolean = false, gameId: String? = null, gameName: String? = null) {
         fragNavController.pushFragment(BaseTagSearchFragment.newInstance(getGameTags, gameId, gameName))
-    }
-
-    override fun androidInjector(): AndroidInjector<Any> {
-        return dispatchingAndroidInjector
     }
 
     private fun initNavigation() {

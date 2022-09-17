@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.github.andreyasadchy.xtra.model.helix.user.User
 import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.ui.common.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class MessageClickedViewModel @Inject constructor(private val repository: ApiRepository) : BaseViewModel() {
 
     private val user = MutableLiveData<User?>()

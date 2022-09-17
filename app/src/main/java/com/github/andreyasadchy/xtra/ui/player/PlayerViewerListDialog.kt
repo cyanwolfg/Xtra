@@ -15,12 +15,14 @@ import com.github.andreyasadchy.xtra.model.helix.channel.ChannelViewerList
 import com.github.andreyasadchy.xtra.repository.ApiRepository
 import com.github.andreyasadchy.xtra.ui.common.ExpandingBottomSheetDialogFragment
 import com.github.andreyasadchy.xtra.util.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_viewer_list.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class PlayerViewerListDialog @Inject constructor(val repository: ApiRepository) : ExpandingBottomSheetDialogFragment() {
+@AndroidEntryPoint
+class PlayerViewerListDialog @Inject constructor(private val repository: ApiRepository) : ExpandingBottomSheetDialogFragment() {
 
     companion object {
 

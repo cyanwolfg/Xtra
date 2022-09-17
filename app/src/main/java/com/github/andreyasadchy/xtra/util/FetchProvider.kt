@@ -10,7 +10,7 @@ class FetchProvider @Inject constructor(
 
     private var instance: Fetch? = null
 
-    fun get(videoId: Int? = null, wifiOnly: Boolean = false): Fetch {
+    fun get(videoId: Int? = null): Fetch {
         if (instance == null || instance!!.isClosed) {
             instance = Fetch.getInstance(
                 configurationBuilder.apply {

@@ -20,9 +20,11 @@ import com.github.andreyasadchy.xtra.ui.login.LoginActivity
 import com.github.andreyasadchy.xtra.ui.main.MainActivity
 import com.github.andreyasadchy.xtra.ui.settings.SettingsActivity
 import com.github.andreyasadchy.xtra.util.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.common_recycler_view_layout.*
 import kotlinx.android.synthetic.main.fragment_games.*
 
+@AndroidEntryPoint
 class GamesFragment : PagedListFragment<Game, GamesViewModel, BasePagedListAdapter<Game>>(), Scrollable {
 
     interface OnGameSelectedListener {
@@ -41,7 +43,7 @@ class GamesFragment : PagedListFragment<Game, GamesViewModel, BasePagedListAdapt
         }
     }
 
-    override val viewModel by viewModels<GamesViewModel> { viewModelFactory }
+    override val viewModel: GamesViewModel by viewModels()
     override val adapter: BasePagedListAdapter<Game> by lazy { GamesAdapter(this, requireActivity() as MainActivity, requireActivity() as MainActivity) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

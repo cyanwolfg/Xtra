@@ -1,6 +1,5 @@
 package com.github.andreyasadchy.xtra.ui.player
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
@@ -8,7 +7,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
@@ -34,12 +32,11 @@ class SleepTimerDialog : DialogFragment() {
         listener = parentFragment as OnSleepTimerStartedListener
     }
 
-    @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val context = requireContext()
         val builder = AlertDialog.Builder(context)
                 .setTitle(getString(R.string.sleep_timer))
-                .setView(LayoutInflater.from(context).inflate(R.layout.dialog_sleep_timer, null).also { dialogView = it })
+                .setView(layoutInflater.inflate(R.layout.dialog_sleep_timer, null).also { dialogView = it })
         val positiveListener: (dialog: DialogInterface, which: Int) -> Unit = { _, _ ->
             listener.onSleepTimerChanged(dialogView.hours.value * 3600_000L + dialogView.minutes.value * 60_000L,  dialogView.hours.value, dialogView.minutes.value, dialogView.lockCheckbox.isChecked)
             dismiss()

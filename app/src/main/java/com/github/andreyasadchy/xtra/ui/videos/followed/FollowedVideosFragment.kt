@@ -15,12 +15,14 @@ import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.prefs
 import com.github.andreyasadchy.xtra.util.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_videos.*
 import kotlinx.android.synthetic.main.sort_bar.*
 
+@AndroidEntryPoint
 class FollowedVideosFragment : BaseVideosFragment<FollowedVideosViewModel>(), VideosSortDialog.OnFilter {
 
-    override val viewModel by viewModels<FollowedVideosViewModel> { viewModelFactory }
+    override val viewModel: FollowedVideosViewModel by viewModels()
 
     override val adapter: BaseVideosAdapter by lazy {
         val activity = requireActivity() as MainActivity
@@ -31,8 +33,6 @@ class FollowedVideosFragment : BaseVideosFragment<FollowedVideosViewModel>(), Vi
             lastSelectedItem = it
             viewModel.saveBookmark(
                 context = requireContext(),
-                helixClientId = requireContext().prefs().getString(C.HELIX_CLIENT_ID, ""),
-                helixToken = User.get(requireContext()).helixToken,
                 video = it)
         })
     }

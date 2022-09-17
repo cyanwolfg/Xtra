@@ -29,7 +29,7 @@ import com.iheartradio.m3u8.data.TrackInfo
 import com.tonyodev.fetch2.AbstractFetchListener
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Fetch
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -43,6 +43,7 @@ import kotlin.math.min
 import com.tonyodev.fetch2.Request as FetchRequest
 
 
+@AndroidEntryPoint
 class DownloadService : IntentService(TAG) {
 
     companion object {
@@ -90,7 +91,6 @@ class DownloadService : IntentService(TAG) {
 
     @Deprecated("Deprecated in Java")
     override fun onCreate() {
-        AndroidInjection.inject(this)
         super.onCreate()
         pauseAction = createAction(R.string.pause, ACTION_PAUSE, 1)
         resumeAction = createAction(R.string.resume, ACTION_RESUME, 2)

@@ -202,6 +202,18 @@
         <item name="android:layout_height">50dp</item>
     </style>
 
+    <style name="FollowButton">
+        <item name="android:layout_width">35dp</item>
+        <item name="android:layout_height">35dp</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:src">@drawable/baseline_favorite_border_black_24</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:tint">?attr/textColor</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:layout_marginEnd">7dp</item>
+        <item name="android:layout_marginRight">7dp</item>
+    </style>
+
     <style name="Search">
         <item name="android:layout_width">35dp</item>
         <item name="android:layout_height">35dp</item>

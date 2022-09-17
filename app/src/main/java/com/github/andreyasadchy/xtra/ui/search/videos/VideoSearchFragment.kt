@@ -10,19 +10,22 @@ import com.github.andreyasadchy.xtra.ui.main.MainActivity
 import com.github.andreyasadchy.xtra.ui.search.Searchable
 import com.github.andreyasadchy.xtra.ui.videos.BaseVideosAdapter
 import com.github.andreyasadchy.xtra.ui.videos.BaseVideosFragment
+import com.github.andreyasadchy.xtra.ui.videos.VideosAdapter
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.gone
 import com.github.andreyasadchy.xtra.util.prefs
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.common_recycler_view_layout.*
 
+@AndroidEntryPoint
 class VideoSearchFragment : BaseVideosFragment<VideoSearchViewModel>(), Searchable {
 
-    override val viewModel by viewModels<VideoSearchViewModel> { viewModelFactory }
+    override val viewModel: VideoSearchViewModel by viewModels()
 
     override val adapter: BaseVideosAdapter by lazy {
         val activity = requireActivity() as MainActivity
-        VideoSearchAdapter(this, activity, activity, activity, {
+        VideosAdapter(this, activity, activity, activity, {
             lastSelectedItem = it
             showDownloadDialog()
         }, {

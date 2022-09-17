@@ -18,13 +18,15 @@ import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.prefs
 import com.github.andreyasadchy.xtra.util.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.common_recycler_view_layout.*
 import kotlinx.android.synthetic.main.fragment_followed_channels.*
 import kotlinx.android.synthetic.main.sort_bar.*
 
+@AndroidEntryPoint
 class FollowedChannelsFragment : PagedListFragment<Follow, FollowedChannelsViewModel, BasePagedListAdapter<Follow>>(), FollowedChannelsSortDialog.OnFilter, Scrollable {
 
-    override val viewModel by viewModels<FollowedChannelsViewModel> { viewModelFactory }
+    override val viewModel: FollowedChannelsViewModel by viewModels()
     override val adapter: BasePagedListAdapter<Follow> by lazy {
         val activity = requireActivity() as MainActivity
         FollowedChannelsAdapter(this, activity)

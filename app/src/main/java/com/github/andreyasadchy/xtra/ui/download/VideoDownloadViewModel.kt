@@ -17,6 +17,7 @@ import com.iheartradio.m3u8.Encoding
 import com.iheartradio.m3u8.Format
 import com.iheartradio.m3u8.ParsingMode
 import com.iheartradio.m3u8.PlaylistParser
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -24,6 +25,7 @@ import java.io.File
 import java.net.URL
 import javax.inject.Inject
 
+@HiltViewModel
 class VideoDownloadViewModel @Inject constructor(
     application: Application,
     private val playerRepository: PlayerRepository,

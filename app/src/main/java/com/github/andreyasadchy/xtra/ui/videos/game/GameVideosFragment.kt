@@ -16,13 +16,15 @@ import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.prefs
 import com.github.andreyasadchy.xtra.util.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_media.*
 import kotlinx.android.synthetic.main.fragment_videos.*
 import kotlinx.android.synthetic.main.sort_bar.*
 
+@AndroidEntryPoint
 class GameVideosFragment : BaseVideosFragment<GameVideosViewModel>(), VideosSortDialog.OnFilter, FollowFragment {
 
-    override val viewModel by viewModels<GameVideosViewModel> { viewModelFactory }
+    override val viewModel: GameVideosViewModel by viewModels()
 
     override val adapter: BaseVideosAdapter by lazy {
         val activity = requireActivity() as MainActivity

@@ -26,10 +26,12 @@ import com.github.andreyasadchy.xtra.ui.main.MainActivity
 import com.github.andreyasadchy.xtra.ui.settings.SettingsActivity
 import com.github.andreyasadchy.xtra.util.*
 import com.google.android.material.appbar.AppBarLayout
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_channel.*
 import kotlinx.android.synthetic.main.fragment_media_pager.*
 
 
+@AndroidEntryPoint
 class ChannelPagerFragment : MediaPagerFragment(), FollowFragment, Scrollable {
 
     companion object {
@@ -45,7 +47,7 @@ class ChannelPagerFragment : MediaPagerFragment(), FollowFragment, Scrollable {
         }
     }
 
-    private val viewModel by viewModels<ChannelPagerViewModel> { viewModelFactory }
+    private val viewModel: ChannelPagerViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_channel, container, false)

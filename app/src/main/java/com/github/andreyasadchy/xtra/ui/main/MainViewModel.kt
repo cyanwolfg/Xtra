@@ -21,10 +21,12 @@ import com.github.andreyasadchy.xtra.util.Event
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.nullIfEmpty
 import com.github.andreyasadchy.xtra.util.toast
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import javax.inject.Inject
 
+@HiltViewModel
 class MainViewModel @Inject constructor(
     application: Application,
     private val repository: ApiRepository,

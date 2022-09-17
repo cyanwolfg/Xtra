@@ -18,11 +18,13 @@ import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.gone
 import com.github.andreyasadchy.xtra.util.prefs
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.common_recycler_view_layout.*
 
+@AndroidEntryPoint
 class StreamSearchFragment : PagedListFragment<Stream, StreamSearchViewModel, BasePagedListAdapter<Stream>>(), Searchable {
 
-    override val viewModel by viewModels<StreamSearchViewModel> { viewModelFactory }
+    override val viewModel: StreamSearchViewModel by viewModels()
 
     override val adapter: BasePagedListAdapter<Stream> by lazy {
         val activity = requireActivity() as MainActivity

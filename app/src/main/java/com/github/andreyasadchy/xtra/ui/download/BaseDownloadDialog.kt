@@ -8,16 +8,11 @@ import android.widget.RadioButton
 import androidx.core.content.edit
 import androidx.fragment.app.DialogFragment
 import com.github.andreyasadchy.xtra.R
-import com.github.andreyasadchy.xtra.di.Injectable
-import com.github.andreyasadchy.xtra.util.C
-import com.github.andreyasadchy.xtra.util.DownloadUtils
-import com.github.andreyasadchy.xtra.util.gone
-import com.github.andreyasadchy.xtra.util.prefs
-import com.github.andreyasadchy.xtra.util.visible
+import com.github.andreyasadchy.xtra.util.*
 import kotlinx.android.synthetic.main.storage_selection.view.*
 import kotlin.math.max
 
-abstract class BaseDownloadDialog : DialogFragment(), Injectable {
+abstract class BaseDownloadDialog : DialogFragment() {
 
     protected lateinit var prefs: SharedPreferences
     private lateinit var storageSelectionContainer: LinearLayout

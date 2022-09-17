@@ -18,16 +18,18 @@ import com.github.andreyasadchy.xtra.ui.player.BasePlayerFragment
 import com.github.andreyasadchy.xtra.ui.player.PlayerSettingsDialog
 import com.github.andreyasadchy.xtra.ui.player.PlayerVolumeDialog
 import com.github.andreyasadchy.xtra.util.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_player_clip.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
+@AndroidEntryPoint
 class ClipPlayerFragment : BasePlayerFragment(), HasDownloadDialog, ChatReplayPlayerFragment, RadioButtonDialogFragment.OnSortOptionChanged, PlayerSettingsDialog.PlayerSettingsListener, PlayerVolumeDialog.PlayerVolumeListener {
 //    override fun play(obj: Parcelable) {
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 //    }
 
-    override val viewModel by viewModels<ClipPlayerViewModel> { viewModelFactory }
+    override val viewModel: ClipPlayerViewModel by viewModels()
     private lateinit var clip: Clip
     override val channelId: String?
         get() = clip.broadcaster_id
@@ -38,7 +40,7 @@ class ClipPlayerFragment : BasePlayerFragment(), HasDownloadDialog, ChatReplayPl
     override val channelImage: String?
         get() = clip.channelLogo
 
-            override val layoutId: Int
+    override val layoutId: Int
         get() = R.layout.fragment_player_clip
     override val chatContainerId: Int
         get() = R.id.clipChatContainer

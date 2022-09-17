@@ -30,11 +30,13 @@ import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.source.hls.HlsManifest
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
+@HiltViewModel
 class VideoPlayerViewModel @Inject constructor(
     context: Application,
     private val playerRepository: PlayerRepository,
@@ -232,7 +234,7 @@ class VideoPlayerViewModel @Inject constructor(
                 } catch (e: Exception) {
 
                 }
-                val userTypes = video.channelId?.let { repository.loadUserTypes(mutableListOf(it), helixClientId, helixToken, gqlClientId) }?.first()
+                val userTypes = video.channelId?.let { repository.loadUserTypes(listOf(it), helixClientId, helixToken, gqlClientId) }?.first()
                 val downloadedThumbnail = File(context.filesDir.toString() + File.separator + "thumbnails" + File.separator + "${video.id}.png").absolutePath
                 val downloadedLogo = File(context.filesDir.toString() + File.separator + "profile_pics" + File.separator + "${video.channelId}.png").absolutePath
                 bookmarksRepository.saveBookmark(

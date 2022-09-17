@@ -17,13 +17,6 @@ import java.util.*
 
 val Context.isNetworkAvailable get() = getConnectivityManager(this).activeNetworkInfo?.isConnectedOrConnecting == true
 
-val Context.networkStatus: NetworkStatus
-    get() {
-        return getConnectivityManager(this).activeNetworkInfo?.let {
-            if (it.type == ConnectivityManager.TYPE_WIFI) NetworkStatus.STATUS_WIFI else NetworkStatus.STATUS_MOBILE
-        } ?: NetworkStatus.STATUS_NOT_CONNECTED
-    }
-
 private fun getConnectivityManager(context: Context) = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
 fun Context.prefs(): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)

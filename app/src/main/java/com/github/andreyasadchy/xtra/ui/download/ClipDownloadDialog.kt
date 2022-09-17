@@ -11,14 +11,14 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.helix.clip.Clip
 import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.prefs
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_clip_download.*
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class ClipDownloadDialog : BaseDownloadDialog() {
 
     companion object {
@@ -32,8 +32,7 @@ class ClipDownloadDialog : BaseDownloadDialog() {
         }
     }
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel by viewModels<ClipDownloadViewModel> { viewModelFactory }
+    private val viewModel: ClipDownloadViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?  =
             inflater.inflate(R.layout.dialog_clip_download, container, false)

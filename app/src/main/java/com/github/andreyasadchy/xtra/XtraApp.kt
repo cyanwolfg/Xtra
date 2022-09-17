@@ -13,19 +13,16 @@ import coil.util.DebugLogger
 import com.github.andreyasadchy.xtra.di.AppInjector
 import com.github.andreyasadchy.xtra.util.AppLifecycleObserver
 import com.github.andreyasadchy.xtra.util.LifecycleListener
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import javax.inject.Inject
+import dagger.hilt.android.HiltAndroidApp
 
 
-class XtraApp : Application(), HasAndroidInjector, ImageLoaderFactory {
+@HiltAndroidApp
+class XtraApp : Application(), ImageLoaderFactory {
 
     companion object {
         lateinit var INSTANCE: Application
     }
 
-    @Inject lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
     private val appLifecycleObserver = AppLifecycleObserver()
 
     override fun onCreate() {
@@ -38,10 +35,6 @@ class XtraApp : Application(), HasAndroidInjector, ImageLoaderFactory {
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-    }
-
-    override fun androidInjector(): AndroidInjector<Any> {
-        return dispatchingAndroidInjector
     }
 
     fun addLifecycleListener(listener: LifecycleListener) {

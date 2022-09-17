@@ -16,16 +16,18 @@ import com.github.andreyasadchy.xtra.repository.BookmarksRepository
 import com.github.andreyasadchy.xtra.repository.PlayerRepository
 import com.github.andreyasadchy.xtra.repository.VodBookmarkIgnoredUsersRepository
 import com.github.andreyasadchy.xtra.util.DownloadUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
+@HiltViewModel
 class BookmarksViewModel @Inject internal constructor(
     application: Application,
     private val repository: ApiRepository,
     private val bookmarksRepository: BookmarksRepository,
-    private val playerRepository: PlayerRepository,
+    playerRepository: PlayerRepository,
     private val vodBookmarkIgnoredUsersRepository: VodBookmarkIgnoredUsersRepository) : AndroidViewModel(application) {
 
     val bookmarks = bookmarksRepository.loadBookmarksLiveData()
@@ -50,7 +52,7 @@ class BookmarksViewModel @Inject internal constructor(
         viewModelScope.launch {
             try {
                 val allIds = bookmarksRepository.loadBookmarks().mapNotNull { bookmark -> bookmark.userId.takeUnless { it == null || ignoredUsers.value?.contains(VodBookmarkIgnoredUser(it)) == true } }
-                if (!allIds.isNullOrEmpty()) {
+                if (allIds.isNotEmpty()) {
                     for (ids in allIds.chunked(100)) {
                         val users = repository.loadUserTypes(ids, helixClientId, helixToken, gqlClientId)
                         if (users != null) {
@@ -125,7 +127,7 @@ class BookmarksViewModel @Inject internal constructor(
         viewModelScope.launch {
             try {
                 val allIds = bookmarksRepository.loadBookmarks().map { it.id }
-                if (!allIds.isNullOrEmpty()) {
+                if (allIds.isNotEmpty()) {
                     for (ids in allIds.chunked(100)) {
                         val videos = repository.loadVideos(ids, helixClientId, helixToken)
                         if (videos != null) {

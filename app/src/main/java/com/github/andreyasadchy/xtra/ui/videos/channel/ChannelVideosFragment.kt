@@ -14,12 +14,14 @@ import com.github.andreyasadchy.xtra.util.C
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import com.github.andreyasadchy.xtra.util.prefs
 import com.github.andreyasadchy.xtra.util.visible
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_videos.*
 import kotlinx.android.synthetic.main.sort_bar.*
 
+@AndroidEntryPoint
 class ChannelVideosFragment : BaseVideosFragment<ChannelVideosViewModel>(), VideosSortDialog.OnFilter {
 
-    override val viewModel by viewModels<ChannelVideosViewModel> { viewModelFactory }
+    override val viewModel: ChannelVideosViewModel by viewModels()
     override val adapter: BaseVideosAdapter by lazy {
         ChannelVideosAdapter(this, requireActivity() as MainActivity, requireActivity() as MainActivity, {
             lastSelectedItem = it

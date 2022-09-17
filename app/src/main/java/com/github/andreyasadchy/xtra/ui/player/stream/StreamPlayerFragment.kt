@@ -16,11 +16,13 @@ import com.github.andreyasadchy.xtra.ui.player.PlayerMode
 import com.github.andreyasadchy.xtra.ui.player.PlayerSettingsDialog
 import com.github.andreyasadchy.xtra.ui.player.PlayerVolumeDialog
 import com.github.andreyasadchy.xtra.util.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.player_stream.*
 
+@AndroidEntryPoint
 class StreamPlayerFragment : BasePlayerFragment(), RadioButtonDialogFragment.OnSortOptionChanged, PlayerSettingsDialog.PlayerSettingsListener, PlayerVolumeDialog.PlayerVolumeListener {
 
-    override val viewModel by viewModels<StreamPlayerViewModel> { viewModelFactory }
+    override val viewModel: StreamPlayerViewModel by viewModels()
     lateinit var chatFragment: ChatFragment
     private lateinit var stream: Stream
     override val channelId: String?
