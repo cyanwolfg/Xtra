@@ -22,6 +22,7 @@ object C {
     const val FIRST_LAUNCH = "first_launch"
     const val FIRST_LAUNCH1 = "first_launch1"
     const val FIRST_LAUNCH2 = "first_launch2"
+    const val FIRST_LAUNCH3 = "first_launch3"
     const val LANDSCAPE_CHAT_WIDTH = "landscape_chat_width"
     const val KEY_CHAT_OPENED = "key_chat_opened"
     const val KEY_CHAT_BAR_VISIBLE = "key_chat_bar_visible"

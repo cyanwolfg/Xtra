@@ -9,9 +9,12 @@ import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import androidx.core.os.LocaleListCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -123,6 +126,15 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, 
                 putBoolean(C.FIRST_LAUNCH1, false)
             }
         }
+        if (prefs.getBoolean(C.FIRST_LAUNCH3, true)) {
+            prefs.edit {
+                val langPref = prefs.getString(C.UI_LANGUAGE, "")
+                if (!langPref.isNullOrBlank() && langPref != "auto") {
+                    AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(langPref))
+                }
+                putBoolean(C.FIRST_LAUNCH3, false)
+            }
+        }
         applyTheme()
         setContentView(R.layout.activity_main)
 
@@ -151,6 +163,40 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, 
                     shortToast(if (online) R.string.connection_restored else R.string.no_connection)
                 } else {
                     flag = true
+                }
+            }
+        }
+        onBackPressedDispatcher.addCallback(this) {
+            if (!viewModel.isPlayerMaximized) {
+                if (fragNavController.isRootFragment) {
+                    if ((User.get(this@MainActivity) !is NotLoggedIn && ((prefs.getString(C.UI_STARTONFOLLOWED, "1")?.toInt() ?: 1) < 2)) || (User.get(this@MainActivity) is NotLoggedIn && ((prefs.getString(C.UI_STARTONFOLLOWED, "1")?.toInt() ?: 1) == 0))) {
+                        if (fragNavController.currentStackIndex != INDEX_FOLLOWED) {
+                            navBar.selectedItemId = R.id.fragment_follow
+                        } else {
+                            finish()
+                        }
+                    } else {
+                        if (fragNavController.currentStackIndex != INDEX_TOP) {
+                            navBar.selectedItemId = R.id.fragment_top
+                        } else {
+                            finish()
+                        }
+                    }
+                } else {
+                    val currentFrag = fragNavController.currentFrag
+                    if (currentFrag !is ChannelPagerFragment || (currentFrag.currentFragment.let { it !is ChatFragment || !it.hideEmotesMenu() })) {
+                        fragNavController.popFragment()
+                    }
+                }
+            } else {
+                playerFragment?.let {
+                    if (it is StreamPlayerFragment) {
+                        if (!it.hideEmotesMenu()) {
+                            it.minimize()
+                        }
+                    } else {
+                        it.minimize()
+                    }
                 }
             }
         }
@@ -198,41 +244,6 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, 
                 }
             }
             2 -> restartActivity() //Was logged in
-        }
-    }
-
-    override fun onBackPressed() {
-        if (!viewModel.isPlayerMaximized) {
-            if (fragNavController.isRootFragment) {
-                if ((User.get(this) !is NotLoggedIn && ((prefs.getString(C.UI_STARTONFOLLOWED, "1")?.toInt() ?: 1) < 2)) || (User.get(this) is NotLoggedIn && ((prefs.getString(C.UI_STARTONFOLLOWED, "1")?.toInt() ?: 1) == 0))) {
-                    if (fragNavController.currentStackIndex != INDEX_FOLLOWED) {
-                        navBar.selectedItemId = R.id.fragment_follow
-                    } else {
-                        super.onBackPressed()
-                    }
-                } else {
-                    if (fragNavController.currentStackIndex != INDEX_TOP) {
-                        navBar.selectedItemId = R.id.fragment_top
-                    } else {
-                        super.onBackPressed()
-                    }
-                }
-            } else {
-                val currentFrag = fragNavController.currentFrag
-                if (currentFrag !is ChannelPagerFragment || (currentFrag.currentFragment.let { it !is ChatFragment || !it.hideEmotesMenu() })) {
-                    fragNavController.popFragment()
-                }
-            }
-        } else {
-            playerFragment?.let {
-                if (it is StreamPlayerFragment) {
-                    if (!it.hideEmotesMenu()) {
-                        it.minimize()
-                    }
-                } else {
-                    it.minimize()
-                }
-            }
         }
     }
 

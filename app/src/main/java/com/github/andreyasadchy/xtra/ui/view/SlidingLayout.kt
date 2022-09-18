@@ -58,13 +58,13 @@ class SlidingLayout : LinearLayout {
     private var listeners = arrayListOf<Listener>()
 
     private val animatorListener = object : Animator.AnimatorListener {
-        override fun onAnimationRepeat(animation: Animator?) {}
-        override fun onAnimationCancel(animation: Animator?) {}
-        override fun onAnimationStart(animation: Animator?) {
+        override fun onAnimationRepeat(animation: Animator) {}
+        override fun onAnimationCancel(animation: Animator) {}
+        override fun onAnimationStart(animation: Animator) {
             isAnimating = true
         }
 
-        override fun onAnimationEnd(animation: Animator?) {
+        override fun onAnimationEnd(animation: Animator) {
             isAnimating = false
             shouldUpdateDragLayout = false
             dragViewTop = 0

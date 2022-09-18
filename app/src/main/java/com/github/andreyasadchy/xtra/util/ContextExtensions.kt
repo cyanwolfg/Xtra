@@ -13,7 +13,6 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.github.andreyasadchy.xtra.R
-import java.util.*
 
 val Context.isNetworkAvailable get() = getConnectivityManager(this).activeNetworkInfo?.isConnectedOrConnecting == true
 
@@ -29,18 +28,6 @@ val Context.displayDensity
     get() = this.resources.displayMetrics.density
 
 fun Activity.applyTheme(): String {
-    val lang = prefs().getString(C.UI_LANGUAGE, "auto") ?: "auto"
-    if (lang != "auto") {
-        val config = resources.configuration
-        val locale = Locale(lang)
-        Locale.setDefault(locale)
-        config.setLocale(locale)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            createConfigurationContext(config)
-        }
-        resources.updateConfiguration(config, resources.displayMetrics)
-        application.resources.updateConfiguration(config, resources.displayMetrics)
-    }
     val theme = if (prefs().getBoolean(C.UI_THEME_FOLLOW_SYSTEM, false)) {
         when (resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)) {
             Configuration.UI_MODE_NIGHT_YES -> prefs().getString(C.UI_THEME_DARK_ON, "0")!!

@@ -16,13 +16,14 @@ android {
             storePassword '123456'
         }
     }
-    compileSdk 32
+    compileSdk 33
     defaultConfig {
         applicationId "com.github.andreyasadchy.xtra"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 121
-        versionName "2.6.1"
+        versionName "2.6.2"
+        resConfigs "ar", "de", "en", "es", "fr", "in", "ja", "pt-rBR", "ru", "tr"
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -70,8 +71,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     //UI
-    implementation 'com.google.android.material:material:1.7.0-beta01'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.8.0-alpha01'
+    implementation 'androidx.appcompat:appcompat:1.6.0-rc01'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
@@ -87,7 +88,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$room"
     implementation "androidx.room:room-ktx:$room"
     kapt "androidx.room:room-compiler:$room"
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.fragment:fragment-ktx:1.5.2'
     implementation 'androidx.webkit:webkit:1.5.0'
 

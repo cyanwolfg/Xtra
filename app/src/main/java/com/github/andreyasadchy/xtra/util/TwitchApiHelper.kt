@@ -2,6 +2,7 @@ package com.github.andreyasadchy.xtra.util
 
 import android.content.Context
 import android.text.format.DateUtils
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.util.Pair
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.XtraApp
@@ -329,7 +330,7 @@ object TwitchApiHelper {
     }
 
     fun getNoticeString(context: Context, msgId: String?, message: String?): String? {
-        val lang = Locale.getDefault().language
+        val lang = AppCompatDelegate.getApplicationLocales().toLanguageTags().substringBefore("-")
         return if (lang == "ar" || lang == "de" || lang == "es" || lang == "fr" || lang == "in" || lang == "ja" || lang == "pt" || lang == "ru" || lang == "tr") {
             when (msgId) {
                 "already_banned" -> context.getString(R.string.irc_notice_already_banned,
