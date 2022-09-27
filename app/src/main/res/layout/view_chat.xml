@@ -41,7 +41,7 @@
             android:background="?attr/primaryColor"
             android:orientation="horizontal"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/viewPager"
+            app:layout_constraintBottom_toTopOf="@id/emoteMenu"
             tools:visibility="visible">
 
             <MultiAutoCompleteTextView
@@ -86,20 +86,27 @@
                 tools:visibility="visible" />
         </LinearLayout>
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/viewPager"
+        <LinearLayout
+            android:id="@+id/emoteMenu"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:tabGravity="fill"
                 app:tabMaxWidth="0dp"
                 app:tabMode="fixed" />
-        </androidx.viewpager.widget.ViewPager>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
+        </LinearLayout>
 
     </LinearLayout>
 

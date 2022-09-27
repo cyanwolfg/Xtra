@@ -4,35 +4,38 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.ui.common.BaseNetworkFragment
 import com.github.andreyasadchy.xtra.ui.common.Scrollable
+import com.github.andreyasadchy.xtra.util.reduceDragSensitivity
 import kotlinx.android.synthetic.main.fragment_media_pager.*
 
 abstract class MediaPagerFragment : BaseNetworkFragment(), ItemAwarePagerFragment, Scrollable {
 
-    private lateinit var adapter: ItemAwareFragmentPagerAdapter
+    protected lateinit var adapter: FragmentStateAdapter
+    private var firstLaunch = true
 
-    override val currentFragment: Fragment?
-        get() = adapter.currentFragment
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        firstLaunch = savedInstanceState == null
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_media_pager, container, false)
     }
 
-    protected fun setAdapter(adapter: ItemAwareFragmentPagerAdapter, currentItem: Int? = null) {
+    protected fun setAdapter(adapter: FragmentStateAdapter, defaultItem: Int? = null) {
         this.adapter = adapter
         viewPager.adapter = adapter
-        if (currentItem != null) {
-            viewPager.currentItem = currentItem
+        if (firstLaunch && defaultItem != null) {
+            viewPager.setCurrentItem(defaultItem, false)
         }
-        viewPager.offscreenPageLimit = adapter.count
+        viewPager.offscreenPageLimit = adapter.itemCount
+        viewPager.reduceDragSensitivity()
     }
 
     override fun scrollToTop() {
-        if (currentFragment is Scrollable) {
-            (currentFragment as Scrollable).scrollToTop()
-        }
+        (currentFragment as? Scrollable)?.scrollToTop()
     }
 }

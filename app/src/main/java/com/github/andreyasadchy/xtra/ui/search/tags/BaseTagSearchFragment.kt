@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.ui.Utils
 import com.github.andreyasadchy.xtra.ui.common.pagers.MediaPagerFragment
@@ -37,20 +39,21 @@ class BaseTagSearchFragment : MediaPagerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val activity = requireActivity() as MainActivity
-        val adapter = BaseTagSearchPagerAdapter(childFragmentManager).apply {
-            setOnItemChangedListener {
-                if (it.isResumed) {
-                    (it as Searchable).search(search.query.toString())
-                }
+        setAdapter(BaseTagSearchPagerAdapter(this))
+        pagerLayout.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                (currentFragment as? Searchable)?.search(search.query.toString())
             }
-        }
-        setAdapter(adapter)
+        })
         toolbar.apply {
             navigationIcon = Utils.getNavigationIcon(activity)
             setNavigationOnClickListener { activity.popFragment() }
         }
-        fragmentContainer.viewPager.tabLayout.gone()
+        pagerLayout.tabLayout.gone()
     }
+
+    override val currentFragment: Fragment?
+        get() = childFragmentManager.findFragmentByTag("f${pagerLayout.viewPager.currentItem}")
 
     override fun initialize() {
         search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -76,7 +79,5 @@ class BaseTagSearchFragment : MediaPagerFragment() {
         })
     }
 
-    override fun onNetworkRestored() {
-
-    }
+    override fun onNetworkRestored() {}
 }

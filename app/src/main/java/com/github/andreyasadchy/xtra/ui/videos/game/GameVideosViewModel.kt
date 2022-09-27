@@ -128,21 +128,25 @@ class GameVideosViewModel @Inject constructor(
         viewModelScope.launch {
             val sortValues = filter.value?.gameId?.let { sortGameRepository.getById(it) }
             if (saveSort) {
-                (sortValues?.apply {
-                    this.saveSort = saveSort
+                sortValues?.apply {
+                    this.saveSort = true
                     videoSort = sort.value
                     if (!filter.value?.helixToken.isNullOrBlank()) videoPeriod = period.value
                     videoType = type.value
                     videoLanguageIndex = languageIndex
                 } ?: filter.value?.gameId?.let { SortGame(
                     id = it,
-                    saveSort = saveSort,
+                    saveSort = true,
                     videoSort = sort.value,
                     videoPeriod = if (filter.value?.helixToken.isNullOrBlank()) null else period.value,
                     videoType = type.value,
                     videoLanguageIndex = languageIndex)
-                })?.let { sortGameRepository.save(it) }
-            }
+                }
+            } else {
+                sortValues?.apply {
+                    this.saveSort = false
+                }
+            }?.let { sortGameRepository.save(it) }
             if (saveDefault) {
                 (sortValues?.apply {
                     this.saveSort = saveSort

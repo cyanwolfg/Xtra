@@ -1,14 +1,13 @@
 package com.github.andreyasadchy.xtra.ui.search.tags
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import com.github.andreyasadchy.xtra.ui.common.pagers.ItemAwareFragmentPagerAdapter
+import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class BaseTagSearchPagerAdapter(fm: FragmentManager) : ItemAwareFragmentPagerAdapter(fm) {
+class BaseTagSearchPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-    override fun getItem(position: Int): Fragment {
+    override fun createFragment(position: Int): Fragment {
         return TagSearchFragment()
     }
 
-    override fun getCount(): Int = 1
+    override fun getItemCount(): Int = 1
 }

@@ -15,9 +15,9 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.chat.*
@@ -29,6 +29,7 @@ import com.github.andreyasadchy.xtra.util.chat.Command
 import com.github.andreyasadchy.xtra.util.chat.PointsEarned
 import com.github.andreyasadchy.xtra.util.chat.Raid
 import com.github.andreyasadchy.xtra.util.chat.RoomState
+import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.auto_complete_emotes_list_item.view.*
 import kotlinx.android.synthetic.main.view_chat.view.*
@@ -383,8 +384,8 @@ class ChatView : ConstraintLayout {
     }
 
     fun hideEmotesMenu(): Boolean {
-        return if (viewPager.isVisible) {
-            viewPager.gone()
+        return if (emoteMenu.isVisible) {
+            emoteMenu.gone()
             true
         } else {
             false
@@ -444,29 +445,30 @@ class ChatView : ConstraintLayout {
             }
             send.setOnClickListener { sendMessage() }
             messageView.visible()
-            viewPager.adapter = object : FragmentStatePagerAdapter(fragment.childFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+            viewPager.adapter = object : FragmentStateAdapter(fragment) {
+                override fun getItemCount(): Int = 3
 
-                override fun getItem(position: Int): Fragment {
+                override fun createFragment(position: Int): Fragment {
                     return EmotesFragment.newInstance(position)
-                }
-
-                override fun getCount(): Int = 3
-
-                override fun getPageTitle(position: Int): CharSequence? {
-                    return when (position) {
-                        0 -> context.getString(R.string.recent_emotes)
-                        1 -> "Twitch"
-                        else -> "7TV/BTTV/FFZ"
-                    }
                 }
             }
             viewPager.offscreenPageLimit = 2
+            viewPager.reduceDragSensitivity()
+            TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+                tab.text = when (position) {
+                    0 -> context.getString(R.string.recent_emotes)
+                    1 -> "Twitch"
+                    else -> "7TV/BTTV/FFZ"
+                }
+            }.attach()
             emotes.setOnClickListener {
                 //TODO add animation
-                with(viewPager) {
+                with(emoteMenu) {
                     if (isGone) {
-                        if (hasRecentEmotes != true && currentItem == 0) {
-                            setCurrentItem(1, false)
+                        with(viewPager) {
+                            if (hasRecentEmotes != true && currentItem == 0) {
+                                setCurrentItem(1, false)
+                            }
                         }
                         visible()
                     } else {

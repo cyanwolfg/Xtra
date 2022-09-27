@@ -11,8 +11,9 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.github.andreyasadchy.xtra.R
 import com.github.andreyasadchy.xtra.model.NotLoggedIn
 import com.github.andreyasadchy.xtra.model.User
@@ -26,9 +27,10 @@ import com.github.andreyasadchy.xtra.ui.main.MainActivity
 import com.github.andreyasadchy.xtra.ui.settings.SettingsActivity
 import com.github.andreyasadchy.xtra.util.*
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_channel.*
-import kotlinx.android.synthetic.main.fragment_media_pager.*
+import kotlinx.android.synthetic.main.fragment_media_pager.view.*
 
 
 @AndroidEntryPoint
@@ -57,7 +59,7 @@ class ChannelPagerFragment : MediaPagerFragment(), FollowFragment, Scrollable {
         super.onViewCreated(view, savedInstanceState)
         val activity = requireActivity() as MainActivity
         val user = User.get(activity)
-        setAdapter(ChannelPagerAdapter(activity, childFragmentManager, requireArguments()))
+        setAdapter(ChannelPagerAdapter(this, requireArguments()))
         if (activity.isInLandscapeOrientation) {
             appBar.setExpanded(false, false)
         }
@@ -110,12 +112,11 @@ class ChannelPagerFragment : MediaPagerFragment(), FollowFragment, Scrollable {
                 show()
             }
         }
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        pagerLayout.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             private val layoutParams = collapsingToolbar.layoutParams as AppBarLayout.LayoutParams
             private val originalScrollFlags = layoutParams.scrollFlags
 
             override fun onPageSelected(position: Int) {
-//                layoutParams.scrollFlags = if (position != 3) {
                 layoutParams.scrollFlags = if (position != 2) {
                     originalScrollFlags
                 } else {
@@ -123,11 +124,18 @@ class ChannelPagerFragment : MediaPagerFragment(), FollowFragment, Scrollable {
                     AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                 }
             }
-
-            override fun onPageScrollStateChanged(state: Int) {}
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
         })
+        TabLayoutMediator(pagerLayout.tabLayout, pagerLayout.viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> getString(R.string.videos)
+                1 -> getString(R.string.clips)
+                else -> getString(R.string.chat)
+            }
+        }.attach()
     }
+
+    override val currentFragment: Fragment?
+        get() = childFragmentManager.findFragmentByTag("f${pagerLayout.viewPager.currentItem}")
 
     override fun initialize() {
         val activity = requireActivity() as MainActivity

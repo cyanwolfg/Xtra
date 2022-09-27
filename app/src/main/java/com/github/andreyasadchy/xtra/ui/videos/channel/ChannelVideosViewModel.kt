@@ -99,17 +99,21 @@ class ChannelVideosViewModel @Inject constructor(
         viewModelScope.launch {
             val sortValues = filter.value?.channelId?.let { sortChannelRepository.getById(it) }
             if (saveSort) {
-                (sortValues?.apply {
-                    this.saveSort = saveSort
+                sortValues?.apply {
+                    this.saveSort = true
                     videoSort = sort.value
                     videoType = type.value
                 } ?: filter.value?.channelId?.let { SortChannel(
                     id = it,
-                    saveSort = saveSort,
+                    saveSort = true,
                     videoSort = sort.value,
                     videoType = type.value)
-                })?.let { sortChannelRepository.save(it) }
-            }
+                }
+            } else {
+                sortValues?.apply {
+                    this.saveSort = false
+                }
+            }?.let { sortChannelRepository.save(it) }
             if (saveDefault) {
                 (sortValues?.apply {
                     this.saveSort = saveSort

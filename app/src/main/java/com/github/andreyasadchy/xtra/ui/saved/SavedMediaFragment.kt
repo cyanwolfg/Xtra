@@ -16,18 +16,14 @@ import kotlinx.android.synthetic.main.fragment_media.*
 class SavedMediaFragment : MediaFragment() {
 
     companion object {
-        private const val PAGER_FRAGMENT = "pager_fragment"
         private const val DEFAULT_ITEM = "default_item"
 
-        fun newInstance(pagerFragment: Boolean, defaultItem: Int?) = SavedMediaFragment().apply {
+        fun newInstance(defaultItem: Int?) = SavedMediaFragment().apply {
             arguments = Bundle().apply {
-                putBoolean(PAGER_FRAGMENT, pagerFragment)
                 putInt(DEFAULT_ITEM, defaultItem ?: 0)
             }
         }
     }
-
-    private var firstLaunch = true
 
     override val spinnerItems: Array<String>
         get() = resources.getStringArray(R.array.spinnerSavedEntries)
@@ -35,34 +31,21 @@ class SavedMediaFragment : MediaFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val activity = requireActivity() as MainActivity
-        val pagerFragment = requireArguments().getBoolean(PAGER_FRAGMENT)
-        val defaultItem = requireArguments().getInt(DEFAULT_ITEM)
-        if (pagerFragment) {
-            currentFragment = if (previousItem != -2) {
-                val newFragment = SavedPagerFragment.newInstance(defaultItem)
-                childFragmentManager.beginTransaction().replace(R.id.fragmentContainer, newFragment).commit()
-                previousItem = -2
-                newFragment
-            } else {
-                childFragmentManager.findFragmentById(R.id.fragmentContainer)
-            }
-        } else {
-            spinner.visible()
-            spinner.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_dropdown_item, spinnerItems)
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    currentFragment = if (position != previousItem && isResumed) {
-                        val newFragment = onSpinnerItemSelected(position)
-                        childFragmentManager.beginTransaction().replace(R.id.fragmentContainer, newFragment).commit()
-                        previousItem = position
-                        newFragment
-                    } else {
-                        childFragmentManager.findFragmentById(R.id.fragmentContainer)
-                    }
+        spinner.visible()
+        spinner.adapter = ArrayAdapter(activity, android.R.layout.simple_spinner_dropdown_item, spinnerItems)
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                currentFragment = if (position != previousItem && isResumed) {
+                    val newFragment = onSpinnerItemSelected(position)
+                    childFragmentManager.beginTransaction().replace(R.id.fragmentContainer, newFragment).commit()
+                    previousItem = position
+                    newFragment
+                } else {
+                    childFragmentManager.findFragmentById(R.id.fragmentContainer)
                 }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 

@@ -16,6 +16,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -119,6 +121,19 @@ fun ImageView.enable() {
 fun ImageView.disable() {
     isEnabled = false
     setColorFilter(Color.GRAY)
+}
+
+fun ViewPager2.reduceDragSensitivity() {
+    try {
+        val recyclerViewField = ViewPager2::class.java.getDeclaredField("mRecyclerView")
+        recyclerViewField.isAccessible = true
+        val recyclerView = recyclerViewField.get(this) as RecyclerView
+
+        val touchSlopField = RecyclerView::class.java.getDeclaredField("mTouchSlop")
+        touchSlopField.isAccessible = true
+        val touchSlop = touchSlopField.get(recyclerView) as Int
+        touchSlopField.set(recyclerView, touchSlop*2)
+    } catch (e: Exception) {}
 }
 
 class TextWithCanvas(context: Context, attrs: AttributeSet) : AppCompatTextView(context, attrs) {

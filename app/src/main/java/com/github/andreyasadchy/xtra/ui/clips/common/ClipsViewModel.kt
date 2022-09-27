@@ -142,17 +142,21 @@ class ClipsViewModel @Inject constructor(
             if (!filter.value?.gameId.isNullOrBlank() || !filter.value?.gameName.isNullOrBlank()) {
                 val sortValues = filter.value?.gameId?.let { sortGameRepository.getById(it) }
                 if (saveSort) {
-                    (sortValues?.apply {
-                        this.saveSort = saveSort
+                    sortValues?.apply {
+                        this.saveSort = true
                         clipPeriod = period.value
                         clipLanguageIndex = languageIndex
                     } ?: filter.value?.gameId?.let { SortGame(
                         id = it,
-                        saveSort = saveSort,
+                        saveSort = true,
                         clipPeriod = period.value,
                         clipLanguageIndex = languageIndex)
-                    })?.let { sortGameRepository.save(it) }
-                }
+                    }
+                } else {
+                    sortValues?.apply {
+                        this.saveSort = false
+                    }
+                }?.let { sortGameRepository.save(it) }
                 if (saveDefault) {
                     (sortValues?.apply {
                         this.saveSort = saveSort
@@ -178,15 +182,19 @@ class ClipsViewModel @Inject constructor(
                 if (!filter.value?.channelId.isNullOrBlank() || !filter.value?.channelLogin.isNullOrBlank()) {
                     val sortValues = filter.value?.channelId?.let { sortChannelRepository.getById(it) }
                     if (saveSort) {
-                        (sortValues?.apply {
-                            this.saveSort = saveSort
+                        sortValues?.apply {
+                            this.saveSort = true
                             clipPeriod = period.value
                         } ?: filter.value?.channelId?.let { SortChannel(
                             id = it,
-                            saveSort = saveSort,
+                            saveSort = true,
                             clipPeriod = period.value)
-                        })?.let { sortChannelRepository.save(it) }
-                    }
+                        }
+                    } else {
+                        sortValues?.apply {
+                            this.saveSort = false
+                        }
+                    }?.let { sortChannelRepository.save(it) }
                     if (saveDefault) {
                         (sortValues?.apply {
                             this.saveSort = saveSort

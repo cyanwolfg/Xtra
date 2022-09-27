@@ -35,6 +35,7 @@ import com.github.andreyasadchy.xtra.ui.common.Scrollable
 import com.github.andreyasadchy.xtra.ui.common.pagers.MediaPagerFragment
 import com.github.andreyasadchy.xtra.ui.download.HasDownloadDialog
 import com.github.andreyasadchy.xtra.ui.follow.FollowMediaFragment
+import com.github.andreyasadchy.xtra.ui.follow.FollowPagerFragment
 import com.github.andreyasadchy.xtra.ui.games.GameFragment
 import com.github.andreyasadchy.xtra.ui.games.GamesFragment
 import com.github.andreyasadchy.xtra.ui.player.AudioPlayerService
@@ -44,6 +45,7 @@ import com.github.andreyasadchy.xtra.ui.player.offline.OfflinePlayerFragment
 import com.github.andreyasadchy.xtra.ui.player.stream.StreamPlayerFragment
 import com.github.andreyasadchy.xtra.ui.player.video.VideoPlayerFragment
 import com.github.andreyasadchy.xtra.ui.saved.SavedMediaFragment
+import com.github.andreyasadchy.xtra.ui.saved.SavedPagerFragment
 import com.github.andreyasadchy.xtra.ui.saved.downloads.DownloadsFragment
 import com.github.andreyasadchy.xtra.ui.search.SearchFragment
 import com.github.andreyasadchy.xtra.ui.search.tags.BaseTagSearchFragment
@@ -493,8 +495,16 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, 
             rootFragments = listOf(
                 GamesFragment(),
                 TopFragment(),
-                FollowMediaFragment.newInstance(prefs.getBoolean(C.UI_FOLLOWPAGER, true), prefs.getString(C.UI_FOLLOW_DEFAULT_PAGE, "0")?.toInt(), !User.get(this@MainActivity).gqlToken.isNullOrBlank()),
-                SavedMediaFragment.newInstance(prefs.getBoolean(C.UI_SAVEDPAGER, true), prefs.getString(C.UI_SAVED_DEFAULT_PAGE, "0")?.toInt())
+                if (prefs.getBoolean(C.UI_FOLLOWPAGER, true)) {
+                    FollowPagerFragment.newInstance(prefs.getString(C.UI_FOLLOW_DEFAULT_PAGE, "0")?.toInt(), !User.get(this@MainActivity).gqlToken.isNullOrBlank())
+                } else {
+                    FollowMediaFragment.newInstance(prefs.getString(C.UI_FOLLOW_DEFAULT_PAGE, "0")?.toInt(), !User.get(this@MainActivity).gqlToken.isNullOrBlank())
+                },
+                if (prefs.getBoolean(C.UI_SAVEDPAGER, true)) {
+                    SavedPagerFragment.newInstance(prefs.getString(C.UI_SAVED_DEFAULT_PAGE, "0")?.toInt())
+                } else {
+                    SavedMediaFragment.newInstance(prefs.getString(C.UI_SAVED_DEFAULT_PAGE, "0")?.toInt())
+                }
             )
             fragmentHideStrategy = FragNavController.DETACH_ON_NAVIGATE_HIDE_ON_SWITCH
             transactionListener = object : FragNavController.TransactionListener {

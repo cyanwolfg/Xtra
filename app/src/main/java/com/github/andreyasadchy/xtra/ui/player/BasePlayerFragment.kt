@@ -456,7 +456,7 @@ abstract class BasePlayerFragment : BaseNetworkFragment(), LifecycleListener, Sl
         if (messageView?.isVisible == true) {
             chatLayout.hideKeyboard()
             chatLayout.clearFocus()
-            chatLayout.viewPager.gone() // emote menu
+            chatLayout.emoteMenu.gone()
             messageView.gone()
             prefs.edit { putBoolean(C.KEY_CHAT_BAR_VISIBLE, false) }
         } else {

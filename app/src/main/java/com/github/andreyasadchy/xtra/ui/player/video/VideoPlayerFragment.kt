@@ -185,6 +185,7 @@ class VideoPlayerFragment : BasePlayerFragment(), HasDownloadDialog, ChatReplayP
 
     override fun onNetworkLost() {
         if (isResumed) {
+            setUserLeaveHint()
             viewModel.onPause()
         }
     }

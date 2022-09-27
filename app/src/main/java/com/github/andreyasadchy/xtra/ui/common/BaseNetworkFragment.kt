@@ -17,7 +17,7 @@ abstract class BaseNetworkFragment : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels()
 
     protected var enableNetworkCheck = true
-    private var lastState = false
+    private var lastIsOnlineState = false
     private var shouldRestore = false
     private var isInitialized = false
     private var created = false
@@ -29,44 +29,49 @@ abstract class BaseNetworkFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (enableNetworkCheck) {
-            lastState = savedInstanceState?.getBoolean(LAST_KEY)
-                    ?: requireContext().isNetworkAvailable
+            lastIsOnlineState = savedInstanceState?.getBoolean(LAST_KEY) ?: requireContext().isNetworkAvailable
             shouldRestore = savedInstanceState?.getBoolean(RESTORE_KEY) ?: false
             created = savedInstanceState?.getBoolean(CREATED_KEY) ?: false
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onResume() {
+        super.onResume()
         if (enableNetworkCheck) {
-            if (!isInitialized && (created || (lastState && userVisibleHint))) {
-                init()
-            }
-            mainViewModel.isNetworkAvailable.observe(viewLifecycleOwner) {
-                val isOnline = it.peekContent()
-                if (isOnline) {
-                    if (!lastState) {
-                        shouldRestore = if (userVisibleHint) {
-                            if (isInitialized) {
-                                onNetworkRestored()
+            if (!isInitialized) {
+                if (created || lastIsOnlineState) {
+                    init()
+                }
+                mainViewModel.isNetworkAvailable.observe(viewLifecycleOwner) {
+                    val isOnline = it.peekContent()
+                    if (isOnline) {
+                        if (!lastIsOnlineState) {
+                            shouldRestore = if (isResumed) {
+                                if (isInitialized) {
+                                    onNetworkRestored()
+                                } else {
+                                    init()
+                                }
+                                false
                             } else {
-                                init()
+                                true
                             }
-                            false
-                        } else {
-                            true
+                        }
+                    } else {
+                        if (isInitialized) {
+                            onNetworkLost()
                         }
                     }
-                } else {
-                    if (isInitialized) {
-                        onNetworkLost()
-                    }
+                    lastIsOnlineState = isOnline
                 }
-                lastState = isOnline
+            } else if (shouldRestore && lastIsOnlineState) {
+                onNetworkRestored()
+                shouldRestore = false
             }
         } else {
-            initialize()
+            if (!isInitialized) {
+                initialize()
+            }
         }
     }
 
@@ -77,27 +82,10 @@ abstract class BaseNetworkFragment : Fragment() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (enableNetworkCheck) {
-            if (!isInitialized) {
-                if (isVisibleToUser && isResumed && lastState) {
-                    init()
-                }
-            } else if (shouldRestore && lastState) {
-                if (isVisibleToUser) {
-                    onNetworkRestored()
-                    shouldRestore = false
-                }
-            }
-        }
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (enableNetworkCheck) {
-            outState.putBoolean(LAST_KEY, lastState)
+            outState.putBoolean(LAST_KEY, lastIsOnlineState)
             outState.putBoolean(RESTORE_KEY, shouldRestore)
             outState.putBoolean(CREATED_KEY, created)
         }
