@@ -551,4 +551,5 @@
     <string name="api_validate_tokens">Validate tokens on startup</string>
     <string name="tokens">Tokens</string>
     <string name="download_limit">Download concurrent limit</string>
+    <string name="show_conscrypt_error_toast">Show Conscrypt error toast</string>
 </resources>

@@ -531,4 +531,5 @@
     <string name="api_validate_tokens">Başlangıçta tokenleri doğrula</string>
     <string name="tokens">Tokenler</string>
     <string name="download_limit">Eşzamanlı indirme sınırı</string>
+    <string name="show_conscrypt_error_toast">Show Conscrypt error toast</string>
 </resources>

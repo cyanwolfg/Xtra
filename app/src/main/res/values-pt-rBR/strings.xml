@@ -531,4 +531,5 @@
     <string name="api_validate_tokens">Validar tokens ao iniciar</string>
     <string name="tokens">Tokens</string>
     <string name="download_limit">Limite de download simultâneo</string>
+    <string name="show_conscrypt_error_toast">Show Conscrypt error toast</string>
 </resources>
