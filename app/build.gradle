@@ -55,6 +55,14 @@ android {
         disable 'ContentDescription'
     }
     namespace 'com.github.andreyasadchy.xtra'
+    configurations.all {
+        resolutionStrategy {
+            force "com.google.android.exoplayer:exoplayer-core:2.10.8"
+            force "com.google.android.exoplayer:exoplayer-hls:2.10.8"
+            force "com.google.android.exoplayer:exoplayer-ui:2.10.8"
+            force "com.google.android.exoplayer:extension-mediasession:2.10.8"
+        }
+    }
 }
 
 // Delete large build log files from ~/.gradle/daemon/X.X/daemon-XXX.out.log
