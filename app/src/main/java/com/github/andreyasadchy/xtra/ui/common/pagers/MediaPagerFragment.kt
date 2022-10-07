@@ -30,6 +30,7 @@ abstract class MediaPagerFragment : BaseNetworkFragment(), ItemAwarePagerFragmen
         viewPager.adapter = adapter
         if (firstLaunch && defaultItem != null) {
             viewPager.setCurrentItem(defaultItem, false)
+            firstLaunch = false
         }
         viewPager.offscreenPageLimit = adapter.itemCount
         viewPager.reduceDragSensitivity()

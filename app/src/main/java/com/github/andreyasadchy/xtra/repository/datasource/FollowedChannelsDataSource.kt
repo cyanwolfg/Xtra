@@ -52,7 +52,7 @@ class FollowedChannelsDataSource(
     override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<Follow>) {
         loadInitial(params, callback) {
             val list = mutableListOf<Follow>()
-            for (i in localFollowsChannel.loadFollows()) {
+            for (i in localFollowsChannel.loadFollows().let { if (order == Order.ASC) it.asReversed() else it }) {
                 list.add(Follow(to_id = i.user_id, to_login = i.user_login, to_name = i.user_name, profileImageURL = i.channelLogo, followLocal = true))
             }
             val remote = try {
