@@ -16,7 +16,6 @@ import com.github.andreyasadchy.xtra.repository.LocalFollowGameRepository
 import com.github.andreyasadchy.xtra.util.DownloadUtils
 import com.github.andreyasadchy.xtra.util.TwitchApiHelper
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -39,12 +38,12 @@ class FollowLiveData(
             try {
                 val isFollowing = if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
                     when {
-                        localFollowsGame != null && !user.gqlToken.isNullOrBlank() && !userName.isNullOrBlank() -> {
+                        localFollowsGame != null && !userName.isNullOrBlank() -> {
                             repository.loadGameFollowing(gqlClientId, user.gqlToken, userName)
                         }
                         localFollowsChannel != null && (
                                 (!helixClientId.isNullOrBlank() && !user.helixToken.isNullOrBlank() && !user.id.isNullOrBlank() && !userId.isNullOrBlank() && user.id != userId) ||
-                                (!user.gqlToken.isNullOrBlank() && !user.login.isNullOrBlank() && !userLogin.isNullOrBlank() && user.login != userLogin)) -> {
+                                (!user.login.isNullOrBlank() && !userLogin.isNullOrBlank() && user.login != userLogin)) -> {
                             repository.loadUserFollowing(helixClientId, user.helixToken, userId, user.id, gqlClientId, user.gqlToken, userLogin)
                         }
                         else -> false
@@ -65,107 +64,103 @@ class FollowLiveData(
         }
     }
 
-    fun saveFollowChannel(context: Context) {
-        GlobalScope.launch {
-            try {
-                if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
-                    repository.followUser(gqlClientId, user.gqlToken, userId)
-                } else {
-                    if (userId != null) {
-                        try {
-                            Glide.with(context)
-                                .asBitmap()
-                                .load(channelLogo)
-                                .into(object: CustomTarget<Bitmap>() {
-                                    override fun onLoadCleared(placeholder: Drawable?) {
+    suspend fun saveFollowChannel(context: Context): String? {
+        try {
+            if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
+                return repository.followUser(gqlClientId, user.gqlToken, userId)
+            } else {
+                if (userId != null) {
+                    try {
+                        Glide.with(context)
+                            .asBitmap()
+                            .load(channelLogo)
+                            .into(object: CustomTarget<Bitmap>() {
+                                override fun onLoadCleared(placeholder: Drawable?) {
 
-                                    }
+                                }
 
-                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                        DownloadUtils.savePng(context, "profile_pics", userId, resource)
-                                    }
-                                })
-                        } catch (e: Exception) {
+                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                    DownloadUtils.savePng(context, "profile_pics", userId, resource)
+                                }
+                            })
+                    } catch (e: Exception) {
 
-                        }
-                        val downloadedLogo = File(context.filesDir.toString() + File.separator + "profile_pics" + File.separator + "${userId}.png").absolutePath
-                        localFollowsChannel?.saveFollow(LocalFollowChannel(userId, userLogin, userName, downloadedLogo))
                     }
+                    val downloadedLogo = File(context.filesDir.toString() + File.separator + "profile_pics" + File.separator + "${userId}.png").absolutePath
+                    localFollowsChannel?.saveFollow(LocalFollowChannel(userId, userLogin, userName, downloadedLogo))
                 }
-            } catch (e: Exception) {
-
             }
+        } catch (e: Exception) {
+
         }
+        return null
     }
 
-    fun deleteFollowChannel(context: Context) {
-        viewModelScope.launch {
-            try {
-                if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
-                    repository.unfollowUser(gqlClientId, user.gqlToken, userId)
-                } else {
-                    if (userId != null) {
-                        localFollowsChannel?.getFollowById(userId)?.let { localFollowsChannel.deleteFollow(context, it) }
-                    }
+    suspend fun deleteFollowChannel(context: Context): String? {
+        try {
+            if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
+                return repository.unfollowUser(gqlClientId, user.gqlToken, userId)
+            } else {
+                if (userId != null) {
+                    localFollowsChannel?.getFollowById(userId)?.let { localFollowsChannel.deleteFollow(context, it) }
                 }
-            } catch (e: Exception) {
-
             }
+        } catch (e: Exception) {
+
         }
+        return null
     }
 
-    fun saveFollowGame(context: Context) {
-        GlobalScope.launch {
-            try {
-                if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
-                    repository.followGame(gqlClientId, user.gqlToken, userId)
-                } else {
-                    if (userId != null) {
-                        if (channelLogo == null) {
-                            val get = repository.loadGameBoxArt(userId, helixClientId, user.helixToken, gqlClientId)
-                            if (get != null) {
-                                channelLogo = TwitchApiHelper.getTemplateUrl(get, "game")
-                            }
+    suspend fun saveFollowGame(context: Context): String? {
+        try {
+            if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
+                return repository.followGame(gqlClientId, user.gqlToken, userId)
+            } else {
+                if (userId != null) {
+                    if (channelLogo == null) {
+                        val get = repository.loadGameBoxArt(userId, helixClientId, user.helixToken, gqlClientId)
+                        if (get != null) {
+                            channelLogo = TwitchApiHelper.getTemplateUrl(get, "game")
                         }
-                        try {
-                            Glide.with(context)
-                                .asBitmap()
-                                .load(channelLogo)
-                                .into(object: CustomTarget<Bitmap>() {
-                                    override fun onLoadCleared(placeholder: Drawable?) {
-
-                                    }
-
-                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                        DownloadUtils.savePng(context, "box_art", userId, resource)
-                                    }
-                                })
-                        } catch (e: Exception) {
-
-                        }
-                        val downloadedLogo = File(context.filesDir.toString() + File.separator + "box_art" + File.separator + "${userId}.png").absolutePath
-                        localFollowsGame?.saveFollow(LocalFollowGame(userId, userName, downloadedLogo))
                     }
-                }
-            } catch (e: Exception) {
+                    try {
+                        Glide.with(context)
+                            .asBitmap()
+                            .load(channelLogo)
+                            .into(object: CustomTarget<Bitmap>() {
+                                override fun onLoadCleared(placeholder: Drawable?) {
 
+                                }
+
+                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                    DownloadUtils.savePng(context, "box_art", userId, resource)
+                                }
+                            })
+                    } catch (e: Exception) {
+
+                    }
+                    val downloadedLogo = File(context.filesDir.toString() + File.separator + "box_art" + File.separator + "${userId}.png").absolutePath
+                    localFollowsGame?.saveFollow(LocalFollowGame(userId, userName, downloadedLogo))
+                }
             }
+        } catch (e: Exception) {
+
         }
+        return null
     }
 
-    fun deleteFollowGame(context: Context) {
-        viewModelScope.launch {
-            try {
-                if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
-                    repository.unfollowGame(gqlClientId, user.gqlToken, userId)
-                } else {
-                    if (userId != null) {
-                        localFollowsGame?.getFollowById(userId)?.let { localFollowsGame.deleteFollow(context, it) }
-                    }
+    suspend fun deleteFollowGame(context: Context): String? {
+        try {
+            if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
+                return repository.unfollowGame(gqlClientId, user.gqlToken, userId)
+            } else {
+                if (userId != null) {
+                    localFollowsGame?.getFollowById(userId)?.let { localFollowsGame.deleteFollow(context, it) }
                 }
-            } catch (e: Exception) {
-
             }
+        } catch (e: Exception) {
+
         }
+        return null
     }
 }

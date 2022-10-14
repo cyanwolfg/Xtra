@@ -25,7 +25,6 @@ import com.github.andreyasadchy.xtra.model.gql.stream.ViewersDataResponse
 import com.github.andreyasadchy.xtra.model.gql.tag.*
 import com.github.andreyasadchy.xtra.model.gql.vod.VodGamesDataResponse
 import com.google.gson.JsonArray
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -125,16 +124,16 @@ interface GraphQLApi {
     suspend fun getFollowedGames(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Body json: JsonObject): FollowedGamesDataResponse
 
     @POST(".")
-    suspend fun getFollowUser(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Header("Client-Integrity") integrityToken: String?, @Header("X-Device-Id") deviceId: String?, @Body json: JsonObject): FollowUserDataResponse
+    suspend fun getFollowUser(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Header("Client-Integrity") integrityToken: String?, @Header("X-Device-Id") deviceId: String?, @Body json: JsonObject): FollowDataResponse
 
     @POST(".")
-    suspend fun getUnfollowUser(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Header("Client-Integrity") integrityToken: String?, @Header("X-Device-Id") deviceId: String?, @Body json: JsonObject): JsonElement
+    suspend fun getUnfollowUser(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Header("Client-Integrity") integrityToken: String?, @Header("X-Device-Id") deviceId: String?, @Body json: JsonObject): FollowDataResponse
 
     @POST(".")
-    suspend fun getFollowGame(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Header("Client-Integrity") integrityToken: String?, @Header("X-Device-Id") deviceId: String?, @Body json: JsonObject): JsonElement
+    suspend fun getFollowGame(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Header("Client-Integrity") integrityToken: String?, @Header("X-Device-Id") deviceId: String?, @Body json: JsonObject): FollowDataResponse
 
     @POST(".")
-    suspend fun getUnfollowGame(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Header("Client-Integrity") integrityToken: String?, @Header("X-Device-Id") deviceId: String?, @Body json: JsonObject): JsonElement
+    suspend fun getUnfollowGame(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Header("Client-Integrity") integrityToken: String?, @Header("X-Device-Id") deviceId: String?, @Body json: JsonObject): FollowDataResponse
 
     @POST(".")
     suspend fun getFollowingUser(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Body json: JsonObject): FollowingUserDataResponse
