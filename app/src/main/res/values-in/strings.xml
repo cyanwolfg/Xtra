@@ -532,4 +532,5 @@
     <string name="browser_workaround">Browser sistem anda sudah tidak didukung. Tolong klik tombol di bawah untuk solusi</string>
     <string name="time_followed">Lama mengikuti</string>
     <string name="show_conscrypt_error_toast">Show Conscrypt error toast</string>
+    <string name="followed_only">Followed only</string>
 </resources>

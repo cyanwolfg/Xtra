@@ -39,7 +39,7 @@ class StreamSearchFragment : PagedListFragment<Stream, StreamSearchViewModel, Ba
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        compactStreams = requireContext().prefs().getBoolean(C.COMPACT_STREAMS, false)
+        compactStreams = requireContext().prefs().getString(C.COMPACT_STREAMS, "disabled") == "all"
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

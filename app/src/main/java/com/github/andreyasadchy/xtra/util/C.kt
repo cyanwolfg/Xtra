@@ -37,7 +37,7 @@ object C {
     const val THEME = "theme"
     const val PORTRAIT_COLUMN_COUNT = "columnsPortrait"
     const val LANDSCAPE_COLUMN_COUNT = "columnsLandscape"
-    const val COMPACT_STREAMS = "compactStreams"
+    const val COMPACT_STREAMS = "compactStreamsV2"
     const val UI_ROUNDUSERIMAGE = "ui_rounduserimage"
     const val UI_TRUNCATEVIEWCOUNT = "ui_truncateviewcount"
     const val UI_BROADCASTERSCOUNT = "ui_broadcasterscount"

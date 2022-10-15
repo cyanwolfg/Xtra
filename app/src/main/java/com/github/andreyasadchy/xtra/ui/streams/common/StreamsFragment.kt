@@ -36,7 +36,7 @@ class StreamsFragment : BaseStreamsFragment<StreamsViewModel>(), StreamsSortDial
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        compactStreams = requireContext().prefs().getBoolean(C.COMPACT_STREAMS, false)
+        compactStreams = requireContext().prefs().getString(C.COMPACT_STREAMS, "disabled") == "all"
     }
 
     override fun initialize() {

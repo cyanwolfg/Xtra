@@ -133,11 +133,13 @@
         android:title="@string/landscape_column_count"
         app:iconSpaceReserved="false"/>
 
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:key="compactStreams"
-        android:title="@string/compact_streams_title"
+    <ListPreference
+        android:defaultValue="disabled"
+        android:entries="@array/compactStreamsEntries"
+        android:entryValues="@array/compactStreamsValues"
+        android:key="compactStreamsV2"
         android:summary="@string/compact_streams_description"
+        android:title="@string/compact_streams_title"
         app:iconSpaceReserved="false"/>
 
     <PreferenceCategory android:title="@string/settings_chat" app:iconSpaceReserved="false" />

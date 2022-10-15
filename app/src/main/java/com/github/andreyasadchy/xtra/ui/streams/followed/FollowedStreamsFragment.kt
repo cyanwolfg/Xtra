@@ -31,7 +31,7 @@ class FollowedStreamsFragment : BaseStreamsFragment<FollowedStreamsViewModel>() 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        compactStreams = requireContext().prefs().getBoolean(C.COMPACT_STREAMS, false)
+        compactStreams = requireContext().prefs().getString(C.COMPACT_STREAMS, "disabled") != "disabled"
     }
 
     override fun initialize() {

@@ -319,4 +319,16 @@
         <item>ZH_HK</item>
         <item>OTHER</item>
     </string-array>
+
+    <string-array name="compactStreamsEntries">
+        <item>@string/all</item>
+        <item>@string/followed_only</item>
+        <item>@string/disabled</item>
+    </string-array>
+
+    <string-array name="compactStreamsValues">
+        <item>all</item>
+        <item>followed</item>
+        <item>disabled</item>
+    </string-array>
 </resources>

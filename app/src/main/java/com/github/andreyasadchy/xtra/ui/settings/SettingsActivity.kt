@@ -133,7 +133,7 @@ class SettingsActivity : AppCompatActivity() {
             findPreference<SwitchPreferenceCompat>(C.UI_SCROLLTOP)?.onPreferenceChangeListener = changeListener
             findPreference<ListPreference>(C.PORTRAIT_COLUMN_COUNT)?.onPreferenceChangeListener = changeListener
             findPreference<ListPreference>(C.LANDSCAPE_COLUMN_COUNT)?.onPreferenceChangeListener = changeListener
-            findPreference<SwitchPreferenceCompat>(C.COMPACT_STREAMS)?.onPreferenceChangeListener = changeListener
+            findPreference<ListPreference>(C.COMPACT_STREAMS)?.onPreferenceChangeListener = changeListener
 
             findPreference<SeekBarPreference>("chatWidth")?.apply {
                 summary = context.getString(R.string.pixels, activity.prefs().getInt(C.LANDSCAPE_CHAT_WIDTH, 30))
