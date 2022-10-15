@@ -43,6 +43,7 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
         val usePubSub = requireContext().prefs().getBoolean(C.CHAT_PUBSUB_ENABLED, true)
         val helixClientId = requireContext().prefs().getString(C.HELIX_CLIENT_ID, "")
         val gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, "")
+        val gqlClientId2 = requireContext().prefs().getString(C.GQL_CLIENT_ID2, "")
         val showUserNotice = requireContext().prefs().getBoolean(C.CHAT_SHOW_USERNOTICE, true)
         val showClearMsg = requireContext().prefs().getBoolean(C.CHAT_SHOW_CLEARMSG, true)
         val showClearChat = requireContext().prefs().getBoolean(C.CHAT_SHOW_CLEARCHAT, true)
@@ -58,7 +59,7 @@ class ChatFragment : BaseNetworkFragment(), LifecycleListener, MessageClickedDia
             false
         } else {
             if (isLive) {
-                viewModel.startLive(useSSl, usePubSub, user, isLoggedIn, helixClientId, gqlClientId, channelId, channelLogin, channelName, streamId, showUserNotice, showClearMsg, showClearChat, collectPoints, notifyPoints, showRaids, autoSwitchRaids, enableRecentMsg, recentMsgLimit.toString())
+                viewModel.startLive(useSSl, usePubSub, user, isLoggedIn, helixClientId, gqlClientId, gqlClientId2, channelId, channelLogin, channelName, streamId, showUserNotice, showClearMsg, showClearChat, collectPoints, notifyPoints, showRaids, autoSwitchRaids, enableRecentMsg, recentMsgLimit.toString())
                 chatView.init(this)
                 chatView.setCallback(viewModel, (viewModel.chat as? ChatViewModel.LiveChatController))
                 chatView.setChannelId(channelId)

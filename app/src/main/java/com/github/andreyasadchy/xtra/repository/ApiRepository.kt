@@ -38,7 +38,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -562,11 +561,11 @@ class ApiRepository @Inject constructor(
     }
 
     suspend fun loadClaimPoints(gqlClientId: String?, gqlToken: String?, channelId: String?, claimID: String?) = withContext(Dispatchers.IO) {
-        gql.loadClaimPoints(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, channelId, claimID)
+        gql.loadClaimPoints(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, null, null, channelId, claimID)
     }
 
     suspend fun loadJoinRaid(gqlClientId: String?, gqlToken: String?, raidId: String?) = withContext(Dispatchers.IO) {
-        gql.loadJoinRaid(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, raidId)
+        gql.loadJoinRaid(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, null, null, raidId)
     }
 
     suspend fun loadMinuteWatched(userId: String?, streamId: String?, channelId: String?, channelLogin: String?) = withContext(Dispatchers.IO) {
@@ -606,27 +605,19 @@ class ApiRepository @Inject constructor(
     }
 
     suspend fun followUser(gqlClientId: String?, gqlToken: String?, userId: String?): String? = withContext(Dispatchers.IO) {
-        val randomId = UUID.randomUUID().toString().replace("-", "").substring(0, 32)
-        val integrityToken = loadClientIntegrityToken(gqlClientId, gqlToken, randomId)
-        gql.loadFollowUser(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, integrityToken, randomId, userId).error
+        gql.loadFollowUser(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, null, null, userId).error
     }
 
     suspend fun unfollowUser(gqlClientId: String?, gqlToken: String?, userId: String?): String? = withContext(Dispatchers.IO) {
-        val randomId = UUID.randomUUID().toString().replace("-", "").substring(0, 32)
-        val integrityToken = loadClientIntegrityToken(gqlClientId, gqlToken, randomId)
-        gql.loadUnfollowUser(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, integrityToken, randomId, userId).error
+        gql.loadUnfollowUser(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, null, null, userId).error
     }
 
     suspend fun followGame(gqlClientId: String?, gqlToken: String?, gameId: String?): String? = withContext(Dispatchers.IO) {
-        val randomId = UUID.randomUUID().toString().replace("-", "").substring(0, 32)
-        val integrityToken = loadClientIntegrityToken(gqlClientId, gqlToken, randomId)
-        gql.loadFollowGame(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, integrityToken, randomId, gameId).error
+        gql.loadFollowGame(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, null, null, gameId).error
     }
 
     suspend fun unfollowGame(gqlClientId: String?, gqlToken: String?, gameId: String?): String? = withContext(Dispatchers.IO) {
-        val randomId = UUID.randomUUID().toString().replace("-", "").substring(0, 32)
-        val integrityToken = loadClientIntegrityToken(gqlClientId, gqlToken, randomId)
-        gql.loadUnfollowGame(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, integrityToken, randomId, gameId).error
+        gql.loadUnfollowGame(gqlClientId, gqlToken?.let { TwitchApiHelper.addTokenPrefixGQL(it) }, null, null, gameId).error
     }
 
     fun loadTagsGQL(clientId: String?, getGameTags: Boolean, gameId: String?, gameName: String?, query: String?, coroutineScope: CoroutineScope): Listing<Tag> {

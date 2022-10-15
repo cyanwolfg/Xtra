@@ -108,7 +108,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun validate(helixClientId: String?, gqlClientId: String?, activity: Activity) {
+    fun validate(helixClientId: String?, gqlClientId: String?, gqlClientId2: String?, activity: Activity) {
         val user = User.get(activity)
         if (user is NotValidated) {
             viewModelScope.launch {
@@ -117,9 +117,7 @@ class MainViewModel @Inject constructor(
                         val response = authRepository.validate(TwitchApiHelper.addTokenPrefixHelix(user.helixToken))
                         if (!response?.clientId.isNullOrBlank() && response?.clientId == helixClientId) {
                             if ((!response?.userId.isNullOrBlank() && response?.userId != user.id) || (!response?.login.isNullOrBlank() && response?.login != user.login)) {
-                                User.set(activity, LoggedIn(response?.userId?.nullIfEmpty() ?: user.id, response?.login?.nullIfEmpty() ?: user.login, user.helixToken, user.gqlToken))
-                            } else {
-                                User.validated()
+                                User.set(activity, LoggedIn(response?.userId?.nullIfEmpty() ?: user.id, response?.login?.nullIfEmpty() ?: user.login, user.helixToken, user.gqlToken, user.gqlToken2))
                             }
                         } else {
                             throw IllegalStateException("401")
@@ -129,13 +127,24 @@ class MainViewModel @Inject constructor(
                         val response = authRepository.validate(TwitchApiHelper.addTokenPrefixGQL(user.gqlToken))
                         if (!response?.clientId.isNullOrBlank() && response?.clientId == gqlClientId) {
                             if ((!response?.userId.isNullOrBlank() && response?.userId != user.id) || (!response?.login.isNullOrBlank() && response?.login != user.login)) {
-                                User.set(activity, LoggedIn(response?.userId?.nullIfEmpty() ?: user.id, response?.login?.nullIfEmpty() ?: user.login, user.helixToken, user.gqlToken))
-                            } else {
-                                User.validated()
+                                User.set(activity, LoggedIn(response?.userId?.nullIfEmpty() ?: user.id, response?.login?.nullIfEmpty() ?: user.login, user.helixToken, user.gqlToken, user.gqlToken2))
                             }
                         } else {
                             throw IllegalStateException("401")
                         }
+                    }
+                    if (!user.gqlToken2.isNullOrBlank()) {
+                        val response = authRepository.validate(TwitchApiHelper.addTokenPrefixGQL(user.gqlToken2))
+                        if (!response?.clientId.isNullOrBlank() && response?.clientId == gqlClientId2) {
+                            if ((!response?.userId.isNullOrBlank() && response?.userId != user.id) || (!response?.login.isNullOrBlank() && response?.login != user.login)) {
+                                User.set(activity, LoggedIn(response?.userId?.nullIfEmpty() ?: user.id, response?.login?.nullIfEmpty() ?: user.login, user.helixToken, user.gqlToken, user.gqlToken2))
+                            }
+                        } else {
+                            throw IllegalStateException("401")
+                        }
+                    }
+                    if (!user.helixToken.isNullOrBlank() || !user.gqlToken.isNullOrBlank() || !user.gqlToken2.isNullOrBlank()) {
+                        User.validated()
                     }
                 } catch (e: Exception) {
                     if ((e is IllegalStateException && e.message == "401") || (e is HttpException && e.code() == 401)) {

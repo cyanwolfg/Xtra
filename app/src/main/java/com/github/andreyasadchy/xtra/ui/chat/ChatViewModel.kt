@@ -106,7 +106,7 @@ class ChatViewModel @Inject constructor(
     val chatters: Collection<Chatter>?
         get() = (chat as? LiveChatController)?.chatters?.values
 
-    fun startLive(useSSl: Boolean, usePubSub: Boolean, user: User, isLoggedIn: Boolean, helixClientId: String?, gqlClientId: String?, channelId: String?, channelLogin: String?, channelName: String?, streamId: String?, showUserNotice: Boolean, showClearMsg: Boolean, showClearChat: Boolean, collectPoints: Boolean, notifyPoints: Boolean, showRaids: Boolean, autoSwitchRaids: Boolean, enableRecentMsg: Boolean? = false, recentMsgLimit: String? = null) {
+    fun startLive(useSSl: Boolean, usePubSub: Boolean, user: User, isLoggedIn: Boolean, helixClientId: String?, gqlClientId: String?, gqlClientId2: String?, channelId: String?, channelLogin: String?, channelName: String?, streamId: String?, showUserNotice: Boolean, showClearMsg: Boolean, showClearChat: Boolean, collectPoints: Boolean, notifyPoints: Boolean, showRaids: Boolean, autoSwitchRaids: Boolean, enableRecentMsg: Boolean? = false, recentMsgLimit: String? = null) {
         if (chat == null && channelLogin != null) {
             stream_id = streamId
             this.showRaids = showRaids
@@ -118,6 +118,7 @@ class ChatViewModel @Inject constructor(
                 isLoggedIn = isLoggedIn,
                 helixClientId = helixClientId,
                 gqlClientId = gqlClientId,
+                gqlClientId2 = gqlClientId2,
                 channelId = channelId,
                 channelLogin = channelLogin,
                 displayName = channelName,
@@ -375,6 +376,7 @@ class ChatViewModel @Inject constructor(
             private val isLoggedIn: Boolean,
             private val helixClientId: String?,
             private val gqlClientId: String?,
+            private val gqlClientId2: String?,
             private val channelId: String?,
             private val channelLogin: String,
             displayName: String?,
@@ -509,8 +511,10 @@ class ChatViewModel @Inject constructor(
         }
 
         override fun onClaim(message: Claim) {
-            viewModelScope.launch {
-                repository.loadClaimPoints(gqlClientId, user.gqlToken, message.channelId, message.claimId)
+            if (!gqlClientId2.isNullOrBlank() && !user.gqlToken2.isNullOrBlank()) {
+                viewModelScope.launch {
+                    repository.loadClaimPoints(gqlClientId2, user.gqlToken2, message.channelId, message.claimId)
+                }
             }
         }
 
@@ -527,9 +531,9 @@ class ChatViewModel @Inject constructor(
             raid.postValue(message)
             if (raidNewId) {
                 usedRaidId = message.raidId
-                if (collectPoints && !user.gqlToken.isNullOrBlank()) {
+                if (collectPoints && !gqlClientId2.isNullOrBlank() && !user.gqlToken2.isNullOrBlank()) {
                     viewModelScope.launch {
-                        repository.loadJoinRaid(gqlClientId, user.gqlToken, message.raidId)
+                        repository.loadJoinRaid(gqlClientId2, user.gqlToken2, message.raidId)
                     }
                 }
             }

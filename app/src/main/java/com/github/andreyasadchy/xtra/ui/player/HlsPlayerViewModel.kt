@@ -147,9 +147,9 @@ abstract class HlsPlayerViewModel(
         }
     }
 
-    override fun setUser(user: User, helixClientId: String?, gqlClientId: String?, setting: Int) {
+    override fun setUser(user: User, helixClientId: String?, gqlClientId: String?, gqlClientId2: String?, setting: Int) {
         if (!this::follow.isInitialized) {
-            follow = FollowLiveData(localFollowsChannel = localFollowsChannel, userId = userId, userLogin = userLogin, userName = userName, channelLogo = channelLogo, repository = repository, helixClientId = helixClientId, user = user, gqlClientId = gqlClientId, setting = setting, viewModelScope = viewModelScope)
+            follow = FollowLiveData(localFollowsChannel = localFollowsChannel, userId = userId, userLogin = userLogin, userName = userName, channelLogo = channelLogo, repository = repository, helixClientId = helixClientId, user = user, gqlClientId = gqlClientId, gqlClientId2 = gqlClientId2, setting = setting, viewModelScope = viewModelScope)
         }
     }
 

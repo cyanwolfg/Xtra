@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity(), GamesFragment.OnGameSelectedListener, 
             it.getContentIfNotHandled()?.let { online ->
                 if (online) {
                     if (prefs.getBoolean(C.VALIDATE_TOKENS, true)) {
-                        viewModel.validate(prefs.getString(C.HELIX_CLIENT_ID, ""), prefs.getString(C.GQL_CLIENT_ID, ""), this)
+                        viewModel.validate(prefs.getString(C.HELIX_CLIENT_ID, ""), prefs.getString(C.GQL_CLIENT_ID, ""), prefs.getString(C.GQL_CLIENT_ID2, ""), this)
                     }
                 }
                 if (flag) {

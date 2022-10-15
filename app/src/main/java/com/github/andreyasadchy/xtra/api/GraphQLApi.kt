@@ -145,10 +145,10 @@ interface GraphQLApi {
     suspend fun getChannelPointsContext(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Body json: JsonObject): ChannelPointsContextDataResponse
 
     @POST(".")
-    suspend fun getClaimPoints(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Body json: JsonObject)
+    suspend fun getClaimPoints(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Header("Client-Integrity") integrityToken: String?, @Header("X-Device-Id") deviceId: String?, @Body json: JsonObject)
 
     @POST(".")
-    suspend fun getJoinRaid(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Body json: JsonObject)
+    suspend fun getJoinRaid(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Header("Client-Integrity") integrityToken: String?, @Header("X-Device-Id") deviceId: String?, @Body json: JsonObject)
 
     @POST(".")
     suspend fun getUserEmotes(@Header("Client-ID") clientId: String?, @Header("Authorization") token: String?, @Body json: JsonObject): UserEmotesDataResponse

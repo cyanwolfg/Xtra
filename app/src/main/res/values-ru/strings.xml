@@ -533,4 +533,6 @@
     <string name="download_limit">Предел одновременных загрузок</string>
     <string name="show_conscrypt_error_toast">Show Conscrypt error toast</string>
     <string name="followed_only">Только отслеживаемые</string>
+    <string name="api_gql2">GQL client id 2</string>
+    <string name="api_gql_token2">GQL token 2</string>
 </resources>

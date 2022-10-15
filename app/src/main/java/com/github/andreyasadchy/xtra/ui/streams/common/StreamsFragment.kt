@@ -69,7 +69,8 @@ class StreamsFragment : BaseStreamsFragment<StreamsViewModel>(), StreamsSortDial
                         setting = requireContext().prefs().getString(C.UI_FOLLOW_BUTTON, "0")?.toInt() ?: 0,
                         user = User.get(activity),
                         helixClientId = requireContext().prefs().getString(C.HELIX_CLIENT_ID, ""),
-                        gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, "")
+                        gqlClientId = requireContext().prefs().getString(C.GQL_CLIENT_ID, ""),
+                        gqlClientId2 = requireContext().prefs().getString(C.GQL_CLIENT_ID2, "")
                     )
                 }
             }

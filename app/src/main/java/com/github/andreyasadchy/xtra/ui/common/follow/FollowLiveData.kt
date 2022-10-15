@@ -30,6 +30,7 @@ class FollowLiveData(
     private val helixClientId: String? = null,
     private val user: User,
     private val gqlClientId: String? = null,
+    private val gqlClientId2: String? = null,
     private val setting: Int,
     private val viewModelScope: CoroutineScope) : MutableLiveData<Boolean>()  {
 
@@ -67,7 +68,11 @@ class FollowLiveData(
     suspend fun saveFollowChannel(context: Context): String? {
         try {
             if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
-                return repository.followUser(gqlClientId, user.gqlToken, userId)
+                return if (!gqlClientId2.isNullOrBlank() && !user.gqlToken2.isNullOrBlank()) {
+                    repository.followUser(gqlClientId2, user.gqlToken2, userId)
+                } else {
+                    repository.followUser(gqlClientId, user.gqlToken, userId)
+                }
             } else {
                 if (userId != null) {
                     try {
@@ -99,7 +104,11 @@ class FollowLiveData(
     suspend fun deleteFollowChannel(context: Context): String? {
         try {
             if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
-                return repository.unfollowUser(gqlClientId, user.gqlToken, userId)
+                return if (!gqlClientId2.isNullOrBlank() && !user.gqlToken2.isNullOrBlank()) {
+                    repository.unfollowUser(gqlClientId2, user.gqlToken2, userId)
+                } else {
+                    repository.unfollowUser(gqlClientId, user.gqlToken, userId)
+                }
             } else {
                 if (userId != null) {
                     localFollowsChannel?.getFollowById(userId)?.let { localFollowsChannel.deleteFollow(context, it) }
@@ -114,7 +123,11 @@ class FollowLiveData(
     suspend fun saveFollowGame(context: Context): String? {
         try {
             if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
-                return repository.followGame(gqlClientId, user.gqlToken, userId)
+                return if (!gqlClientId2.isNullOrBlank() && !user.gqlToken2.isNullOrBlank()) {
+                    repository.followGame(gqlClientId2, user.gqlToken2, userId)
+                } else {
+                    repository.followGame(gqlClientId, user.gqlToken, userId)
+                }
             } else {
                 if (userId != null) {
                     if (channelLogo == null) {
@@ -152,7 +165,11 @@ class FollowLiveData(
     suspend fun deleteFollowGame(context: Context): String? {
         try {
             if (setting == 0 && !user.gqlToken.isNullOrBlank()) {
-                return repository.unfollowGame(gqlClientId, user.gqlToken, userId)
+                return if (!gqlClientId2.isNullOrBlank() && !user.gqlToken2.isNullOrBlank()) {
+                    repository.unfollowGame(gqlClientId2, user.gqlToken2, userId)
+                } else {
+                    repository.unfollowGame(gqlClientId, user.gqlToken, userId)
+                }
             } else {
                 if (userId != null) {
                     localFollowsGame?.getFollowById(userId)?.let { localFollowsGame.deleteFollow(context, it) }

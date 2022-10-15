@@ -35,11 +35,12 @@ class LoginActivity : AppCompatActivity() {
     @Inject
     lateinit var repository: AuthRepository
     private val tokenPattern = Pattern.compile("token=(.+?)(?=&)")
-    private var tokens = 0
+    private val tokens = mutableListOf<String>()
     private var userId: String? = null
     private var userLogin: String? = null
     private var helixToken: String? = null
     private var gqlToken: String? = null
+    private var gqlToken2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +48,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         val helixClientId = prefs().getString(C.HELIX_CLIENT_ID, "")
         val gqlClientId = prefs().getString(C.GQL_CLIENT_ID, "")
+        val gqlClientId2 = prefs().getString(C.GQL_CLIENT_ID2, "")
         val user = User.get(this)
         if (user !is NotLoggedIn) {
             TwitchApiHelper.checkedValidation = false
@@ -59,16 +61,19 @@ class LoginActivity : AppCompatActivity() {
                     if (!gqlClientId.isNullOrBlank() && !user.gqlToken.isNullOrBlank()) {
                         repository.revoke(gqlClientId, user.gqlToken)
                     }
+                    if (!gqlClientId2.isNullOrBlank() && !user.gqlToken2.isNullOrBlank()) {
+                        repository.revoke(gqlClientId2, user.gqlToken2)
+                    }
                 } catch (e: Exception) {
 
                 }
             }
         }
-        initWebView(helixClientId, gqlClientId)
+        initWebView(helixClientId, gqlClientId, gqlClientId2)
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun initWebView(helixClientId: String?, gqlClientId: String?) {
+    private fun initWebView(helixClientId: String?, gqlClientId: String?, gqlClientId2: String?) {
         webViewContainer.visible()
         val apiSetting = prefs().getString(C.API_LOGIN, "0")?.toInt() ?: 0
         val helixRedirect = prefs().getString(C.HELIX_REDIRECT, "https://localhost")
@@ -76,6 +81,7 @@ class LoginActivity : AppCompatActivity() {
         val helixAuthUrl = "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=${helixClientId}&redirect_uri=${helixRedirect}&scope=${helixScopes}"
         val gqlRedirect = prefs().getString(C.GQL_REDIRECT, "https://www.twitch.tv/")
         val gqlAuthUrl = "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=${gqlClientId}&redirect_uri=${gqlRedirect}&scope="
+        val gqlAuthUrl2 = "https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=${gqlClientId2}&redirect_uri=${gqlRedirect}&scope="
         havingTrouble.setOnClickListener {
             AlertDialog.Builder(this)
                     .setMessage(getString(R.string.login_problem_solution))
@@ -101,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
                                 .setPositiveButton(R.string.log_in) { _, _ ->
                                     val text = editText.text
                                     if (text.isNotEmpty()) {
-                                        if (!loginIfValidUrl(text.toString(), gqlAuthUrl, helixClientId, gqlClientId, 2)) {
+                                        if (!loginIfValidUrl(text.toString(), gqlAuthUrl, gqlAuthUrl2, helixClientId, gqlClientId, gqlClientId2, 2)) {
                                             shortToast(R.string.invalid_url)
                                         }
                                     }
@@ -136,7 +142,7 @@ class LoginActivity : AppCompatActivity() {
 
                 @Deprecated("Deprecated in Java")
                 override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                    loginIfValidUrl(url, gqlAuthUrl, helixClientId, gqlClientId, apiSetting)
+                    loginIfValidUrl(url, gqlAuthUrl, gqlAuthUrl2, helixClientId, gqlClientId, gqlClientId2, apiSetting)
                     return false
                 }
 
@@ -166,23 +172,49 @@ class LoginActivity : AppCompatActivity() {
         return super.onKeyDown(keyCode, event)
     }*/
 
-    private fun loginIfValidUrl(url: String, gqlAuthUrl: String, helixClientId: String?, gqlClientId: String?, apiSetting: Int): Boolean {
+    private fun loginIfValidUrl(url: String, gqlAuthUrl: String, gqlAuthUrl2: String, helixClientId: String?, gqlClientId: String?, gqlClientId2: String?, apiSetting: Int): Boolean {
         val matcher = tokenPattern.matcher(url)
-        return if (matcher.find() && tokens < 2) {
+        return if (matcher.find()) {
             webViewContainer.gone()
             progressBar.visible()
             val token = matcher.group(1)!!
-            if (apiSetting == 0 && tokens == 0 || apiSetting == 2) {
+            if (token.isNotBlank() && !tokens.contains(token)) {
+                tokens.add(token)
                 lifecycleScope.launch {
                     try {
-                        val response = repository.validate(TwitchApiHelper.addTokenPrefixHelix(token))
-                        if (!response?.clientId.isNullOrBlank() && response?.clientId == helixClientId) {
+                        val response = repository.validate(if ((apiSetting == 0 && tokens.count() == 1) || (apiSetting == 2)) {
+                            TwitchApiHelper.addTokenPrefixHelix(token)
+                        } else {
+                            TwitchApiHelper.addTokenPrefixGQL(token)
+                        })
+                        if (!response?.clientId.isNullOrBlank() && response?.clientId ==
+                            if ((apiSetting == 0 && tokens.count() == 1) || (apiSetting == 2)) {
+                                helixClientId
+                            } else {
+                                if ((apiSetting == 0 && tokens.count() == 2) || (apiSetting == 1 && tokens.count() == 1)) {
+                                    gqlClientId
+                                } else {
+                                    if ((apiSetting == 0 && tokens.count() == 3) || (apiSetting == 1 && tokens.count() == 2)) {
+                                        gqlClientId2
+                                    } else null
+                                }
+                            }) {
                             userId = response?.userId
                             userLogin = response?.login
-                            helixToken = token
-                            if (apiSetting == 0 && !gqlToken.isNullOrBlank() || apiSetting > 0) {
+                            if ((apiSetting == 0 && tokens.count() == 1) || (apiSetting == 2)) {
+                                helixToken = token
+                            } else {
+                                if ((apiSetting == 0 && tokens.count() == 2) || (apiSetting == 1 && tokens.count() == 1)) {
+                                    gqlToken = token
+                                } else {
+                                    if ((apiSetting == 0 && tokens.count() == 3) || (apiSetting == 1 && tokens.count() == 2)) {
+                                        gqlToken2 = token
+                                    }
+                                }
+                            }
+                            if ((apiSetting == 0 && tokens.count() == 3) || (apiSetting == 1 && tokens.count() == 2) || (apiSetting == 2)) {
                                 TwitchApiHelper.checkedValidation = true
-                                User.set(this@LoginActivity, LoggedIn(userId, userLogin, helixToken, gqlToken))
+                                User.set(this@LoginActivity, LoggedIn(userId, userLogin, helixToken, gqlToken, gqlToken2))
                                 setResult(RESULT_OK)
                                 finish()
                             }
@@ -191,34 +223,19 @@ class LoginActivity : AppCompatActivity() {
                         }
                     } catch (e: Exception) {
                         toast(R.string.connection_error)
-                    }
-                }
-            } else {
-                lifecycleScope.launch {
-                    try {
-                        val response = repository.validate(TwitchApiHelper.addTokenPrefixGQL(token))
-                        if (!response?.clientId.isNullOrBlank() && response?.clientId == gqlClientId) {
-                            userId = response?.userId
-                            userLogin = response?.login
-                            gqlToken = token
-                            if (apiSetting == 0 && !helixToken.isNullOrBlank() || apiSetting > 0) {
-                                TwitchApiHelper.checkedValidation = true
-                                User.set(this@LoginActivity, LoggedIn(userId, userLogin, helixToken, gqlToken))
-                                setResult(RESULT_OK)
-                                finish()
-                            }
-                        } else {
-                            throw IOException()
+                        if ((apiSetting == 0 && tokens.count() == 3) || (apiSetting == 1 && tokens.count() == 2) || (apiSetting == 2)) {
+                            finish()
                         }
-                    } catch (e: Exception) {
-                        toast(R.string.connection_error)
+                    }
+                    if (apiSetting == 0 && tokens.count() == 1) {
+                        webView.loadUrl(gqlAuthUrl)
+                    } else {
+                        if ((apiSetting == 0 && tokens.count() == 2) || (apiSetting == 1 && tokens.count() == 1)) {
+                            webView.loadUrl(gqlAuthUrl2)
+                        }
                     }
                 }
             }
-            if (apiSetting == 0 && tokens == 0) {
-                webView.loadUrl(gqlAuthUrl)
-            }
-            tokens++
             true
         } else {
             false

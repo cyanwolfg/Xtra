@@ -12,10 +12,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 interface FollowFragment {
-    fun initializeFollow(fragment: Fragment, viewModel: FollowViewModel, followButton: ImageButton, setting: Int, user: User, helixClientId: String? = null, gqlClientId: String? = null) {
+    fun initializeFollow(fragment: Fragment, viewModel: FollowViewModel, followButton: ImageButton, setting: Int, user: User, helixClientId: String? = null, gqlClientId: String? = null, gqlClientId2: String? = null) {
         val context = fragment.requireContext()
         with(viewModel) {
-            setUser(user, helixClientId, gqlClientId, setting)
+            setUser(user, helixClientId, gqlClientId, gqlClientId2, setting)
             followButton.visible()
             var initialized = false
             var errorMessage: String? = null

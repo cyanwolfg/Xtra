@@ -696,7 +696,7 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
         return graphQL.getChannelPointsContext(clientId, token, json)
     }
 
-    suspend fun loadClaimPoints(clientId: String?, token: String?, channelId: String?, claimId: String?) {
+    suspend fun loadClaimPoints(clientId: String?, token: String?, integrityToken: String?, deviceId: String?, channelId: String?, claimId: String?) {
         val json = JsonObject().apply {
             addProperty("operationName", "ClaimCommunityPoints")
             add("variables", JsonObject().apply {
@@ -712,10 +712,10 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
                 })
             })
         }
-        return graphQL.getClaimPoints(clientId, token, json)
+        return graphQL.getClaimPoints(clientId, token, integrityToken, deviceId, json)
     }
 
-    suspend fun loadJoinRaid(clientId: String?, token: String?, raidId: String?) {
+    suspend fun loadJoinRaid(clientId: String?, token: String?, integrityToken: String?, deviceId: String?, raidId: String?) {
         val json = JsonObject().apply {
             addProperty("operationName", "JoinRaid")
             add("variables", JsonObject().apply {
@@ -730,7 +730,7 @@ class GraphQLRepository @Inject constructor(private val graphQL: GraphQLApi) {
                 })
             })
         }
-        return graphQL.getJoinRaid(clientId, token, json)
+        return graphQL.getJoinRaid(clientId, token, integrityToken, deviceId, json)
     }
 
     suspend fun loadUserEmotes(clientId: String?, token: String?, channelId: String?): UserEmotesDataResponse {
