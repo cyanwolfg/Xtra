@@ -585,5 +585,5 @@
     <string name="resume_download">Reanudar descarga</string>
     <string name="use_workmanager_downloads">Usar WorkManager para descargas</string>
     <string name="show_view_count_icon">Mostrar el contador de visitas y los iconos de tiempo de actividad</string>
-    <string name="playback_speeds">Playback speeds</string>
+    <string name="playback_speeds">Velocidades de reproducción</string>
 </resources>
