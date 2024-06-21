@@ -620,8 +620,8 @@
     <string name="download_chat_emotes">Descargar emoticonos e insignias</string>
     <string name="chat_downloading_progress">Chat: %d%%</string>
     <string name="change_chat_file">Cambiar archivo de chat</string>
-    <string name="download_queued">Queued</string>
-    <string name="download_blocked">Waiting for Internet connection</string>
-    <string name="download_blocked_wifi">Waiting for Wi-Fi connection</string>
-    <string name="download_wifi_only">Download using Wi-Fi only</string>
+    <string name="download_queued">En cola</string>
+    <string name="download_blocked">Esperando la conexión a Internet</string>
+    <string name="download_blocked_wifi">Esperando la conexión Wi-Fi</string>
+    <string name="download_wifi_only">Descargar sólo con Wi-Fi</string>
 </resources>
